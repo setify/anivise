@@ -312,7 +312,10 @@
       "error": "Fehler beim Speichern der Einstellungen",
       "emailTemplatesLink": "E-Mail-Templates",
       "emailTemplatesDescription": "Passen Sie den Inhalt der von der Plattform versendeten E-Mails an",
-      "manageTemplates": "Templates verwalten"
+      "manageTemplates": "Templates verwalten",
+      "emailLayoutLink": "E-Mail-Layout",
+      "emailLayoutDescription": "Logo, Farben und Footer aller ausgehenden E-Mails anpassen",
+      "manageLayout": "Layout konfigurieren"
     },
     "emailTemplates": {
       "title": "E-Mail-Templates",
@@ -465,6 +468,43 @@
       "pageInfo": "{from}–{to} von {total}",
       "previous": "Zurueck",
       "nextPage": "Weiter"
+    },
+    "emailLayout": {
+      "title": "E-Mail-Layout",
+      "description": "Konfigurieren Sie das Erscheinungsbild aller ausgehenden E-Mails",
+      "save": "Layout speichern",
+      "saved": "E-Mail-Layout erfolgreich gespeichert",
+      "sendTest": "Test-Layout senden",
+      "testSent": "Test-E-Mail mit aktuellem Layout gesendet",
+      "reset": "Auf Standard zuruecksetzen",
+      "logo": {
+        "title": "Logo",
+        "description": "Logo-Bild fuer den E-Mail-Header",
+        "url": "Logo-URL",
+        "link": "Logo-Link (optional)"
+      },
+      "colors": {
+        "title": "Farben",
+        "description": "Farbanpassungen fuer das E-Mail-Layout",
+        "background": "Hintergrund",
+        "contentBg": "Inhaltsbereich",
+        "primary": "Primaerfarbe (Buttons)",
+        "text": "Textfarbe",
+        "links": "Linkfarbe",
+        "borderRadius": "Abrundung"
+      },
+      "footer": {
+        "title": "Footer",
+        "description": "Fusszeile fuer alle E-Mails",
+        "textDe": "Footer-Text (Deutsch)",
+        "textEn": "Footer-Text (Englisch)",
+        "supportEmail": "Support-E-Mail",
+        "hint": "Verfuegbare Platzhalter: {{platformName}}, {{currentYear}}, {{supportEmail}}"
+      },
+      "preview": {
+        "title": "Vorschau",
+        "description": "Echtzeit-Vorschau des E-Mail-Layouts"
+      }
     },
     "activity": {
       "title": "Aktivitaet",

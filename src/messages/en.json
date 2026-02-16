@@ -312,7 +312,10 @@
       "error": "Failed to save settings",
       "emailTemplatesLink": "Email Templates",
       "emailTemplatesDescription": "Customize the content of emails sent by the platform",
-      "manageTemplates": "Manage Templates"
+      "manageTemplates": "Manage Templates",
+      "emailLayoutLink": "Email Layout",
+      "emailLayoutDescription": "Customize logo, colors, and footer of all outgoing emails",
+      "manageLayout": "Configure Layout"
     },
     "emailTemplates": {
       "title": "Email Templates",
@@ -465,6 +468,43 @@
       "pageInfo": "{from}–{to} of {total}",
       "previous": "Previous",
       "nextPage": "Next"
+    },
+    "emailLayout": {
+      "title": "Email Layout",
+      "description": "Configure the appearance of all outgoing emails",
+      "save": "Save Layout",
+      "saved": "Email layout saved successfully",
+      "sendTest": "Send Test Layout",
+      "testSent": "Test email with current layout sent",
+      "reset": "Reset to Default",
+      "logo": {
+        "title": "Logo",
+        "description": "Logo image for the email header",
+        "url": "Logo URL",
+        "link": "Logo Link (optional)"
+      },
+      "colors": {
+        "title": "Colors",
+        "description": "Color customization for the email layout",
+        "background": "Background",
+        "contentBg": "Content Area",
+        "primary": "Primary (Buttons)",
+        "text": "Text Color",
+        "links": "Link Color",
+        "borderRadius": "Border Radius"
+      },
+      "footer": {
+        "title": "Footer",
+        "description": "Footer text for all emails",
+        "textDe": "Footer Text (German)",
+        "textEn": "Footer Text (English)",
+        "supportEmail": "Support Email",
+        "hint": "Available placeholders: {{platformName}}, {{currentYear}}, {{supportEmail}}"
+      },
+      "preview": {
+        "title": "Preview",
+        "description": "Real-time preview of the email layout"
+      }
     },
     "activity": {
       "title": "Activity",

@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.13.0
+**Version:** 0.13.1
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add integrations page with encrypted secret management
+**Last Commit:** feat(admin): add configurable email base layout with live preview
 
 ## What's Implemented
 
@@ -97,6 +97,7 @@
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination
 - [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)
 - [x] Superadmin Email Templates page (`/admin/settings/emails`) with editor, preview, variables, reset
+- [x] Email Layout page (`/admin/settings/email-layout`) with logo, colors, footer, border radius, live preview, test send
 - [x] Impersonation: "View as Organization" button on org detail (superadmin only)
 - [x] Impersonation banner in dashboard layout with signed cookie and 2h timeout
 - [x] NotificationBell component in admin header (popover, polling, unread badge)
@@ -231,7 +232,10 @@
 - `src/lib/db/schema/email-templates.ts` - Email templates table schema
 - `src/app/[locale]/(superadmin)/admin/settings/emails/page.tsx` - Email templates page (server)
 - `src/app/[locale]/(superadmin)/admin/settings/emails/email-templates-client.tsx` - Email templates editor (client)
-- `src/lib/email/send.ts` - Email send helper with DB template rendering
+- `src/lib/email/send.ts` - Email send helper with DB template rendering and configurable layout
+- `src/app/[locale]/(superadmin)/admin/settings/email-layout/page.tsx` - Email layout page (server)
+- `src/app/[locale]/(superadmin)/admin/settings/email-layout/email-layout-client.tsx` - Email layout config (client)
+- `src/app/[locale]/(superadmin)/admin/settings/email-layout/actions.ts` - Email layout server actions
 - `src/lib/auth/impersonation.ts` - Impersonation cookie management (sign/verify/parse)
 - `src/components/layout/impersonation-banner.tsx` - Impersonation banner component
 - `src/app/[locale]/(dashboard)/impersonation-actions.ts` - End impersonation server action

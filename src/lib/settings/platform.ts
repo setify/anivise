@@ -12,7 +12,34 @@ export interface PlatformSettings {
   'org.max_members_trial': number
   'analysis.max_transcript_size_mb': number
   'analysis.n8n_webhook_url': string
+  'email.logo_url': string
+  'email.logo_link': string
+  'email.bg_color': string
+  'email.content_bg_color': string
+  'email.primary_color': string
+  'email.text_color': string
+  'email.link_color': string
+  'email.footer_text_de': string
+  'email.footer_text_en': string
+  'email.border_radius': number
+  'email.support_email': string
 }
+
+export const EMAIL_LAYOUT_DEFAULTS = {
+  'email.logo_url': '',
+  'email.logo_link': '',
+  'email.bg_color': '#f4f4f5',
+  'email.content_bg_color': '#ffffff',
+  'email.primary_color': '#4f46e5',
+  'email.text_color': '#18181b',
+  'email.link_color': '#4f46e5',
+  'email.footer_text_de':
+    'Diese E-Mail wurde von der {{platformName}}-Plattform gesendet.',
+  'email.footer_text_en':
+    'This email was sent by the {{platformName}} platform.',
+  'email.border_radius': 12,
+  'email.support_email': '',
+} as const
 
 const DEFAULTS: PlatformSettings = {
   'platform.name': 'Anivise',
@@ -33,6 +60,7 @@ const DEFAULTS: PlatformSettings = {
   'org.max_members_trial': 5,
   'analysis.max_transcript_size_mb': 10,
   'analysis.n8n_webhook_url': process.env.N8N_WEBHOOK_URL || '',
+  ...EMAIL_LAYOUT_DEFAULTS,
 }
 
 export function getDefault<K extends keyof PlatformSettings>(

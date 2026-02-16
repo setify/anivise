@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.13.1] - 2026-02-16
+### Added
+- Configurable email base layout page (`/admin/settings/email-layout`) with:
+  - Logo URL and logo link configuration
+  - Color customization (background, content area, primary/button, text, links)
+  - Footer text with placeholders ({{platformName}}, {{currentYear}}, {{supportEmail}})
+  - Border radius adjustment
+  - Live email preview with desktop/mobile toggle
+  - "Send Test Layout" button to email current layout to self
+  - "Reset to Default" to restore original settings
+- Email layout settings stored in `platform_settings` (11 new keys under `email.*`)
+- `getEmailLayoutConfig()` helper to load layout config from DB
+- `wrapInBaseLayout()` now uses configurable colors, logo, footer, and border radius
+- Link to email layout from settings page (alongside email templates link)
+- Audit logging for layout saves and test sends
+- i18n translations for `admin.emailLayout` namespace (de + en)
+- Breadcrumb label for `email-layout` segment
+
+### Changed
+- `wrapInBaseLayout()` refactored from hardcoded HTML to configurable template
+- `sendTemplatedEmail()` now reads layout config from DB and uses platform name for sender
+- `PlatformSettings` interface extended with 11 `email.*` keys
+
 ## [0.13.0] - 2026-02-16
 ### Added
 - Integrations page (`/admin/integrations`) with encrypted secret management for:

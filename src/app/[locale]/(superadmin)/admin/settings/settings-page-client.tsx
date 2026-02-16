@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Save, X, Plus, Loader2, Mail, ArrowRight } from 'lucide-react'
+import { Save, X, Plus, Loader2, Mail, ArrowRight, Palette } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -412,6 +412,28 @@ export function SettingsPageClient({ settings }: Props) {
             <Button variant="outline" asChild>
               <Link href={`/${locale}/admin/settings/emails`}>
                 {t('manageTemplates')}
+                <ArrowRight className="ml-2 size-4" />
+              </Link>
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="size-4" />
+                {t('emailLayoutLink')}
+              </CardTitle>
+              <CardDescription>
+                {t('emailLayoutDescription')}
+              </CardDescription>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href={`/${locale}/admin/settings/email-layout`}>
+                {t('manageLayout')}
                 <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
