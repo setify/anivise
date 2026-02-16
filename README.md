@@ -51,7 +51,55 @@ The platform uses a single database with shared schema. Tenant isolation is enfo
 - Superadmin is a flag on the `users` table (platform-wide scope)
 
 ### Database Schema
-Core tables: `organizations`, `users`, `organization_members`, `analysis_subjects`, `consents`, `analysis_jobs`, `reports`. See `CLAUDE.md` for full schema definitions.
+
+The database is managed via **Drizzle ORM** with schemas defined in `src/lib/db/schema/`. All migrations are output to `drizzle/migrations/`.
+
+#### Core Tables
+
+| Table | Description | Tenant-Isolated |
+|-------|-------------|-----------------|
+| `organizations` | Organizations with slug, subscription tier/status | No (root table) |
+| `users` | Users linked to Supabase Auth by ID | No (global) |
+| `organization_members` | Junction: user + org + role (unique constraint) | Yes |
+| `analysis_subjects` | People being analyzed | Yes |
+| `consents` | Consent records (type, status, timestamps) | Yes |
+| `analysis_jobs` | Analysis job lifecycle (pending -> completed/failed) | Yes |
+| `reports` | Analysis results (jsonb report_data, 1:1 with job) | Yes |
+
+#### Enums
+
+| Enum | Values |
+|------|--------|
+| `subscription_tier` | individual, team, enterprise |
+| `subscription_status` | trial, active, cancelled, expired |
+| `org_member_role` | org_admin, manager, member |
+| `consent_type` | analysis, data_retention, sharing |
+| `consent_status` | active, revoked |
+| `job_status` | pending, processing, completed, failed, cancelled |
+| `locale` | de, en |
+
+#### Supabase Clients
+
+Three client configurations for different contexts:
+
+```typescript
+// Browser (Client Components):
+import { createClient } from '@/lib/supabase/client'
+
+// Server Components / Server Actions / Route Handlers:
+import { createClient } from '@/lib/supabase/server'
+
+// Superadmin operations (bypasses RLS):
+import { createAdminClient } from '@/lib/supabase/admin'
+```
+
+#### Row Level Security (RLS)
+
+RLS policies are defined in `supabase/migrations/`:
+- `001_enable_rls.sql` - Enables RLS on all tables
+- `002_tenant_isolation_policies.sql` - Tenant isolation via `organization_members` lookup
+
+Apply these manually to your Supabase instance after running Drizzle migrations.
 
 ### n8n Integration
 Analysis pipeline: Upload transcript -> Create job -> Trigger n8n webhook -> n8n processes -> Callback to `/api/webhooks/n8n/analysis-complete` -> Store report -> Notify via Supabase Realtime.
@@ -72,8 +120,8 @@ next-intl with App Router integration. Default locale: `de`. Supported: `['de', 
 | `pnpm lint` | Run ESLint |
 | `pnpm typecheck` | Run TypeScript type checking |
 | `pnpm db:migrate` | Run Drizzle migrations |
-| `pnpm db:generate` | Generate Drizzle types from schema |
-| `pnpm db:push` | Push schema to database (dev only) |
+| `pnpm db:generate` | Generate Drizzle migration files from schema |
+| `pnpm db:push` | Push schema directly to database (dev only) |
 | `pnpm db:studio` | Open Drizzle Studio (DB browser) |
 
 ## Project Structure
@@ -97,8 +145,10 @@ src/
 │   ├── analyses/              # Analysis-specific components
 │   └── shared/                # Shared/generic components
 ├── lib/
-│   ├── supabase/              # Supabase clients (browser, server, admin)
+│   ├── supabase/              # Supabase clients (browser, server, admin, middleware)
 │   ├── db/                    # Drizzle ORM (schema, migrations, client)
+│   │   ├── schema/            # Table definitions and enums
+│   │   └── index.ts           # Drizzle client instance
 │   ├── i18n/                  # next-intl config
 │   ├── auth/                  # Role definitions and permission helpers
 │   ├── n8n/                   # Webhook trigger
@@ -107,6 +157,9 @@ src/
 │   └── utils.ts               # Utility functions (cn, etc.)
 ├── hooks/                     # Custom React hooks
 ├── types/                     # TypeScript type definitions
+│   ├── database.ts            # Drizzle inferred types (Select + Insert)
+│   ├── api.ts                 # API response types
+│   └── index.ts               # Type re-exports
 ├── messages/                  # Translation files (de.json, en.json)
 └── middleware.ts              # Locale routing, auth, subdomain resolution
 ```
@@ -118,6 +171,7 @@ src/
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key (server-only) |
+| `DATABASE_URL` | Yes | PostgreSQL connection string for Drizzle ORM |
 | `NEXT_PUBLIC_APP_DOMAIN` | Yes | App domain (e.g., `localhost:3000`) |
 | `NEXT_PUBLIC_APP_URL` | Yes | Full app URL (e.g., `http://localhost:3000`) |
 | `N8N_WEBHOOK_URL` | No | n8n webhook endpoint URL |
@@ -140,11 +194,13 @@ Deploy to Vercel:
 ## Database Management
 
 ```bash
-pnpm db:generate  # Generate Drizzle types from schema
-pnpm db:migrate   # Run pending migrations
-pnpm db:push      # Push schema to Supabase (dev only)
-pnpm db:studio    # Open Drizzle Studio (DB browser)
+pnpm db:generate  # Generate Drizzle migration files from schema changes
+pnpm db:migrate   # Run pending migrations against the database
+pnpm db:push      # Push schema directly to database (dev only, no migration files)
+pnpm db:studio    # Open Drizzle Studio (visual DB browser)
 ```
+
+After running Drizzle migrations, apply RLS policies from `supabase/migrations/` to your Supabase instance.
 
 ## Contributing
 

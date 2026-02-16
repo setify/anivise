@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Last Updated:** 2026-02-16
-**Last Commit:** chore: initial project scaffold v0.1.0
+**Last Commit:** feat(db): add complete database schema and Supabase clients v0.2.0
 
 ## What's Implemented
 
@@ -17,12 +17,24 @@
 - [x] Complete folder structure from CLAUDE.md
 
 ### Database
-- [ ] Drizzle ORM configured with PostgreSQL
-- [ ] Schema: organizations, users, organization_members
-- [ ] Schema: analysis_subjects, consents
-- [ ] Schema: analysis_jobs, reports
-- [ ] Supabase clients (browser, server, admin)
-- [ ] RLS policies applied to Supabase
+- [x] Drizzle ORM configured with PostgreSQL (postgres.js driver)
+- [x] drizzle.config.ts with schema path and migrations output
+- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale)
+- [x] Schema: organizations (name, slug, settings, subscription tier/status, soft-delete)
+- [x] Schema: users (Supabase Auth ID, email, superadmin flag, locale preference)
+- [x] Schema: organization_members (junction table, role enum, unique constraint)
+- [x] Schema: analysis_subjects (full_name, email, role_title, organization_id)
+- [x] Schema: consents (consent_type, status, granted_at, revoked_at, ip_address)
+- [x] Schema: analysis_jobs (status lifecycle, n8n timestamps, transcript path, error tracking)
+- [x] Schema: reports (jsonb report_data, unique analysis_job_id, subject viewing)
+- [x] Drizzle DB client instance
+- [x] TypeScript inferred types (Select + Insert for all tables)
+- [x] Supabase browser client (@supabase/ssr)
+- [x] Supabase server client (cookie-based auth)
+- [x] Supabase admin client (service role, superadmin only)
+- [x] Supabase middleware helper (session refresh)
+- [x] RLS SQL templates (enable RLS + tenant isolation policies)
+- [ ] RLS policies applied to Supabase (requires running migrations against live DB)
 
 ### Authentication
 - [ ] Supabase Auth integration
@@ -58,8 +70,6 @@
 - [ ] Supabase Storage upload flow
 
 ## What's NOT Implemented Yet
-- Supabase client setup (browser, server, admin)
-- Drizzle ORM schema and migrations
 - Authentication flows (login, register, magic link)
 - Middleware (subdomain resolution, auth check)
 - RBAC (role definitions, permission checks)
@@ -80,19 +90,36 @@
 - Testing (Vitest, Playwright)
 
 ## Known Issues / Tech Debt
-- Package.json db:* scripts reference drizzle-kit but it is not yet installed (will be added in v0.2.0)
 - next-themes is installed but ThemeProvider is not yet wired into layouts (will be added in v0.4.0)
+- RLS policies are defined as SQL files but not yet applied to a live Supabase instance
+- DATABASE_URL env var needed for Drizzle (added to .env.example)
 
 ## File Map (Key Files)
+- `drizzle.config.ts` - Drizzle Kit configuration
+- `src/lib/db/schema/enums.ts` - All PostgreSQL enums
+- `src/lib/db/schema/organizations.ts` - Organizations table
+- `src/lib/db/schema/users.ts` - Users table
+- `src/lib/db/schema/organization-members.ts` - Org members junction table
+- `src/lib/db/schema/analysis-subjects.ts` - Analysis subjects table
+- `src/lib/db/schema/consents.ts` - Consents table
+- `src/lib/db/schema/analysis-jobs.ts` - Analysis jobs table
+- `src/lib/db/schema/reports.ts` - Reports table
+- `src/lib/db/schema/index.ts` - Schema re-exports
+- `src/lib/db/index.ts` - Drizzle client instance
+- `src/lib/supabase/client.ts` - Browser Supabase client
+- `src/lib/supabase/server.ts` - Server-side Supabase client
+- `src/lib/supabase/admin.ts` - Service-role client (superadmin)
+- `src/lib/supabase/middleware.ts` - Auth middleware helper
+- `src/types/database.ts` - Drizzle inferred types
+- `src/types/index.ts` - Type re-exports
+- `supabase/migrations/001_enable_rls.sql` - Enable RLS on all tables
+- `supabase/migrations/002_tenant_isolation_policies.sql` - Tenant isolation policies
 - `src/app/layout.tsx` - Root layout with fonts and metadata
 - `src/app/[locale]/layout.tsx` - Locale layout with NextIntlClientProvider
-- `src/app/[locale]/page.tsx` - Home page
 - `src/middleware.ts` - next-intl locale routing (will be extended with auth + subdomain)
 - `src/lib/i18n/request.ts` - next-intl server request config
 - `src/lib/i18n/routing.ts` - Locale routing definition
-- `src/lib/constants.ts` - App constants (name, locales)
-- `src/lib/utils.ts` - cn() utility for Tailwind class merging
+- `src/lib/constants.ts` - App constants
+- `src/lib/utils.ts` - cn() utility
 - `src/messages/de.json` / `en.json` - Translation files
-- `src/types/api.ts` - API response type definitions
 - `.env.example` - Environment variable template
-- `next.config.ts` - Next.js config with next-intl plugin

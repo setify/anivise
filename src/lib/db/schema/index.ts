@@ -1,2 +1,19 @@
-// Re-exports all schemas
-// Will be populated when Drizzle schema is defined
+// Enums
+export {
+  subscriptionTierEnum,
+  subscriptionStatusEnum,
+  orgMemberRoleEnum,
+  consentTypeEnum,
+  consentStatusEnum,
+  jobStatusEnum,
+  localeEnum,
+} from './enums'
+
+// Tables
+export { organizations } from './organizations'
+export { users } from './users'
+export { organizationMembers } from './organization-members'
+export { analysisSubjects } from './analysis-subjects'
+export { consents } from './consents'
+export { analysisJobs } from './analysis-jobs'
+export { reports } from './reports'
