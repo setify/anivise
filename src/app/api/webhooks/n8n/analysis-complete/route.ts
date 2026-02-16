@@ -4,6 +4,7 @@ import { analysisJobs, reports } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { z } from 'zod/v4'
 import { createNotification } from '@/lib/notifications/create'
+import { getIntegrationSecret } from '@/lib/crypto/secrets'
 
 const callbackSchema = z.object({
   jobId: z.string().uuid(),
@@ -15,9 +16,15 @@ const callbackSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  // Validate the shared secret
-  const secret = request.headers.get('X-N8N-Secret')
-  if (!secret || secret !== process.env.N8N_WEBHOOK_SECRET) {
+  // Validate the shared secret (DB-stored secret takes priority, fallback to ENV)
+  const authHeaderName =
+    (await getIntegrationSecret('n8n', 'auth_header_name')) || 'X-Anivise-Secret'
+  const expectedSecret =
+    (await getIntegrationSecret('n8n', 'auth_header_value')) ||
+    process.env.N8N_WEBHOOK_SECRET
+
+  const receivedSecret = request.headers.get(authHeaderName)
+  if (!receivedSecret || !expectedSecret || receivedSecret !== expectedSecret) {
     return NextResponse.json(
       { success: false, error: { code: 'UNAUTHORIZED', message: 'Invalid secret' } },
       { status: 401 }

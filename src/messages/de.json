@@ -396,6 +396,63 @@
       "previous": "Zurueck",
       "nextPage": "Weiter"
     },
+    "integrations": {
+      "title": "Integrationen",
+      "description": "Externe Dienste und API-Schluessel verwalten",
+      "save": "Speichern",
+      "saved": "Erfolgreich gespeichert",
+      "testConnection": "Verbindung testen",
+      "loadFromEnv": "Aus ENV laden",
+      "envLoaded": "{count} Werte aus Umgebungsvariablen importiert",
+      "copied": "In die Zwischenablage kopiert",
+      "status": {
+        "idle": "Nicht getestet",
+        "testing": "Teste...",
+        "connected": "Verbunden",
+        "error": "Fehler"
+      },
+      "supabase": {
+        "description": "Datenbank, Authentifizierung und Dateispeicher",
+        "hint": "Der Service Role Key hat vollen Zugriff auf Ihre Datenbank. Behandeln Sie ihn wie ein Passwort und geben Sie ihn niemals im Client-Code weiter."
+      },
+      "resend": {
+        "description": "E-Mail-Versand fuer Einladungen und Benachrichtigungen",
+        "fromEmail": "Absender-E-Mail",
+        "fromName": "Absender-Name",
+        "sendTest": "Test-E-Mail senden",
+        "testSent": "Test-E-Mail wurde an Ihre Adresse gesendet"
+      },
+      "n8n": {
+        "subtitle": "Analyse-Pipeline",
+        "description": "Webhook-Verbindung zur externen Analyse-Engine",
+        "healthUrl": "Health-Check URL",
+        "authHeaderName": "Auth-Header Name",
+        "authHeaderValue": "Auth-Header Wert",
+        "rotateSecret": "Secret rotieren",
+        "secretRotated": "Neues Secret generiert",
+        "newSecretLabel": "Neues Secret (nur einmal sichtbar)",
+        "newSecretHint": "Kopieren Sie dieses Secret und konfigurieren Sie es in Ihrer n8n-Instanz. Es wird nach dem Verlassen dieser Seite nicht mehr angezeigt.",
+        "hint": "Die Webhook-URL und das Auth-Secret muessen mit Ihrer n8n-Instanz uebereinstimmen. Die Health-URL ist optional und wird nur fuer den Verbindungstest verwendet."
+      },
+      "vercel": {
+        "description": "Deployment-Informationen (schreibgeschuetzt)",
+        "deployed": "Deployed",
+        "local": "Lokal",
+        "environment": "Umgebung",
+        "region": "Region",
+        "gitBranch": "Git-Branch",
+        "commitSha": "Commit SHA",
+        "deploymentUrl": "Deployment-URL",
+        "notDeployed": "Nicht auf Vercel bereitgestellt. Diese Informationen sind nur in einer Vercel-Umgebung verfuegbar.",
+        "hint": "Diese Werte werden automatisch von Vercel gesetzt und koennen nicht geaendert werden."
+      },
+      "payment": {
+        "comingSoon": "In Kuerze",
+        "description": "Zahlungsabwicklung fuer Abonnements",
+        "planned": "Geplant",
+        "placeholder": "Stripe- oder Lemon Squeezy-Integration wird in einer zukuenftigen Version hinzugefuegt."
+      }
+    },
     "notifications": {
       "title": "Benachrichtigungen",
       "description": "Benachrichtigungen anzeigen und verwalten",

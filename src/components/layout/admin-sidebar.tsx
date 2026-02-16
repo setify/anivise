@@ -10,6 +10,7 @@ import {
   Briefcase,
   Building2,
   LayoutDashboard,
+  Link2,
   Settings,
   User,
   Users,
@@ -70,6 +71,12 @@ export function AdminSidebar({ platformRole }: { platformRole?: string | null })
       href: `/${locale}/admin/jobs`,
       label: tAdmin('jobs.title'),
       icon: Briefcase,
+    },
+    {
+      href: `/${locale}/admin/integrations`,
+      label: tAdmin('integrations.title'),
+      icon: Link2,
+      superadminOnly: true,
     },
     {
       href: `/${locale}/admin/notifications`,

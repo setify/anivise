@@ -12,6 +12,7 @@ import type {
   platformSettings,
   emailTemplates,
   notifications,
+  integrationSecrets,
 } from '@/lib/db/schema'
 
 // Organization
@@ -61,6 +62,10 @@ export type NewEmailTemplate = InferInsertModel<typeof emailTemplates>
 // Notification
 export type Notification = InferSelectModel<typeof notifications>
 export type NewNotification = InferInsertModel<typeof notifications>
+
+// Integration Secret
+export type IntegrationSecret = InferSelectModel<typeof integrationSecrets>
+export type NewIntegrationSecret = InferInsertModel<typeof integrationSecrets>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

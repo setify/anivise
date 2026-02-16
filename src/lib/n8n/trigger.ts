@@ -1,4 +1,4 @@
-import { getSetting } from '@/lib/settings/platform'
+import { getIntegrationSecret } from '@/lib/crypto/secrets'
 
 export interface N8nTriggerPayload {
   jobId: string
@@ -22,15 +22,22 @@ export interface N8nHealthStatus {
 export async function triggerN8nWebhook(
   payload: N8nTriggerPayload
 ): Promise<{ success: boolean; error?: string }> {
-  const webhookUrl = await getSetting('analysis.n8n_webhook_url')
+  const webhookUrl =
+    (await getIntegrationSecret('n8n', 'webhook_url')) ||
+    process.env.N8N_WEBHOOK_URL
 
   if (!webhookUrl) {
     return { success: false, error: 'n8n webhook URL not configured' }
   }
 
-  const secret = process.env.N8N_WEBHOOK_SECRET
-  if (!secret) {
-    return { success: false, error: 'N8N_WEBHOOK_SECRET not set' }
+  const authHeaderName =
+    (await getIntegrationSecret('n8n', 'auth_header_name')) || 'X-Anivise-Secret'
+  const authHeaderValue =
+    (await getIntegrationSecret('n8n', 'auth_header_value')) ||
+    process.env.N8N_WEBHOOK_SECRET
+
+  if (!authHeaderValue) {
+    return { success: false, error: 'n8n auth secret not configured' }
   }
 
   try {
@@ -38,7 +45,7 @@ export async function triggerN8nWebhook(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-N8N-Secret': secret,
+        [authHeaderName]: authHeaderValue,
       },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(30000),
@@ -63,7 +70,9 @@ export async function triggerN8nWebhook(
  * Check n8n health by pinging the webhook URL
  */
 export async function checkN8nHealth(): Promise<N8nHealthStatus> {
-  const webhookUrl = await getSetting('analysis.n8n_webhook_url')
+  const webhookUrl =
+    (await getIntegrationSecret('n8n', 'webhook_url')) ||
+    process.env.N8N_WEBHOOK_URL
 
   if (!webhookUrl) {
     return {
@@ -78,7 +87,6 @@ export async function checkN8nHealth(): Promise<N8nHealthStatus> {
   const start = Date.now()
 
   try {
-    // Try a HEAD or GET request to the n8n base URL (extract base from webhook URL)
     const urlObj = new URL(webhookUrl)
     const baseUrl = `${urlObj.protocol}//${urlObj.host}`
 

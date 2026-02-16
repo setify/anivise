@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.13.0] - 2026-02-16
+### Added
+- Integrations page (`/admin/integrations`) with encrypted secret management for:
+  - **Supabase**: Project URL, Anon Key, Service Role Key with save, test connection, load from ENV
+  - **Resend**: API Key, From Email, From Name with save, test connection, send test email, load from ENV
+  - **n8n**: Webhook URL, Health URL, Auth Header Name/Value with save, test connection, secret rotation, load from ENV
+  - **Vercel**: Read-only deployment info (environment, region, git branch, commit SHA, URL)
+  - **Payment**: Disabled placeholder for future Stripe/Lemon Squeezy integration
+- `integration_secrets` table with AES-256-GCM encryption (service, key, encrypted_value, iv, is_sensitive)
+- `src/lib/crypto/secrets.ts` with encryption/decryption helpers (`getIntegrationSecret`, `setIntegrationSecret`, `getSecretMetadata`, `getMaskedSecret`)
+- Integration server actions: `saveIntegrationSecrets`, `getIntegrationSecretsForUI`, `testSupabaseConnection`, `testResendConnection`, `testN8nConnection`, `sendTestEmail`, `rotateN8nSecret`, `loadFromEnv`, `getVercelInfo`
+- "Integrations" nav item in admin sidebar (superadmin only, Link2 icon)
+- StatusBadge component for connection status display (idle/testing/connected/error)
+- `IntegrationSecret` and `NewIntegrationSecret` TypeScript types
+- `SECRETS_ENCRYPTION_KEY` to `.env.example`
+- i18n translations for integrations (`admin.integrations` namespace, de + en)
+
+### Changed
+- n8n trigger (`triggerN8nWebhook`) now reads webhook URL and auth from DB-stored integration secrets with ENV fallback
+- n8n health check (`checkN8nHealth`) now reads webhook URL from DB-stored secrets with ENV fallback
+- n8n callback handler now validates against DB-stored auth header name/value with ENV fallback
+- Breadcrumbs component updated with `integrations` segment label
+
 ## [0.12.1] - 2026-02-16
 ### Added
 - Breadcrumbs component for admin pages (auto-generated from URL path with segment labels)

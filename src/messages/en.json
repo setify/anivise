@@ -396,6 +396,63 @@
       "previous": "Previous",
       "nextPage": "Next"
     },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Manage external services and API keys",
+      "save": "Save",
+      "saved": "Saved successfully",
+      "testConnection": "Test Connection",
+      "loadFromEnv": "Load from ENV",
+      "envLoaded": "{count} values imported from environment variables",
+      "copied": "Copied to clipboard",
+      "status": {
+        "idle": "Not tested",
+        "testing": "Testing...",
+        "connected": "Connected",
+        "error": "Error"
+      },
+      "supabase": {
+        "description": "Database, authentication and file storage",
+        "hint": "The Service Role Key has full access to your database. Treat it like a password and never expose it in client-side code."
+      },
+      "resend": {
+        "description": "Email delivery for invitations and notifications",
+        "fromEmail": "From Email",
+        "fromName": "From Name",
+        "sendTest": "Send Test Email",
+        "testSent": "Test email sent to your address"
+      },
+      "n8n": {
+        "subtitle": "Analysis Pipeline",
+        "description": "Webhook connection to the external analysis engine",
+        "healthUrl": "Health Check URL",
+        "authHeaderName": "Auth Header Name",
+        "authHeaderValue": "Auth Header Value",
+        "rotateSecret": "Rotate Secret",
+        "secretRotated": "New secret generated",
+        "newSecretLabel": "New Secret (shown only once)",
+        "newSecretHint": "Copy this secret and configure it in your n8n instance. It will not be shown again after leaving this page.",
+        "hint": "The webhook URL and auth secret must match your n8n instance configuration. The health URL is optional and only used for connection testing."
+      },
+      "vercel": {
+        "description": "Deployment information (read-only)",
+        "deployed": "Deployed",
+        "local": "Local",
+        "environment": "Environment",
+        "region": "Region",
+        "gitBranch": "Git Branch",
+        "commitSha": "Commit SHA",
+        "deploymentUrl": "Deployment URL",
+        "notDeployed": "Not deployed on Vercel. This information is only available in a Vercel environment.",
+        "hint": "These values are automatically set by Vercel and cannot be changed."
+      },
+      "payment": {
+        "comingSoon": "Coming Soon",
+        "description": "Payment processing for subscriptions",
+        "planned": "Planned",
+        "placeholder": "Stripe or Lemon Squeezy integration will be added in a future release."
+      }
+    },
     "notifications": {
       "title": "Notifications",
       "description": "View and manage your notifications",

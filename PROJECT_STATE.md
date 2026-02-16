@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.12.1
+**Version:** 0.13.0
 **Last Updated:** 2026-02-16
-**Last Commit:** refactor(admin): add breadcrumbs, staff permissions, server layout
+**Last Commit:** feat(admin): add integrations page with encrypted secret management
 
 ## What's Implemented
 
@@ -32,8 +32,9 @@
 - [x] Schema: platform_settings (key-value store with typed defaults)
 - [x] Schema: email_templates (slug, de/en subject+body, variables, system flag)
 - [x] Schema: notifications (recipientId, type, title, body, link, isRead, metadata, indexed)
+- [x] Schema: integration_secrets (service, key, encrypted_value, iv, is_sensitive, AES-256-GCM encryption)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -84,7 +85,7 @@
 - [x] Analyses page with empty state
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (8 nav items: Dashboard, Profile, Team, Organizations, Jobs, Notifications, Activity, Settings)
+- [x] Superadmin layout with admin sidebar (9 nav items: Dashboard, Profile, Team, Organizations, Jobs, Integrations, Notifications, Activity, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
@@ -101,6 +102,7 @@
 - [x] NotificationBell component in admin header (popover, polling, unread badge)
 - [x] Notifications page (`/admin/notifications`) with All/Unread tabs, mark-all-read, pagination
 - [x] Analysis Jobs page (`/admin/jobs`) with n8n health check, stats, filters, retry/cancel actions
+- [x] Integrations page (`/admin/integrations`) with encrypted secret management (Supabase, Resend, n8n, Vercel, Payment placeholder)
 - [x] Breadcrumbs component in admin header (auto-generated from URL path)
 - [x] Staff permission filtering on admin sidebar (Settings hidden for staff)
 - [x] Home page (redirects to dashboard)
@@ -148,11 +150,20 @@
 - [x] cancelAnalysisJob - cancel pending/processing job with audit logging
 - [x] retryAnalysisJob - reset failed/cancelled job to pending with audit logging
 - [x] checkN8nHealthAction - check n8n webhook connectivity
+- [x] saveIntegrationSecrets - save encrypted secrets for a service
+- [x] getIntegrationSecretsForUI - load masked secrets for display
+- [x] testSupabaseConnection - test Supabase API connectivity
+- [x] testResendConnection - test Resend API connectivity
+- [x] testN8nConnection - test n8n health endpoint
+- [x] sendTestEmail - send test email via Resend
+- [x] rotateN8nSecret - generate and store new random secret
+- [x] loadFromEnv - import ENV values into encrypted DB storage
 
 ### Integrations
-- [x] n8n webhook trigger (`triggerN8nWebhook` helper with secret header)
-- [x] n8n callback handler (`POST /api/webhooks/n8n/analysis-complete` with validation)
-- [x] n8n health check (`checkN8nHealth`)
+- [x] Integration secrets encryption (AES-256-GCM, `src/lib/crypto/secrets.ts`)
+- [x] n8n webhook trigger (`triggerN8nWebhook` - reads from DB secrets with ENV fallback)
+- [x] n8n callback handler (`POST /api/webhooks/n8n/analysis-complete` - validates against DB secrets with ENV fallback)
+- [x] n8n health check (`checkN8nHealth` - reads from DB secrets with ENV fallback)
 - [x] Resend email (package installed, sendTemplatedEmail helper ready)
 - [ ] Supabase Storage upload flow
 
@@ -233,7 +244,12 @@
 - `src/app/api/webhooks/n8n/analysis-complete/route.ts` - n8n callback webhook handler
 - `src/app/[locale]/(superadmin)/admin/jobs/page.tsx` - Analysis jobs page (server)
 - `src/app/[locale]/(superadmin)/admin/jobs/jobs-page-client.tsx` - Analysis jobs table (client)
-- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (8 items)
+- `src/app/[locale]/(superadmin)/admin/integrations/page.tsx` - Integrations page (server)
+- `src/app/[locale]/(superadmin)/admin/integrations/integrations-page-client.tsx` - Integrations cards (client)
+- `src/app/[locale]/(superadmin)/admin/integrations/actions.ts` - Integration server actions
+- `src/lib/crypto/secrets.ts` - AES-256-GCM encryption for integration secrets
+- `src/lib/db/schema/integration-secrets.ts` - Integration secrets table schema
+- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (9 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration

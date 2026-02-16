@@ -11,6 +11,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   team: 'team.title',
   organizations: 'orgs.title',
   jobs: 'jobs.title',
+  integrations: 'integrations.title',
   notifications: 'notifications.title',
   activity: 'activity.title',
   settings: 'platformSettings.title',
