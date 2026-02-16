@@ -1,0 +1,55 @@
+{
+  "common": {
+    "appName": "Anivise",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "email": "Email Address",
+      "password": "Password",
+      "submit": "Sign In",
+      "magicLink": "Send Magic Link",
+      "noAccount": "Don't have an account?",
+      "register": "Register"
+    },
+    "register": {
+      "title": "Create Account",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "password": "Password",
+      "submit": "Register",
+      "hasAccount": "Already have an account?",
+      "login": "Sign In"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to Anivise"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "analyses": "Analyses",
+    "team": "Team",
+    "settings": "Settings",
+    "admin": "Administration"
+  },
+  "analyses": {
+    "title": "Analyses",
+    "empty": "No analyses yet"
+  },
+  "settings": {
+    "title": "Settings"
+  },
+  "team": {
+    "title": "Team"
+  }
+}
