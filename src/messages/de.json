@@ -266,6 +266,39 @@
         "notFound": "Organisation nicht gefunden"
       },
       "error": "Ein Fehler ist aufgetreten"
+    },
+    "activity": {
+      "title": "Aktivitaet",
+      "description": "Protokoll aller Plattform-Aktionen",
+      "filters": "Filter",
+      "filtersDescription": "Filtern Sie das Aktivitaetsprotokoll nach Aktionstyp und Zeitraum",
+      "actionFilter": "Aktionstyp",
+      "periodFilter": "Zeitraum",
+      "allActions": "Alle Aktionen",
+      "allTime": "Gesamter Zeitraum",
+      "last24h": "Letzte 24 Stunden",
+      "last7d": "Letzte 7 Tage",
+      "last30d": "Letzte 30 Tage",
+      "categories": {
+        "org": "Organisationen",
+        "team": "Team",
+        "org_member": "Org-Mitglieder",
+        "invitation": "Einladungen",
+        "profile": "Profil",
+        "settings": "Einstellungen",
+        "impersonation": "Identitaetswechsel",
+        "analysis_job": "Analyse-Jobs"
+      },
+      "logTitle": "Aktivitaetsprotokoll",
+      "totalEntries": "{count, plural, =0 {Keine Eintraege} =1 {1 Eintrag} other {# Eintraege}}",
+      "noLogs": "Noch keine Aktivitaeten protokolliert.",
+      "columnTime": "Zeit",
+      "columnAction": "Aktion",
+      "columnActor": "Akteur",
+      "columnDetails": "Details",
+      "pageInfo": "{from}–{to} von {total}",
+      "previous": "Zurueck",
+      "nextPage": "Weiter"
     }
   }
 }

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { Building2, LayoutDashboard, User, Users } from 'lucide-react'
+import { Activity, Building2, LayoutDashboard, User, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface NavItem {
@@ -38,6 +38,11 @@ export function AdminSidebar() {
       href: `/${locale}/admin/organizations`,
       label: tAdmin('orgs.title'),
       icon: Building2,
+    },
+    {
+      href: `/${locale}/admin/activity`,
+      label: tAdmin('activity.title'),
+      icon: Activity,
     },
   ]
 

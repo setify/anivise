@@ -8,6 +8,7 @@ import type {
   analysisJobs,
   reports,
   teamInvitations,
+  auditLogs,
 } from '@/lib/db/schema'
 
 // Organization
@@ -41,6 +42,10 @@ export type NewReport = InferInsertModel<typeof reports>
 // Team Invitation
 export type TeamInvitation = InferSelectModel<typeof teamInvitations>
 export type NewTeamInvitation = InferInsertModel<typeof teamInvitations>
+
+// Audit Log
+export type AuditLog = InferSelectModel<typeof auditLogs>
+export type NewAuditLog = InferInsertModel<typeof auditLogs>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

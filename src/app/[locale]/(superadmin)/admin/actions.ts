@@ -2,8 +2,13 @@
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db'
-import { users, organizations, teamInvitations } from '@/lib/db/schema'
-import { eq, and, isNull, isNotNull, count } from 'drizzle-orm'
+import {
+  users,
+  organizations,
+  teamInvitations,
+  auditLogs,
+} from '@/lib/db/schema'
+import { eq, and, isNull, isNotNull, count, desc, sql, like, gte, type SQL } from 'drizzle-orm'
 import { requirePlatformRole } from '@/lib/auth/require-platform-role'
 import {
   updateProfileSchema,
@@ -13,6 +18,7 @@ import {
   createOrganizationSchema,
   deleteOrganizationSchema,
 } from '@/lib/validations/admin'
+import { logAudit } from '@/lib/audit/log'
 import crypto from 'crypto'
 
 // ─── Profile Actions ───
@@ -52,6 +58,14 @@ export async function updateProfile(formData: FormData) {
       updatedAt: new Date(),
     })
     .where(eq(users.id, currentUser.id))
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'profile.updated',
+    entityType: 'user',
+    entityId: currentUser.id,
+  })
 
   revalidatePath('/admin/profile')
   return { success: true }
@@ -130,6 +144,15 @@ export async function inviteTeamMember(formData: FormData) {
       })
       .where(eq(users.id, existingUser.id))
 
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'team.invited',
+      entityType: 'user',
+      entityId: existingUser.id,
+      metadata: { email: parsed.data.email, role: parsed.data.role },
+    })
+
     revalidatePath('/admin/team')
     return { success: true }
   }
@@ -138,13 +161,25 @@ export async function inviteTeamMember(formData: FormData) {
   const token = crypto.randomBytes(32).toString('hex')
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
-  await db.insert(teamInvitations).values({
-    email: parsed.data.email,
-    role: parsed.data.role,
-    invitationType: 'platform',
-    invitedBy: currentUser.id,
-    token,
-    expiresAt,
+  const [invitation] = await db
+    .insert(teamInvitations)
+    .values({
+      email: parsed.data.email,
+      role: parsed.data.role,
+      invitationType: 'platform',
+      invitedBy: currentUser.id,
+      token,
+      expiresAt,
+    })
+    .returning()
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'team.invited',
+    entityType: 'invitation',
+    entityId: invitation.id,
+    metadata: { email: parsed.data.email, role: parsed.data.role },
   })
 
   revalidatePath('/admin/team')
@@ -152,7 +187,7 @@ export async function inviteTeamMember(formData: FormData) {
 }
 
 export async function updateTeamMemberRole(formData: FormData) {
-  await requirePlatformRole('superadmin')
+  const currentUser = await requirePlatformRole('superadmin')
 
   const raw = {
     userId: formData.get('userId') as string,
@@ -164,6 +199,13 @@ export async function updateTeamMemberRole(formData: FormData) {
     return { success: false, error: 'Invalid input' }
   }
 
+  // Get old role for audit
+  const [targetUser] = await db
+    .select({ platformRole: users.platformRole, email: users.email })
+    .from(users)
+    .where(eq(users.id, parsed.data.userId))
+    .limit(1)
+
   await db
     .update(users)
     .set({
@@ -171,6 +213,19 @@ export async function updateTeamMemberRole(formData: FormData) {
       updatedAt: new Date(),
     })
     .where(eq(users.id, parsed.data.userId))
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'team.role_changed',
+    entityType: 'user',
+    entityId: parsed.data.userId,
+    metadata: {
+      oldRole: targetUser?.platformRole,
+      newRole: parsed.data.role,
+      email: targetUser?.email,
+    },
+  })
 
   revalidatePath('/admin/team')
   return { success: true }
@@ -193,6 +248,13 @@ export async function removeTeamMember(formData: FormData) {
     return { success: false, error: 'Cannot remove yourself' }
   }
 
+  // Get user info for audit
+  const [targetUser] = await db
+    .select({ email: users.email, fullName: users.fullName })
+    .from(users)
+    .where(eq(users.id, parsed.data.userId))
+    .limit(1)
+
   await db
     .update(users)
     .set({
@@ -201,12 +263,21 @@ export async function removeTeamMember(formData: FormData) {
     })
     .where(eq(users.id, parsed.data.userId))
 
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'team.removed',
+    entityType: 'user',
+    entityId: parsed.data.userId,
+    metadata: { email: targetUser?.email, name: targetUser?.fullName },
+  })
+
   revalidatePath('/admin/team')
   return { success: true }
 }
 
 export async function cancelInvitation(invitationId: string) {
-  await requirePlatformRole('superadmin')
+  const currentUser = await requirePlatformRole('superadmin')
 
   await db
     .update(teamInvitations)
@@ -215,6 +286,14 @@ export async function cancelInvitation(invitationId: string) {
       updatedAt: new Date(),
     })
     .where(eq(teamInvitations.id, invitationId))
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'invitation.cancelled',
+    entityType: 'invitation',
+    entityId: invitationId,
+  })
 
   revalidatePath('/admin/team')
   return { success: true }
@@ -246,7 +325,7 @@ export async function getOrganizationById(id: string) {
 }
 
 export async function createOrganization(formData: FormData) {
-  await requirePlatformRole('superadmin')
+  const currentUser = await requirePlatformRole('superadmin')
 
   const raw = {
     name: formData.get('name') as string,
@@ -279,12 +358,21 @@ export async function createOrganization(formData: FormData) {
     })
     .returning()
 
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'org.created',
+    entityType: 'organization',
+    entityId: newOrg.id,
+    metadata: { name: newOrg.name, slug: newOrg.slug },
+  })
+
   revalidatePath('/admin/organizations')
   return { success: true, data: newOrg }
 }
 
 export async function deleteOrganization(formData: FormData) {
-  await requirePlatformRole('superadmin')
+  const currentUser = await requirePlatformRole('superadmin')
 
   const raw = {
     organizationId: formData.get('organizationId') as string,
@@ -295,6 +383,13 @@ export async function deleteOrganization(formData: FormData) {
     return { success: false, error: 'Invalid input' }
   }
 
+  // Get org name for audit
+  const [org] = await db
+    .select({ name: organizations.name, slug: organizations.slug })
+    .from(organizations)
+    .where(eq(organizations.id, parsed.data.organizationId))
+    .limit(1)
+
   // Soft-delete
   await db
     .update(organizations)
@@ -303,6 +398,15 @@ export async function deleteOrganization(formData: FormData) {
       updatedAt: new Date(),
     })
     .where(eq(organizations.id, parsed.data.organizationId))
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'org.deleted',
+    entityType: 'organization',
+    entityId: parsed.data.organizationId,
+    metadata: { name: org?.name, slug: org?.slug },
+  })
 
   revalidatePath('/admin/organizations')
   return { success: true }
@@ -363,6 +467,24 @@ export async function createOrganizationWithAdmin(formData: FormData) {
     expiresAt,
   })
 
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'org.created',
+    entityType: 'organization',
+    entityId: newOrg.id,
+    metadata: { name: newOrg.name, slug: newOrg.slug, adminEmail },
+  })
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'org_member.invited',
+    entityType: 'invitation',
+    organizationId: newOrg.id,
+    metadata: { email: adminEmail, role: 'org_admin' },
+  })
+
   // Build invite link (show in dialog since Resend is not configured yet)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
   const inviteLink = `${appUrl}/de/invite/${token}`
@@ -412,15 +534,28 @@ export async function resendOrgInvitation(invitationId: string) {
   const token = crypto.randomBytes(32).toString('hex')
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
-  await db.insert(teamInvitations).values({
-    email: oldInvitation.email,
-    invitationType: oldInvitation.invitationType,
-    organizationId: oldInvitation.organizationId,
-    targetOrgRole: oldInvitation.targetOrgRole,
-    role: oldInvitation.role,
-    invitedBy: currentUser.id,
-    token,
-    expiresAt,
+  const [newInvitation] = await db
+    .insert(teamInvitations)
+    .values({
+      email: oldInvitation.email,
+      invitationType: oldInvitation.invitationType,
+      organizationId: oldInvitation.organizationId,
+      targetOrgRole: oldInvitation.targetOrgRole,
+      role: oldInvitation.role,
+      invitedBy: currentUser.id,
+      token,
+      expiresAt,
+    })
+    .returning()
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'invitation.resent',
+    entityType: 'invitation',
+    entityId: newInvitation.id,
+    organizationId: oldInvitation.organizationId ?? undefined,
+    metadata: { email: oldInvitation.email, oldInvitationId: invitationId },
   })
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
@@ -431,15 +566,86 @@ export async function resendOrgInvitation(invitationId: string) {
 }
 
 export async function cancelOrgInvitation(invitationId: string) {
-  await requirePlatformRole('superadmin')
+  const currentUser = await requirePlatformRole('superadmin')
 
   await db
     .update(teamInvitations)
     .set({ status: 'cancelled', updatedAt: new Date() })
     .where(eq(teamInvitations.id, invitationId))
 
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'invitation.cancelled',
+    entityType: 'invitation',
+    entityId: invitationId,
+  })
+
   revalidatePath('/admin/organizations')
   return { success: true }
+}
+
+// ─── Activity Log ───
+
+export async function getAuditLogs(params?: {
+  action?: string
+  period?: 'day' | 'week' | 'month' | 'all'
+  offset?: number
+  limit?: number
+}) {
+  await requirePlatformRole('staff')
+
+  const pageLimit = params?.limit ?? 50
+  const pageOffset = params?.offset ?? 0
+
+  // Build conditions array
+  const conditions: SQL[] = []
+
+  // Filter by action category (prefix match: "org" matches "org.created", "org.deleted", etc.)
+  if (params?.action && params.action !== 'all') {
+    conditions.push(like(auditLogs.action, `${params.action}.%`))
+  }
+
+  // Filter by time period
+  if (params?.period && params.period !== 'all') {
+    const now = new Date()
+    let since: Date
+    switch (params.period) {
+      case 'day':
+        since = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+        break
+      case 'week':
+        since = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        break
+      case 'month':
+        since = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        break
+      default:
+        since = new Date(0)
+    }
+    conditions.push(gte(auditLogs.createdAt, since))
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined
+
+  const logs = await db
+    .select()
+    .from(auditLogs)
+    .where(whereClause)
+    .orderBy(desc(auditLogs.createdAt))
+    .limit(pageLimit)
+    .offset(pageOffset)
+
+  // Get total count with same filters for pagination
+  const [countResult] = await db
+    .select({ value: count() })
+    .from(auditLogs)
+    .where(whereClause)
+
+  return {
+    logs,
+    total: countResult?.value ?? 0,
+  }
 }
 
 // ─── Stats ───

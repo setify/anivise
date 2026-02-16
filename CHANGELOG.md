@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0] - 2026-02-16
+### Added
+- Audit trail / activity log system with `audit_logs` table (append-only, indexed on `created_at` and `action`)
+- `logAudit()` helper function with `AuditAction` type (20 action types across org, team, invitation, profile, settings, impersonation, analysis_job)
+- Audit logging integrated into all admin mutation actions (updateProfile, inviteTeamMember, updateTeamMemberRole, removeTeamMember, cancelInvitation, createOrganization, deleteOrganization, createOrganizationWithAdmin, resendOrgInvitation, cancelOrgInvitation)
+- `getAuditLogs` server action with category prefix filtering, time period filtering (24h/7d/30d), and pagination
+- Activity page (`/admin/activity`) with filterable log table, color-coded action icons, relative timestamps, metadata display, and pagination
+- "Activity" nav item added to admin sidebar (5 items now: Dashboard, Profile, Team, Organizations, Activity)
+- `AuditLog` and `NewAuditLog` TypeScript types in `src/types/database.ts`
+- `date-fns` dependency for relative time formatting with locale support (de/en)
+- i18n translations for activity page (`admin.activity` namespace, de + en)
+
 ## [0.6.1] - 2026-02-16
 ### Added
 - Org creation form now includes "First Org-Admin" section (email, first name, last name)
