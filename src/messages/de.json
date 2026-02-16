@@ -9,7 +9,28 @@
     "edit": "Bearbeiten",
     "back": "Zurueck",
     "next": "Weiter",
-    "confirm": "Bestaetigen"
+    "confirm": "Bestaetigen",
+    "search": "Suchen...",
+    "noResults": "Keine Ergebnisse gefunden",
+    "comingSoon": "In Kuerze verfuegbar"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "analyses": "Analysen",
+    "team": "Team",
+    "settings": "Einstellungen",
+    "admin": "Administration",
+    "logout": "Abmelden",
+    "user": "Benutzer",
+    "menu": "Menue",
+    "organization": "Organisation",
+    "backToDashboard": "Zurueck zum Dashboard"
+  },
+  "theme": {
+    "toggle": "Erscheinungsbild wechseln",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
   },
   "auth": {
     "login": {
@@ -33,23 +54,51 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Willkommen bei Anivise"
-  },
-  "navigation": {
-    "dashboard": "Dashboard",
-    "analyses": "Analysen",
-    "team": "Team",
-    "settings": "Einstellungen",
-    "admin": "Administration"
+    "welcome": "Willkommen bei Anivise",
+    "recentActivity": "Letzte Aktivitaeten",
+    "noActivity": "Noch keine Aktivitaeten vorhanden.",
+    "stats": {
+      "totalAnalyses": "Analysen gesamt",
+      "activeJobs": "Aktive Auftraege",
+      "reports": "Berichte",
+      "teamMembers": "Teammitglieder"
+    }
   },
   "analyses": {
     "title": "Analysen",
-    "empty": "Noch keine Analysen vorhanden"
-  },
-  "settings": {
-    "title": "Einstellungen"
+    "description": "Muster-Analysen fuer Fuehrungsentscheidungen",
+    "empty": "Starten Sie Ihre erste Analyse, um Muster und Handlungsoptionen zu erkennen.",
+    "emptyTitle": "Keine Analysen vorhanden",
+    "newAnalysis": "Neue Analyse"
   },
   "team": {
-    "title": "Team"
+    "title": "Team",
+    "description": "Teammitglieder verwalten",
+    "empty": "Noch keine Teammitglieder hinzugefuegt.",
+    "emptyTitle": "Keine Teammitglieder",
+    "invite": "Einladen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "description": "Verwalten Sie Ihr Profil und Ihre Organisation",
+    "profile": "Profil",
+    "profileDescription": "Persoenliche Informationen und Einstellungen",
+    "organization": "Organisation",
+    "organizationDescription": "Organisationseinstellungen und Konfiguration",
+    "notifications": "Benachrichtigungen",
+    "notificationsDescription": "Benachrichtigungseinstellungen verwalten",
+    "comingSoon": "Dieser Bereich wird in Kuerze verfuegbar sein."
+  },
+  "admin": {
+    "title": "Administration",
+    "description": "Plattform-Administration und Organisationsverwaltung",
+    "organizations": "Organisationen",
+    "organizationsDescription": "Alle Organisationen auf der Plattform verwalten",
+    "noOrganizations": "Noch keine Organisationen vorhanden.",
+    "stats": {
+      "totalOrganizations": "Organisationen gesamt",
+      "totalUsers": "Benutzer gesamt",
+      "totalAnalyses": "Analysen gesamt"
+    }
   }
 }

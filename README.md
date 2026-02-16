@@ -110,6 +110,22 @@ Supabase Storage with tenant-isolated paths: `transcripts/{org_id}/{job_id}/` an
 ### Internationalization
 next-intl with App Router integration. Default locale: `de`. Supported: `['de', 'en']`. Translation files in `src/messages/`.
 
+Translation namespaces: `common`, `nav`, `theme`, `auth`, `dashboard`, `analyses`, `team`, `settings`, `admin`.
+
+```typescript
+// In Server or Client Components:
+import { useTranslations } from 'next-intl'
+const t = useTranslations('dashboard')
+// Usage: t('title'), t('stats.totalAnalyses')
+```
+
+### UI Layout
+The dashboard uses a responsive app shell with:
+- **Desktop:** Fixed 256px sidebar with navigation links
+- **Mobile:** Collapsible sidebar via Sheet component (hamburger menu)
+- **Header:** Mobile menu toggle, dark mode toggle (light/dark/system), user avatar dropdown
+- **Dark mode:** Managed by next-themes with system preference detection
+
 ## Available Scripts
 
 | Script | Description |
@@ -134,16 +150,16 @@ src/
 │   │   ├── (dashboard)/       # Authenticated app routes
 │   │   ├── (superadmin)/      # Superadmin routes
 │   │   ├── layout.tsx         # Locale layout with NextIntlClientProvider
-│   │   └── page.tsx           # Home page
+│   │   └── page.tsx           # Redirects to dashboard
 │   ├── api/                   # API routes
 │   │   └── webhooks/          # n8n callback webhooks
-│   └── layout.tsx             # Root layout
+│   └── layout.tsx             # Root layout (ThemeProvider)
 ├── components/
 │   ├── ui/                    # shadcn/ui components
-│   ├── layout/                # Shell, Sidebar, Header
+│   ├── layout/                # AppShell, Sidebar, Header, AdminSidebar
 │   ├── forms/                 # Reusable form components
 │   ├── analyses/              # Analysis-specific components
-│   └── shared/                # Shared/generic components
+│   └── shared/                # ThemeProvider, ThemeToggle
 ├── lib/
 │   ├── supabase/              # Supabase clients (browser, server, admin, middleware)
 │   ├── db/                    # Drizzle ORM (schema, migrations, client)

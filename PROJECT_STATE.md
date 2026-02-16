@@ -1,16 +1,16 @@
 # Project State
 
-**Version:** 0.2.0
+**Version:** 0.4.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(db): add complete database schema and Supabase clients v0.2.0
+**Last Commit:** feat(ui): add dashboard layouts, navigation and i18n setup v0.4.0
 
 ## What's Implemented
 
 ### Infrastructure
 - [x] Next.js 16 App Router with TypeScript strict mode
 - [x] Tailwind CSS v4 + shadcn/ui configured
-- [x] next-intl with de/en base translations
-- [x] next-themes installed (dark mode ready)
+- [x] next-intl with de/en comprehensive translations
+- [x] next-themes with ThemeProvider (dark mode fully functional)
 - [x] zod installed for runtime validation
 - [x] pnpm as package manager
 - [x] ESLint configured
@@ -52,14 +52,20 @@
 - [ ] UI-level permission checks in components
 
 ### UI / Pages
-- [x] Root layout with fonts and metadata
+- [x] Root layout with fonts, metadata, and ThemeProvider
 - [x] Locale layout with NextIntlClientProvider
 - [x] Auth layout + placeholder pages (login, register)
-- [x] Dashboard layout + placeholder pages (dashboard, analyses, team, settings)
-- [x] Superadmin layout + placeholder page (admin)
-- [x] Home page (locale root)
-- [ ] Dashboard sidebar and header
-- [ ] Dark mode toggle component
+- [x] Dashboard app shell (sidebar + header)
+- [x] Responsive sidebar (desktop fixed, mobile Sheet)
+- [x] Header with mobile menu, dark mode toggle, user dropdown
+- [x] Dark mode toggle component (light/dark/system)
+- [x] Dashboard page with stats cards and activity section
+- [x] Analyses page with empty state
+- [x] Team page with empty state
+- [x] Settings page with profile/org/notifications sections
+- [x] Superadmin layout with admin sidebar
+- [x] Superadmin admin page with platform stats
+- [x] Home page (redirects to dashboard)
 - [ ] Analysis upload flow
 - [ ] Report viewer
 
@@ -73,8 +79,6 @@
 - Authentication flows (login, register, magic link)
 - Middleware (subdomain resolution, auth check)
 - RBAC (role definitions, permission checks)
-- Dashboard UI (sidebar, header, navigation)
-- Dark mode toggle
 - Analysis upload + job creation flow
 - n8n integration (webhook trigger + callback)
 - Report generation + viewer
@@ -82,19 +86,33 @@
 - Supabase Storage file upload with RLS
 - OAuth providers (Google, Microsoft)
 - SSO/SAML for Enterprise
-- Team management UI
-- Organization settings UI
-- Superadmin org management
+- Team management UI (functional, currently placeholder)
+- Organization settings UI (functional, currently placeholder)
+- Superadmin org management (functional, currently placeholder)
 - Consent management UI
 - User invitation flow
 - Testing (Vitest, Playwright)
 
 ## Known Issues / Tech Debt
-- next-themes is installed but ThemeProvider is not yet wired into layouts (will be added in v0.4.0)
+- Auth pages (login, register) are minimal placeholders without functional forms
+- Sidebar user section shows hardcoded placeholder ("User") until auth is implemented
+- Sidebar organization label is placeholder until subdomain resolution is implemented
+- All stats show "0" as static values until connected to database queries
 - RLS policies are defined as SQL files but not yet applied to a live Supabase instance
 - DATABASE_URL env var needed for Drizzle (added to .env.example)
 
 ## File Map (Key Files)
+- `src/app/layout.tsx` - Root layout with fonts, metadata, ThemeProvider
+- `src/app/[locale]/layout.tsx` - Locale layout with NextIntlClientProvider
+- `src/app/[locale]/page.tsx` - Redirects to dashboard
+- `src/app/[locale]/(dashboard)/layout.tsx` - Dashboard layout with AppShell
+- `src/app/[locale]/(superadmin)/layout.tsx` - Admin layout with AdminSidebar
+- `src/components/layout/app-shell.tsx` - Main wrapper (sidebar + header + content)
+- `src/components/layout/sidebar.tsx` - Navigation sidebar with nav links
+- `src/components/layout/header.tsx` - Top bar with menu toggle, theme, user menu
+- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar
+- `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
+- `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration
 - `src/lib/db/schema/enums.ts` - All PostgreSQL enums
 - `src/lib/db/schema/organizations.ts` - Organizations table
@@ -114,12 +132,10 @@
 - `src/types/index.ts` - Type re-exports
 - `supabase/migrations/001_enable_rls.sql` - Enable RLS on all tables
 - `supabase/migrations/002_tenant_isolation_policies.sql` - Tenant isolation policies
-- `src/app/layout.tsx` - Root layout with fonts and metadata
-- `src/app/[locale]/layout.tsx` - Locale layout with NextIntlClientProvider
 - `src/middleware.ts` - next-intl locale routing (will be extended with auth + subdomain)
 - `src/lib/i18n/request.ts` - next-intl server request config
 - `src/lib/i18n/routing.ts` - Locale routing definition
 - `src/lib/constants.ts` - App constants
 - `src/lib/utils.ts` - cn() utility
-- `src/messages/de.json` / `en.json` - Translation files
+- `src/messages/de.json` / `en.json` - Comprehensive translation files
 - `.env.example` - Environment variable template

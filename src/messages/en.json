@@ -9,7 +9,28 @@
     "edit": "Edit",
     "back": "Back",
     "next": "Next",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "search": "Search...",
+    "noResults": "No results found",
+    "comingSoon": "Coming soon"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "analyses": "Analyses",
+    "team": "Team",
+    "settings": "Settings",
+    "admin": "Administration",
+    "logout": "Sign Out",
+    "user": "User",
+    "menu": "Menu",
+    "organization": "Organization",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   },
   "auth": {
     "login": {
@@ -33,23 +54,51 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome to Anivise"
-  },
-  "navigation": {
-    "dashboard": "Dashboard",
-    "analyses": "Analyses",
-    "team": "Team",
-    "settings": "Settings",
-    "admin": "Administration"
+    "welcome": "Welcome to Anivise",
+    "recentActivity": "Recent Activity",
+    "noActivity": "No activity yet.",
+    "stats": {
+      "totalAnalyses": "Total Analyses",
+      "activeJobs": "Active Jobs",
+      "reports": "Reports",
+      "teamMembers": "Team Members"
+    }
   },
   "analyses": {
     "title": "Analyses",
-    "empty": "No analyses yet"
-  },
-  "settings": {
-    "title": "Settings"
+    "description": "Pattern analyses for leadership decisions",
+    "empty": "Start your first analysis to discover patterns and action options.",
+    "emptyTitle": "No analyses yet",
+    "newAnalysis": "New Analysis"
   },
   "team": {
-    "title": "Team"
+    "title": "Team",
+    "description": "Manage team members",
+    "empty": "No team members added yet.",
+    "emptyTitle": "No team members",
+    "invite": "Invite"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your profile and organization",
+    "profile": "Profile",
+    "profileDescription": "Personal information and preferences",
+    "organization": "Organization",
+    "organizationDescription": "Organization settings and configuration",
+    "notifications": "Notifications",
+    "notificationsDescription": "Manage notification preferences",
+    "comingSoon": "This section will be available soon."
+  },
+  "admin": {
+    "title": "Administration",
+    "description": "Platform administration and organization management",
+    "organizations": "Organizations",
+    "organizationsDescription": "Manage all organizations on the platform",
+    "noOrganizations": "No organizations yet.",
+    "stats": {
+      "totalOrganizations": "Total Organizations",
+      "totalUsers": "Total Users",
+      "totalAnalyses": "Total Analyses"
+    }
   }
 }
