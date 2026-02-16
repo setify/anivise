@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.8.0
+**Version:** 0.9.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add platform settings management
+**Last Commit:** feat(admin): add email template management with preview and test send
 
 ## What's Implemented
 
@@ -30,8 +30,9 @@
 - [x] Schema: team_invitations (email, role, status, token, expiry, invitation_type, organization_id, target_org_role)
 - [x] Schema: audit_logs (append-only, actor, action, entity, metadata, IP, indexed)
 - [x] Schema: platform_settings (key-value store with typed defaults)
+- [x] Schema: email_templates (slug, de/en subject+body, variables, system flag)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -92,6 +93,7 @@
 - [x] Org creation form with "First Org-Admin" section and auto-invitation
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination
 - [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)
+- [x] Superadmin Email Templates page (`/admin/settings/emails`) with editor, preview, variables, reset
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
@@ -121,11 +123,14 @@
 - [x] getAuditLogs - list audit logs with action/period filters and pagination
 - [x] updatePlatformSettings - update platform settings with audit logging
 - [x] getSetting / setSetting / getAllSettings - typed platform settings helpers
+- [x] updateEmailTemplate - update email template content with audit logging
+- [x] resetEmailTemplate - reset system template to default content
+- [x] sendTemplatedEmail / renderTemplatedEmail - email send helper with DB templates
 
 ### Integrations
 - [ ] n8n webhook trigger
 - [ ] n8n callback handler
-- [ ] Resend email
+- [x] Resend email (package installed, sendTemplatedEmail helper ready)
 - [ ] Supabase Storage upload flow
 
 ## What's NOT Implemented Yet
@@ -189,6 +194,10 @@
 - `src/app/[locale]/(superadmin)/admin/settings/settings-page-client.tsx` - Settings form (client)
 - `src/lib/settings/platform.ts` - Platform settings helper (typed key-value store)
 - `src/lib/db/schema/platform-settings.ts` - Platform settings table schema
+- `src/lib/db/schema/email-templates.ts` - Email templates table schema
+- `src/app/[locale]/(superadmin)/admin/settings/emails/page.tsx` - Email templates page (server)
+- `src/app/[locale]/(superadmin)/admin/settings/emails/email-templates-client.tsx` - Email templates editor (client)
+- `src/lib/email/send.ts` - Email send helper with DB template rendering
 - `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (6 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown

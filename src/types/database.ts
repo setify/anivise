@@ -10,6 +10,7 @@ import type {
   teamInvitations,
   auditLogs,
   platformSettings,
+  emailTemplates,
 } from '@/lib/db/schema'
 
 // Organization
@@ -51,6 +52,10 @@ export type NewAuditLog = InferInsertModel<typeof auditLogs>
 // Platform Setting
 export type PlatformSetting = InferSelectModel<typeof platformSettings>
 export type NewPlatformSetting = InferInsertModel<typeof platformSettings>
+
+// Email Template
+export type EmailTemplate = InferSelectModel<typeof emailTemplates>
+export type NewEmailTemplate = InferInsertModel<typeof emailTemplates>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

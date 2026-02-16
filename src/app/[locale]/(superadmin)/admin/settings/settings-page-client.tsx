@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Save, X, Plus, Loader2 } from 'lucide-react'
+import { Save, X, Plus, Loader2, Mail, ArrowRight } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -30,6 +30,8 @@ import {
 } from '@/components/ui/select'
 import { updatePlatformSettings } from '../actions'
 import type { PlatformSettings } from '@/lib/settings/platform'
+import Link from 'next/link'
+import { useLocale } from 'next-intl'
 
 interface Props {
   settings: Partial<PlatformSettings>
@@ -38,6 +40,7 @@ interface Props {
 
 export function SettingsPageClient({ settings }: Props) {
   const t = useTranslations('admin.platformSettings')
+  const locale = useLocale()
 
   // General tab state
   const [platformName, setPlatformName] = useState(
@@ -393,6 +396,28 @@ export function SettingsPageClient({ settings }: Props) {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="size-4" />
+                {t('emailTemplatesLink')}
+              </CardTitle>
+              <CardDescription>
+                {t('emailTemplatesDescription')}
+              </CardDescription>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href={`/${locale}/admin/settings/emails`}>
+                {t('manageTemplates')}
+                <ArrowRight className="ml-2 size-4" />
+              </Link>
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
     </div>
   )
 }

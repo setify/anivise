@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.9.0] - 2026-02-16
+### Added
+- `email_templates` table with 5 system templates (team-invitation, org-invitation, welcome, password-reset, analysis-complete)
+- Email send helper (`src/lib/email/send.ts`) with `sendTemplatedEmail` and `renderTemplatedEmail` functions
+- Base email layout wrapper (header/footer) for all outgoing emails
+- Email templates management page (`/admin/settings/emails`) with:
+  - Template list with name, slug, description, type
+  - Template editor with de/en tabs, subject and body fields
+  - Available variables sidebar with click-to-copy
+  - Live preview with example values
+  - Reset to default for system templates
+- `updateEmailTemplate` and `resetEmailTemplate` server actions with audit logging
+- Link to email templates from settings page
+- `resend` package installed for email sending
+- `EmailTemplate` and `NewEmailTemplate` TypeScript types
+- i18n translations for email templates (`admin.emailTemplates` namespace, de + en)
+
 ## [0.8.0] - 2026-02-16
 ### Added
 - `platform_settings` table with key-value store for platform-wide configuration
