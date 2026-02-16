@@ -332,7 +332,7 @@
         "title": "Analysis Settings",
         "description": "Configure analysis pipeline settings",
         "maxTranscriptSize": "Maximum Transcript Size (MB)",
-        "n8nWebhookUrl": "n8n Webhook URL"
+        "n8nHint": "n8n webhook URL and authentication are configured in the Integrations page."
       },
       "save": "Save Settings",
       "saved": "Settings saved successfully",
@@ -466,7 +466,7 @@
         "secretRotated": "New secret generated",
         "newSecretLabel": "New Secret (shown only once)",
         "newSecretHint": "Copy this secret and configure it in your n8n instance. It will not be shown again after leaving this page.",
-        "hint": "The webhook URL and auth secret must match your n8n instance configuration. The health URL is optional and only used for connection testing."
+        "hint": "Configure the same auth header in your n8n workflow: set the header name and value in both the incoming Webhook Trigger node and the outgoing HTTP Request node (callback). The health URL is optional and only used for connection testing."
       },
       "vercel": {
         "description": "Deployment information (read-only)",

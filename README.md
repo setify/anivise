@@ -165,8 +165,43 @@ RLS policies are defined in `supabase/migrations/`:
 
 Apply these manually to your Supabase instance after running Drizzle migrations.
 
+### Integrations
+
+External services are configured via the **Integrations** admin page (`/admin/integrations`). Credentials are stored encrypted in the `integration_secrets` table using AES-256-GCM encryption.
+
+| Service | Purpose | Configuration |
+|---------|---------|---------------|
+| **Supabase** | Database, Auth, Storage | URL, Anon Key, Service Role Key |
+| **Resend** | Transactional emails | API Key, From Email, From Name |
+| **n8n** | Analysis pipeline | Webhook URL, Health URL, Auth Header Name/Value |
+| **Vercel** | Hosting (read-only) | Auto-detected from environment |
+
+**ENV Fallback:** All services check DB-stored secrets first, then fall back to environment variables. This allows gradual migration from ENV vars to encrypted DB storage.
+
+**Secret Caching:** Secrets are cached in-memory with a 5-minute TTL (`src/lib/crypto/secrets-cache.ts`) to avoid per-request DB queries and decryption. Cache is invalidated automatically when secrets are saved, rotated, or imported from env.
+
 ### n8n Integration
-Analysis pipeline: Upload transcript -> Create job -> Trigger n8n webhook -> n8n processes -> Callback to `/api/webhooks/n8n/analysis-complete` -> Store report -> Notify via Supabase Realtime.
+
+Analysis pipeline: Upload transcript -> Create job -> Trigger n8n webhook -> n8n processes -> Callback to `/api/webhooks/n8n/analysis-complete` -> Store report -> Notify user.
+
+**Authentication:** Both outgoing requests (App -> n8n) and incoming callbacks (n8n -> App) use the same auth header (configurable name + value). Configure the identical header in your n8n workflow's Webhook Trigger node and HTTP Request node.
+
+### Email System
+
+Emails use configurable templates stored in the database with a customizable base layout.
+
+**Base Layout** (`/admin/settings/email-layout`): Logo, colors (background, content, primary, text, links), footer text with placeholders (`{{platformName}}`, `{{currentYear}}`, `{{supportEmail}}`), and border radius.
+
+**Templates** (`/admin/settings/emails`): Per-template subject and body in DE/EN with variable placeholders. Includes live preview, locale toggle, and test send functionality.
+
+**Sending:** `sendTemplatedEmail()` loads template from DB, renders variables, wraps in configured layout, and sends via Resend (with DB secret + ENV fallback).
+
+### Security
+
+- **Secret Encryption:** All integration credentials are encrypted at rest using AES-256-GCM. The encryption key is stored in the `SECRETS_ENCRYPTION_KEY` environment variable (base64-encoded 32-byte key).
+- **Tenant Isolation:** Every query for tenant data filters by `organization_id`. Supabase RLS policies provide an additional safety net.
+- **RBAC:** Server-side role checks via `requirePlatformRole()`. Client-side checks are UX-only.
+- **Audit Logging:** All sensitive operations are logged to the `audit_logs` table with actor, action, entity, and metadata.
 
 ### File Storage
 Supabase Storage with tenant-isolated paths: `transcripts/{org_id}/{job_id}/` and `reports/{org_id}/{report_id}/`.
@@ -234,7 +269,11 @@ src/
 │   ├── i18n/                  # next-intl config
 │   ├── auth/                  # Role definitions and permission helpers
 │   ├── n8n/                   # Webhook trigger
-│   ├── email/                 # Resend client
+│   ├── email/                 # Email sending with DB templates and configurable layout
+│   ├── crypto/                # AES-256-GCM encryption and cached secret access
+│   ├── settings/              # Platform settings (typed key-value store)
+│   ├── audit/                 # Audit logging
+│   ├── notifications/         # Notification creation and broadcast
 │   ├── constants.ts           # App-wide constants
 │   └── utils.ts               # Utility functions (cn, etc.)
 ├── hooks/                     # Custom React hooks
@@ -254,6 +293,7 @@ src/
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key (server-only) |
 | `DATABASE_URL` | Yes | PostgreSQL connection string for Drizzle ORM |
+| `SECRETS_ENCRYPTION_KEY` | Yes | Base64-encoded 32-byte key for AES-256-GCM encryption of integration secrets |
 | `NEXT_PUBLIC_APP_DOMAIN` | Yes | App domain (e.g., `localhost:3000`) |
 | `NEXT_PUBLIC_APP_URL` | Yes | Full app URL (e.g., `http://localhost:3000`) |
 | `N8N_WEBHOOK_URL` | No | n8n webhook endpoint URL |

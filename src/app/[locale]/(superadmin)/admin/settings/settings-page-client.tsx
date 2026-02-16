@@ -83,10 +83,6 @@ export function SettingsPageClient({ settings }: Props) {
   const [maxTranscriptSize, setMaxTranscriptSize] = useState(
     settings['analysis.max_transcript_size_mb'] ?? 10
   )
-  const [n8nWebhookUrl, setN8nWebhookUrl] = useState(
-    settings['analysis.n8n_webhook_url'] ?? ''
-  )
-
   const [isPending, startTransition] = useTransition()
 
   function saveSection(section: string, data: Record<string, unknown>) {
@@ -365,23 +361,14 @@ export function SettingsPageClient({ settings }: Props) {
                   onChange={(e) => setMaxTranscriptSize(Number(e.target.value))}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="n8nWebhookUrl">
-                  {t('analysis.n8nWebhookUrl')}
-                </Label>
-                <Input
-                  id="n8nWebhookUrl"
-                  value={n8nWebhookUrl}
-                  onChange={(e) => setN8nWebhookUrl(e.target.value)}
-                  placeholder="https://n8n.example.com/webhook/..."
-                />
-              </div>
+              <p className="text-muted-foreground text-xs">
+                {t('analysis.n8nHint')}
+              </p>
               <Button
                 disabled={isPending}
                 onClick={() =>
                   saveSection('analysis', {
                     'analysis.max_transcript_size_mb': maxTranscriptSize,
-                    'analysis.n8n_webhook_url': n8nWebhookUrl,
                   })
                 }
               >

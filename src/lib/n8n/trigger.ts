@@ -1,4 +1,4 @@
-import { getIntegrationSecret } from '@/lib/crypto/secrets'
+import { getCachedSecret } from '@/lib/crypto/secrets-cache'
 
 export interface N8nTriggerPayload {
   jobId: string
@@ -23,7 +23,7 @@ export async function triggerN8nWebhook(
   payload: N8nTriggerPayload
 ): Promise<{ success: boolean; error?: string }> {
   const webhookUrl =
-    (await getIntegrationSecret('n8n', 'webhook_url')) ||
+    (await getCachedSecret('n8n', 'webhook_url')) ||
     process.env.N8N_WEBHOOK_URL
 
   if (!webhookUrl) {
@@ -31,9 +31,9 @@ export async function triggerN8nWebhook(
   }
 
   const authHeaderName =
-    (await getIntegrationSecret('n8n', 'auth_header_name')) || 'X-Anivise-Secret'
+    (await getCachedSecret('n8n', 'auth_header_name')) || 'X-Anivise-Secret'
   const authHeaderValue =
-    (await getIntegrationSecret('n8n', 'auth_header_value')) ||
+    (await getCachedSecret('n8n', 'auth_header_value')) ||
     process.env.N8N_WEBHOOK_SECRET
 
   if (!authHeaderValue) {
@@ -71,7 +71,7 @@ export async function triggerN8nWebhook(
  */
 export async function checkN8nHealth(): Promise<N8nHealthStatus> {
   const webhookUrl =
-    (await getIntegrationSecret('n8n', 'webhook_url')) ||
+    (await getCachedSecret('n8n', 'webhook_url')) ||
     process.env.N8N_WEBHOOK_URL
 
   if (!webhookUrl) {

@@ -11,7 +11,6 @@ export interface PlatformSettings {
   'org.reserved_slugs': string[]
   'org.max_members_trial': number
   'analysis.max_transcript_size_mb': number
-  'analysis.n8n_webhook_url': string
   'email.logo_url': string
   'email.logo_link': string
   'email.bg_color': string
@@ -59,7 +58,6 @@ const DEFAULTS: PlatformSettings = {
   ],
   'org.max_members_trial': 5,
   'analysis.max_transcript_size_mb': 10,
-  'analysis.n8n_webhook_url': process.env.N8N_WEBHOOK_URL || '',
   ...EMAIL_LAYOUT_DEFAULTS,
 }
 

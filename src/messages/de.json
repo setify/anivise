@@ -332,7 +332,7 @@
         "title": "Analyse-Einstellungen",
         "description": "Analyse-Pipeline konfigurieren",
         "maxTranscriptSize": "Maximale Transkript-Groesse (MB)",
-        "n8nWebhookUrl": "n8n Webhook URL"
+        "n8nHint": "n8n Webhook-URL und Authentifizierung werden auf der Integrationen-Seite konfiguriert."
       },
       "save": "Einstellungen speichern",
       "saved": "Einstellungen erfolgreich gespeichert",
@@ -466,7 +466,7 @@
         "secretRotated": "Neues Secret generiert",
         "newSecretLabel": "Neues Secret (nur einmal sichtbar)",
         "newSecretHint": "Kopieren Sie dieses Secret und konfigurieren Sie es in Ihrer n8n-Instanz. Es wird nach dem Verlassen dieser Seite nicht mehr angezeigt.",
-        "hint": "Die Webhook-URL und das Auth-Secret muessen mit Ihrer n8n-Instanz uebereinstimmen. Die Health-URL ist optional und wird nur fuer den Verbindungstest verwendet."
+        "hint": "Konfigurieren Sie denselben Auth-Header in Ihrem n8n-Workflow: Setzen Sie Header-Name und -Wert sowohl im eingehenden Webhook-Trigger-Node als auch im ausgehenden HTTP-Request-Node (Callback). Die Health-URL ist optional und wird nur fuer den Verbindungstest verwendet."
       },
       "vercel": {
         "description": "Deployment-Informationen (schreibgeschuetzt)",

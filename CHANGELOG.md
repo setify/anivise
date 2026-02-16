@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.15.0] - 2026-02-16
+### Added
+- Collapsible settings sub-navigation in admin sidebar (General, Email Layout, Email Templates)
+- Secret caching with 5-minute TTL (`src/lib/crypto/secrets-cache.ts`) to avoid per-request DB+decryption
+- Cache invalidation on secret save, rotate, and env import
+
+### Changed
+- Admin sidebar restructured: Team (superadmin only), collapsible Settings with sub-items, FlaskConical icon for Jobs
+- All services now use `getCachedSecret()` with ENV fallback: n8n trigger, n8n callback, Resend email sending
+- `sendTemplatedEmail` now reads Resend API key and from email from DB secrets with ENV fallback
+- n8n webhook URL removed from platform settings (consolidated into integration secrets only)
+- n8n hint text updated with auth header configuration instructions for both inbound and outbound
+- Analysis settings tab: removed n8n webhook URL field, added note pointing to Integrations page
+- Fixed lint error in admin-sidebar (function hoisting)
+
+### Removed
+- `analysis.n8n_webhook_url` from `PlatformSettings` interface (now in integration_secrets only)
+
 ## [0.14.0] - 2026-02-16
 ### Added
 - Organization edit page (`/admin/organizations/[id]/edit`) with form sections:

@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.14.0
+**Version:** 0.15.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add organization edit page with extended schema
+**Last Commit:** feat(admin): add integrations, email layout config, org editing and secret encryption
 
 ## What's Implemented
 
@@ -85,7 +85,7 @@
 - [x] Analyses page with empty state
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (9 nav items: Dashboard, Profile, Team, Organizations, Jobs, Integrations, Notifications, Activity, Settings)
+- [x] Superadmin layout with admin sidebar (9 nav items with collapsible Settings sub-menu: General, Email Layout, Email Templates)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
@@ -166,10 +166,13 @@
 
 ### Integrations
 - [x] Integration secrets encryption (AES-256-GCM, `src/lib/crypto/secrets.ts`)
-- [x] n8n webhook trigger (`triggerN8nWebhook` - reads from DB secrets with ENV fallback)
-- [x] n8n callback handler (`POST /api/webhooks/n8n/analysis-complete` - validates against DB secrets with ENV fallback)
-- [x] n8n health check (`checkN8nHealth` - reads from DB secrets with ENV fallback)
-- [x] Resend email (package installed, sendTemplatedEmail helper ready)
+- [x] Secret caching with 5-minute TTL (`src/lib/crypto/secrets-cache.ts`)
+- [x] Cache invalidation on secret save, rotate, and env import
+- [x] n8n webhook trigger (`triggerN8nWebhook` - cached secrets with ENV fallback)
+- [x] n8n callback handler (`POST /api/webhooks/n8n/analysis-complete` - cached secrets with ENV fallback)
+- [x] n8n health check (`checkN8nHealth` - cached secrets with ENV fallback)
+- [x] Resend email (package installed, `sendTemplatedEmail` with cached DB secrets + ENV fallback)
+- [x] Platform settings and integration secrets cleanly separated (non-sensitive config vs encrypted API keys)
 - [ ] Supabase Storage upload flow
 
 ## What's NOT Implemented Yet
@@ -258,6 +261,7 @@
 - `src/app/[locale]/(superadmin)/admin/integrations/integrations-page-client.tsx` - Integrations cards (client)
 - `src/app/[locale]/(superadmin)/admin/integrations/actions.ts` - Integration server actions
 - `src/lib/crypto/secrets.ts` - AES-256-GCM encryption for integration secrets
+- `src/lib/crypto/secrets-cache.ts` - In-memory secret cache with 5-minute TTL
 - `src/lib/db/schema/integration-secrets.ts` - Integration secrets table schema
 - `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (9 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper

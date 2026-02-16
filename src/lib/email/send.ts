@@ -166,7 +166,9 @@ export async function sendTemplatedEmail(params: {
     return { success: false, error: `Template '${params.templateSlug}' not found` }
   }
 
-  const resendApiKey = process.env.RESEND_API_KEY
+  const { getCachedSecret } = await import('@/lib/crypto/secrets-cache')
+  const resendApiKey =
+    (await getCachedSecret('resend', 'api_key')) || process.env.RESEND_API_KEY
   if (!resendApiKey) {
     console.log(
       `[Email] Would send "${rendered.subject}" to ${params.to} (Resend not configured)`
@@ -178,7 +180,10 @@ export async function sendTemplatedEmail(params: {
     const { Resend } = await import('resend')
     const resend = new Resend(resendApiKey)
 
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@anivise.com'
+    const fromEmail =
+      (await getCachedSecret('resend', 'from_email')) ||
+      process.env.RESEND_FROM_EMAIL ||
+      'noreply@anivise.com'
     const fromName = (await getSetting('platform.name')) || 'Anivise'
 
     await resend.emails.send({

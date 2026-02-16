@@ -828,7 +828,6 @@ export async function updatePlatformSettings(
       'org.reserved_slugs',
       'org.max_members_trial',
       'analysis.max_transcript_size_mb',
-      'analysis.n8n_webhook_url',
     ]
 
     const changedKeys: string[] = []

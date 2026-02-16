@@ -9,6 +9,7 @@ import {
   getSecretMetadata,
   getAllSecretsForService,
 } from '@/lib/crypto/secrets'
+import { invalidateSecretCache } from '@/lib/crypto/secrets-cache'
 import crypto from 'crypto'
 
 // ─── Save Secrets ───
@@ -31,6 +32,9 @@ export async function saveIntegrationSecrets(
         )
       }
     }
+
+    // Invalidate cached secrets for this service
+    invalidateSecretCache(service)
 
     await logAudit({
       actorId: currentUser.id,
@@ -296,6 +300,7 @@ export async function rotateN8nSecret(): Promise<{
     const newSecret = crypto.randomBytes(32).toString('hex')
 
     await setIntegrationSecret('n8n', 'auth_header_value', newSecret, true, currentUser.id)
+    invalidateSecretCache('n8n')
 
     await logAudit({
       actorId: currentUser.id,
@@ -356,6 +361,9 @@ export async function loadFromEnv(service: string): Promise<{
         count++
       }
     }
+
+    // Invalidate cached secrets for this service
+    invalidateSecretCache(service)
 
     await logAudit({
       actorId: currentUser.id,
