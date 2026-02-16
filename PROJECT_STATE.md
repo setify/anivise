@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.10.0
+**Version:** 0.11.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add organization impersonation for superadmins
+**Last Commit:** feat(admin): add notification center with bell, page, and event integration
 
 ## What's Implemented
 
@@ -31,8 +31,9 @@
 - [x] Schema: audit_logs (append-only, actor, action, entity, metadata, IP, indexed)
 - [x] Schema: platform_settings (key-value store with typed defaults)
 - [x] Schema: email_templates (slug, de/en subject+body, variables, system flag)
+- [x] Schema: notifications (recipientId, type, title, body, link, isRead, metadata, indexed)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -82,7 +83,7 @@
 - [x] Analyses page with empty state
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (6 nav items: Dashboard, Profile, Team, Organizations, Activity, Settings)
+- [x] Superadmin layout with admin sidebar (7 nav items: Dashboard, Profile, Team, Organizations, Notifications, Activity, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
@@ -96,6 +97,8 @@
 - [x] Superadmin Email Templates page (`/admin/settings/emails`) with editor, preview, variables, reset
 - [x] Impersonation: "View as Organization" button on org detail (superadmin only)
 - [x] Impersonation banner in dashboard layout with signed cookie and 2h timeout
+- [x] NotificationBell component in admin header (popover, polling, unread badge)
+- [x] Notifications page (`/admin/notifications`) with All/Unread tabs, mark-all-read, pagination
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
@@ -130,6 +133,12 @@
 - [x] sendTemplatedEmail / renderTemplatedEmail - email send helper with DB templates
 - [x] startImpersonationAction - start impersonation as org admin with audit logging
 - [x] endImpersonationAction - end impersonation and redirect back to admin
+- [x] getRecentNotifications - get 10 most recent notifications for current user
+- [x] getUnreadCount - get count of unread notifications
+- [x] getAllNotifications - list notifications with unread filter and pagination
+- [x] markNotificationRead - mark a single notification as read
+- [x] markAllNotificationsRead - mark all notifications as read
+- [x] createNotification - create notification for user or broadcast to all superadmins
 
 ### Integrations
 - [ ] n8n webhook trigger
@@ -205,7 +214,12 @@
 - `src/lib/auth/impersonation.ts` - Impersonation cookie management (sign/verify/parse)
 - `src/components/layout/impersonation-banner.tsx` - Impersonation banner component
 - `src/app/[locale]/(dashboard)/impersonation-actions.ts` - End impersonation server action
-- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (6 items)
+- `src/components/admin/notification-bell.tsx` - NotificationBell popover with polling
+- `src/lib/notifications/create.ts` - Notification creation helper with broadcast support
+- `src/lib/db/schema/notifications.ts` - Notifications table schema
+- `src/app/[locale]/(superadmin)/admin/notifications/page.tsx` - Notifications page (server)
+- `src/app/[locale]/(superadmin)/admin/notifications/notifications-page-client.tsx` - Notifications list (client)
+- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (7 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration

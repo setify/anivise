@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Menu } from 'lucide-react'
 import { AdminSidebar } from '@/components/layout/admin-sidebar'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
+import { NotificationBell } from '@/components/admin/notification-bell'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 
@@ -44,6 +45,7 @@ export default function SuperadminLayout({
             <span className="sr-only">{t('menu')}</span>
           </Button>
           <div className="flex-1" />
+          <NotificationBell />
           <ThemeToggle />
         </header>
         <main className="flex-1 p-4 lg:p-6">{children}</main>

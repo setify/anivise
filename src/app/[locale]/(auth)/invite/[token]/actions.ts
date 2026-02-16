@@ -9,6 +9,7 @@ import {
 } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { createClient } from '@/lib/supabase/server'
+import { createNotification } from '@/lib/notifications/create'
 
 export type InvitationInfo = {
   id: string
@@ -154,6 +155,13 @@ export async function acceptInvitation(
     })
     .where(eq(teamInvitations.id, invitation.id))
 
+  // Get acceptor info for notification
+  const [acceptor] = await db
+    .select({ fullName: users.fullName, email: users.email })
+    .from(users)
+    .where(eq(users.id, authUser.id))
+    .limit(1)
+
   if (invitation.invitationType === 'platform' && invitation.role) {
     // Set platform role on the user
     await db
@@ -163,6 +171,14 @@ export async function acceptInvitation(
         updatedAt: new Date(),
       })
       .where(eq(users.id, authUser.id))
+
+    await createNotification({
+      recipientId: invitation.invitedBy,
+      type: 'invitation.accepted',
+      title: `${acceptor?.fullName || acceptor?.email || invitation.email} accepted the platform invitation`,
+      body: `Role: ${invitation.role}`,
+      link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/team`,
+    })
 
     return { success: true, redirectTo: '/admin' }
   }
@@ -179,6 +195,23 @@ export async function acceptInvitation(
       role: invitation.targetOrgRole,
       invitedBy: invitation.invitedBy,
       joinedAt: new Date(),
+    })
+
+    // Get org name for notification
+    let orgName = ''
+    const [org] = await db
+      .select({ name: organizations.name })
+      .from(organizations)
+      .where(eq(organizations.id, invitation.organizationId))
+      .limit(1)
+    orgName = org?.name ?? ''
+
+    await createNotification({
+      recipientId: invitation.invitedBy,
+      type: 'invitation.accepted',
+      title: `${acceptor?.fullName || acceptor?.email || invitation.email} joined ${orgName}`,
+      body: `Role: ${invitation.targetOrgRole}`,
+      link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/organizations/${invitation.organizationId}`,
     })
 
     return { success: true, redirectTo: '/dashboard' }
@@ -254,6 +287,14 @@ export async function registerAndAcceptInvitation(
       })
       .where(eq(users.id, authData.user.id))
 
+    await createNotification({
+      recipientId: invitation.invitedBy,
+      type: 'invitation.accepted',
+      title: `${data.fullName || invitation.email} accepted the platform invitation`,
+      body: `Role: ${invitation.role}`,
+      link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/team`,
+    })
+
     return { success: true, redirectTo: '/admin' }
   }
 
@@ -268,6 +309,23 @@ export async function registerAndAcceptInvitation(
       role: invitation.targetOrgRole,
       invitedBy: invitation.invitedBy,
       joinedAt: new Date(),
+    })
+
+    // Get org name for notification
+    let orgName = ''
+    const [org] = await db
+      .select({ name: organizations.name })
+      .from(organizations)
+      .where(eq(organizations.id, invitation.organizationId))
+      .limit(1)
+    orgName = org?.name ?? ''
+
+    await createNotification({
+      recipientId: invitation.invitedBy,
+      type: 'invitation.accepted',
+      title: `${data.fullName || invitation.email} joined ${orgName}`,
+      body: `Role: ${invitation.targetOrgRole}`,
+      link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/organizations/${invitation.organizationId}`,
     })
 
     return { success: true, redirectTo: '/dashboard' }

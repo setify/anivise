@@ -1,15 +1,27 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { Activity, Building2, LayoutDashboard, Settings, User, Users } from 'lucide-react'
+import {
+  Activity,
+  Bell,
+  Building2,
+  LayoutDashboard,
+  Settings,
+  User,
+  Users,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
+import { getUnreadCount } from '@/app/[locale]/(superadmin)/admin/actions'
 
 interface NavItem {
   href: string
   label: string
   icon: React.ComponentType<{ className?: string }>
+  badge?: number
 }
 
 export function AdminSidebar() {
@@ -17,6 +29,18 @@ export function AdminSidebar() {
   const tAdmin = useTranslations('admin')
   const locale = useLocale()
   const pathname = usePathname()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    loadUnreadCount()
+    const interval = setInterval(loadUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  async function loadUnreadCount() {
+    const count = await getUnreadCount()
+    setUnreadCount(count)
+  }
 
   const navItems: NavItem[] = [
     {
@@ -38,6 +62,12 @@ export function AdminSidebar() {
       href: `/${locale}/admin/organizations`,
       label: tAdmin('orgs.title'),
       icon: Building2,
+    },
+    {
+      href: `/${locale}/admin/notifications`,
+      label: tAdmin('notifications.title'),
+      icon: Bell,
+      badge: unreadCount,
     },
     {
       href: `/${locale}/admin/activity`,
@@ -80,7 +110,15 @@ export function AdminSidebar() {
               )}
             >
               <item.icon className="size-4 shrink-0" />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.badge != null && item.badge > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="flex size-5 items-center justify-center p-0 text-[10px]"
+                >
+                  {item.badge > 9 ? '9+' : item.badge}
+                </Badge>
+              )}
             </Link>
           )
         })}

@@ -348,6 +348,19 @@
       "banner": "Sie sehen {orgName} als {role} (Superadmin-Impersonation). Alle Aktionen werden protokolliert.",
       "endImpersonation": "Zurueck zum Admin"
     },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "description": "Benachrichtigungen anzeigen und verwalten",
+      "tabAll": "Alle",
+      "tabUnread": "Ungelesen",
+      "markAllRead": "Alle als gelesen markieren",
+      "allMarkedRead": "Alle Benachrichtigungen als gelesen markiert",
+      "empty": "Noch keine Benachrichtigungen vorhanden.",
+      "viewAll": "Alle Benachrichtigungen anzeigen",
+      "pageInfo": "{from}–{to} von {total}",
+      "previous": "Zurueck",
+      "nextPage": "Weiter"
+    },
     "activity": {
       "title": "Aktivitaet",
       "description": "Protokoll aller Plattform-Aktionen",

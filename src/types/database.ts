@@ -11,6 +11,7 @@ import type {
   auditLogs,
   platformSettings,
   emailTemplates,
+  notifications,
 } from '@/lib/db/schema'
 
 // Organization
@@ -56,6 +57,10 @@ export type NewPlatformSetting = InferInsertModel<typeof platformSettings>
 // Email Template
 export type EmailTemplate = InferSelectModel<typeof emailTemplates>
 export type NewEmailTemplate = InferInsertModel<typeof emailTemplates>
+
+// Notification
+export type Notification = InferSelectModel<typeof notifications>
+export type NewNotification = InferInsertModel<typeof notifications>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

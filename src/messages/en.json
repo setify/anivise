@@ -348,6 +348,19 @@
       "banner": "You are viewing {orgName} as {role} (Superadmin Impersonation). All actions are logged.",
       "endImpersonation": "Back to Admin"
     },
+    "notifications": {
+      "title": "Notifications",
+      "description": "View and manage your notifications",
+      "tabAll": "All",
+      "tabUnread": "Unread",
+      "markAllRead": "Mark all read",
+      "allMarkedRead": "All notifications marked as read",
+      "empty": "No notifications yet.",
+      "viewAll": "View all notifications",
+      "pageInfo": "{from}–{to} of {total}",
+      "previous": "Previous",
+      "nextPage": "Next"
+    },
     "activity": {
       "title": "Activity",
       "description": "Audit trail of all platform actions",

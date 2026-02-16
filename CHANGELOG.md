@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0] - 2026-02-16
+### Added
+- Notification center with `notifications` table (recipientId, type, title, body, link, isRead, metadata)
+- `createNotification` helper with broadcast to all superadmins support
+- `NotificationBell` component in admin header with popover, 30-second polling, unread badge
+- Notifications page (`/admin/notifications`) with All/Unread tabs, "Mark all read" button, pagination
+- "Notifications" nav item in admin sidebar with unread badge counter
+- Notification server actions: `getRecentNotifications`, `getUnreadCount`, `getAllNotifications`, `markNotificationRead`, `markAllNotificationsRead`
+- `Notification` and `NewNotification` TypeScript types
+- i18n translations for notifications (`admin.notifications` namespace, de + en)
+- `shadcn/ui` Popover component added
+- Notifications integrated into org creation (notify all superadmins) and invitation acceptance (notify inviter)
+
 ## [0.10.0] - 2026-02-16
 ### Added
 - Impersonation feature: Superadmins can "View as Organization" from org detail page
