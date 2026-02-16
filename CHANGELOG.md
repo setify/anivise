@@ -23,6 +23,27 @@
 - Locale root page now redirects to dashboard instead of showing welcome text
 - Translation namespace changed from "navigation" to "nav" for consistency
 
+## [0.3.0] - 2026-02-16
+### Added
+- Next.js middleware with three-layer architecture: locale detection (next-intl), subdomain resolution, and auth check (Supabase)
+- RBAC system with role definitions (superadmin, org_admin, manager, member) and hierarchy helpers
+- Permission helpers (canManageOrganization, canRequestAnalysis, canViewReport, canManageTeam, canAccessSuperadmin)
+- Role permissions map for client-side UX checks
+- Login page with email/password form, magic link support, and OAuth placeholders (Google, Microsoft - coming soon)
+- Register page with name, email, password form
+- Auth layout with centered card design and app branding
+- Auth callback API route for magic link and OAuth code exchange
+- next-intl navigation helpers (Link, useRouter, usePathname, redirect, getPathname)
+- Client-side hooks: useTenant (organization context) and useRole (current user role)
+- Auth-related translations (de + en): login descriptions, magic link messages, SSO labels, error messages
+- Error translations namespace (unauthorized, forbidden, notFound)
+- Middleware handles localhost development gracefully (no subdomains, optional query param/header fallback)
+- Unauthenticated users on protected routes are redirected to login with redirectTo parameter
+
+### Changed
+- Middleware rewritten from simple next-intl wrapper to full three-concern architecture
+- Auth pages upgraded from placeholder text to functional forms with Supabase integration
+
 ## [0.2.0] - 2026-02-16
 ### Added
 - Drizzle ORM with PostgreSQL (postgres.js driver) configured

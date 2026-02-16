@@ -35,10 +35,16 @@
   "auth": {
     "login": {
       "title": "Anmelden",
+      "description": "Melden Sie sich bei Ihrem Konto an",
       "email": "E-Mail-Adresse",
       "password": "Passwort",
       "submit": "Anmelden",
       "magicLink": "Magic Link senden",
+      "magicLinkSent": "Pruefen Sie Ihre E-Mails fuer den Magic Link.",
+      "emailRequired": "Bitte geben Sie zuerst Ihre E-Mail-Adresse ein.",
+      "or": "oder",
+      "googleSSO": "Weiter mit Google",
+      "microsoftSSO": "Weiter mit Microsoft",
       "noAccount": "Noch kein Konto?",
       "register": "Registrieren"
     },
@@ -51,6 +57,11 @@
       "hasAccount": "Bereits ein Konto?",
       "login": "Anmelden"
     }
+  },
+  "errors": {
+    "unauthorized": "Sie muessen angemeldet sein, um auf diese Seite zuzugreifen.",
+    "forbidden": "Sie haben keine Berechtigung, auf diese Ressource zuzugreifen.",
+    "notFound": "Die gesuchte Seite existiert nicht."
   },
   "dashboard": {
     "title": "Dashboard",

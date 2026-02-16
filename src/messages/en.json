@@ -35,10 +35,16 @@
   "auth": {
     "login": {
       "title": "Sign In",
+      "description": "Sign in to your account",
       "email": "Email Address",
       "password": "Password",
       "submit": "Sign In",
       "magicLink": "Send Magic Link",
+      "magicLinkSent": "Check your email for the magic link.",
+      "emailRequired": "Please enter your email address first.",
+      "or": "or",
+      "googleSSO": "Continue with Google",
+      "microsoftSSO": "Continue with Microsoft",
       "noAccount": "Don't have an account?",
       "register": "Register"
     },
@@ -51,6 +57,11 @@
       "hasAccount": "Already have an account?",
       "login": "Sign In"
     }
+  },
+  "errors": {
+    "unauthorized": "You must be signed in to access this page.",
+    "forbidden": "You do not have permission to access this resource.",
+    "notFound": "The page you are looking for does not exist."
   },
   "dashboard": {
     "title": "Dashboard",

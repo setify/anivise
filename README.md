@@ -45,10 +45,59 @@ The development server starts at [http://localhost:3000](http://localhost:3000).
 The platform uses a single database with shared schema. Tenant isolation is enforced via `organization_id` columns on all tenant-specific tables. Each organization gets a subdomain (`{org_slug}.app-domain.com`), resolved by Next.js middleware.
 
 ### Authentication & Authorization
-- **Auth Provider:** Supabase Auth (email/password, magic link)
-- **RBAC:** 4-tier hierarchy - `superadmin`, `org_admin`, `manager`, `member`
-- Roles are stored in the `organization_members` junction table
-- Superadmin is a flag on the `users` table (platform-wide scope)
+
+**Auth Provider:** Supabase Auth with `@supabase/ssr` for cookie-based session management.
+
+**Login Methods:**
+- Email + password (functional)
+- Magic link via email (functional)
+- Google OAuth (placeholder, coming soon)
+- Microsoft OAuth (placeholder, coming soon)
+
+**RBAC:** 4-tier hierarchy with numeric levels for comparison:
+
+| Role | Level | Scope |
+|------|-------|-------|
+| `superadmin` | 100 | Platform-wide (flag on users table) |
+| `org_admin` | 75 | Organization-level |
+| `manager` | 50 | Team/department |
+| `member` | 25 | Self only |
+
+Roles are stored in the `organization_members` junction table. Superadmin is a boolean flag on the `users` table (not org-scoped).
+
+**Permission Helpers:**
+```typescript
+import { hasRole } from '@/lib/auth/roles'
+import { canManageOrganization, canRequestAnalysis } from '@/lib/auth/permissions'
+
+// Check hierarchy: does userRole meet requiredRole?
+hasRole('manager', 'member') // true
+hasRole('member', 'org_admin') // false
+
+// Specific permission checks
+canManageOrganization('org_admin') // true
+canRequestAnalysis('member') // false
+canViewReport('member', true) // true (own report)
+```
+
+**Client-Side Hooks (UX only, not security):**
+```typescript
+import { useTenant } from '@/hooks/use-tenant'
+import { useRole } from '@/hooks/use-role'
+
+const { organizationSlug, isLoading } = useTenant()
+const { role, isSuperadmin, isLoading } = useRole()
+```
+
+### Middleware
+
+The Next.js middleware (`src/middleware.ts`) handles three concerns in order:
+
+1. **Locale Detection:** next-intl determines locale from URL, cookie, or Accept-Language header
+2. **Subdomain Resolution:** Extracts subdomain from hostname, injects `x-organization-slug` header. In development (localhost), supports `?org=slug` query param or `x-organization-slug` header fallback
+3. **Auth Check:** Refreshes Supabase session tokens, redirects unauthenticated users on protected routes to `/login` with a `redirectTo` parameter
+
+**Auth Callback:** `GET /api/auth/callback` handles magic link and OAuth redirects by exchanging the auth code for a session
 
 ### Database Schema
 
@@ -110,7 +159,7 @@ Supabase Storage with tenant-isolated paths: `transcripts/{org_id}/{job_id}/` an
 ### Internationalization
 next-intl with App Router integration. Default locale: `de`. Supported: `['de', 'en']`. Translation files in `src/messages/`.
 
-Translation namespaces: `common`, `nav`, `theme`, `auth`, `dashboard`, `analyses`, `team`, `settings`, `admin`.
+Translation namespaces: `common`, `nav`, `theme`, `auth`, `errors`, `dashboard`, `analyses`, `team`, `settings`, `admin`.
 
 ```typescript
 // In Server or Client Components:
@@ -152,6 +201,7 @@ src/
 │   │   ├── layout.tsx         # Locale layout with NextIntlClientProvider
 │   │   └── page.tsx           # Redirects to dashboard
 │   ├── api/                   # API routes
+│   │   ├── auth/callback/     # Supabase auth callback (magic link, OAuth)
 │   │   └── webhooks/          # n8n callback webhooks
 │   └── layout.tsx             # Root layout (ThemeProvider)
 ├── components/

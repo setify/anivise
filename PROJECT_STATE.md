@@ -37,19 +37,28 @@
 - [ ] RLS policies applied to Supabase (requires running migrations against live DB)
 
 ### Authentication
-- [ ] Supabase Auth integration
-- [ ] Login page (email/password + magic link)
-- [ ] Register page
-- [ ] Middleware: auth check
-- [ ] Middleware: subdomain to org resolution
-- [ ] OAuth (Google/Microsoft)
-- [ ] SSO/SAML
+- [x] Supabase Auth integration (email/password + magic link)
+- [x] Login page with email/password form, magic link, OAuth placeholders
+- [x] Register page with name, email, password form
+- [x] Auth layout with centered card design
+- [x] Auth callback API route (magic link + OAuth code exchange)
+- [x] Middleware: auth check (protected route redirect to login)
+- [x] Middleware: subdomain to org resolution (production subdomains + dev fallback)
+- [x] Middleware: locale detection via next-intl
+- [x] next-intl navigation helpers (Link, useRouter, usePathname, redirect)
+- [ ] OAuth (Google/Microsoft) - placeholders only
+- [ ] SSO/SAML - not started
 
 ### RBAC
-- [ ] Role definitions (superadmin, org_admin, manager, member)
-- [ ] Permission helper functions
-- [ ] Role-based middleware guards
-- [ ] UI-level permission checks in components
+- [x] Role definitions (superadmin, org_admin, manager, member) with hierarchy
+- [x] Permission helper functions (canManageOrganization, canRequestAnalysis, canViewReport, canManageTeam, canAccessSuperadmin)
+- [x] Role permissions map for client-side UX checks
+- [x] Role-based middleware guards (auth redirect for protected routes)
+- [ ] UI-level permission checks in components (hooks available, not yet wired)
+
+### Hooks
+- [x] useTenant - client-side organization context (subdomain or dev query param)
+- [x] useRole - client-side user role in current org (UX only, not security)
 
 ### UI / Pages
 - [x] Root layout with fonts, metadata, and ThemeProvider
@@ -76,9 +85,6 @@
 - [ ] Supabase Storage upload flow
 
 ## What's NOT Implemented Yet
-- Authentication flows (login, register, magic link)
-- Middleware (subdomain resolution, auth check)
-- RBAC (role definitions, permission checks)
 - Analysis upload + job creation flow
 - n8n integration (webhook trigger + callback)
 - Report generation + viewer
@@ -94,12 +100,13 @@
 - Testing (Vitest, Playwright)
 
 ## Known Issues / Tech Debt
-- Auth pages (login, register) are minimal placeholders without functional forms
-- Sidebar user section shows hardcoded placeholder ("User") until auth is implemented
-- Sidebar organization label is placeholder until subdomain resolution is implemented
+- Sidebar user section shows hardcoded placeholder ("User") - needs wiring to auth session
+- Sidebar organization label is placeholder - useTenant hook available but not yet wired
 - All stats show "0" as static values until connected to database queries
 - RLS policies are defined as SQL files but not yet applied to a live Supabase instance
 - DATABASE_URL env var needed for Drizzle (added to .env.example)
+- Next.js 16 shows deprecation warning for middleware convention (will be renamed to "proxy" in future)
+- useRole hook queries Supabase directly from client - consider server-side session enrichment for performance
 
 ## File Map (Key Files)
 - `src/app/layout.tsx` - Root layout with fonts, metadata, ThemeProvider
@@ -132,9 +139,18 @@
 - `src/types/index.ts` - Type re-exports
 - `supabase/migrations/001_enable_rls.sql` - Enable RLS on all tables
 - `supabase/migrations/002_tenant_isolation_policies.sql` - Tenant isolation policies
-- `src/middleware.ts` - next-intl locale routing (will be extended with auth + subdomain)
+- `src/middleware.ts` - Three-layer middleware (locale + subdomain + auth)
+- `src/lib/auth/roles.ts` - RBAC role definitions and hierarchy helpers
+- `src/lib/auth/permissions.ts` - Permission check functions and role permissions map
 - `src/lib/i18n/request.ts` - next-intl server request config
 - `src/lib/i18n/routing.ts` - Locale routing definition
+- `src/lib/i18n/navigation.ts` - next-intl navigation helpers (Link, useRouter, etc.)
+- `src/app/[locale]/(auth)/layout.tsx` - Auth layout (centered card)
+- `src/app/[locale]/(auth)/login/page.tsx` - Login page with Supabase auth
+- `src/app/[locale]/(auth)/register/page.tsx` - Register page with Supabase auth
+- `src/app/api/auth/callback/route.ts` - Auth callback for magic link/OAuth
+- `src/hooks/use-tenant.ts` - Client-side organization context hook
+- `src/hooks/use-role.ts` - Client-side user role hook
 - `src/lib/constants.ts` - App constants
 - `src/lib/utils.ts` - cn() utility
 - `src/messages/de.json` / `en.json` - Comprehensive translation files
