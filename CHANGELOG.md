@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.10.0] - 2026-02-16
+### Added
+- Impersonation feature: Superadmins can "View as Organization" from org detail page
+- Signed httpOnly impersonation cookie with HMAC verification and 2-hour timeout
+- Impersonation banner in dashboard layout (amber, shows org name and role, "Back to Admin" button)
+- `startImpersonationAction` and `endImpersonationAction` server actions with audit logging
+- Confirmation dialog before starting impersonation
+- i18n translations for impersonation (`admin.impersonation` namespace, de + en)
+
 ## [0.9.0] - 2026-02-16
 ### Added
 - `email_templates` table with 5 system templates (team-invitation, org-invitation, welcome, password-reset, analysis-complete)

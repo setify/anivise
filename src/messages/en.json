@@ -340,6 +340,14 @@
       "resetToDefault": "Reset to Default",
       "resetSuccess": "Template reset to default"
     },
+    "impersonation": {
+      "viewAsOrg": "View as Organization",
+      "confirmTitle": "Switch to Organization View",
+      "confirmDescription": "You will switch to the dashboard of {orgName} and see what an org admin sees. All actions will be logged in the audit trail.",
+      "confirm": "Switch View",
+      "banner": "You are viewing {orgName} as {role} (Superadmin Impersonation). All actions are logged.",
+      "endImpersonation": "Back to Admin"
+    },
     "activity": {
       "title": "Activity",
       "description": "Audit trail of all platform actions",

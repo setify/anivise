@@ -7,6 +7,7 @@ import {
   deleteOrganization,
   resendOrgInvitation,
   cancelOrgInvitation,
+  startImpersonationAction,
 } from '../../actions'
 import {
   Card,
@@ -44,7 +45,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { ArrowLeft, Trash2, RefreshCw, X, Copy, Check } from 'lucide-react'
+import { ArrowLeft, Trash2, RefreshCw, X, Copy, Check, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -91,9 +92,17 @@ export function OrgDetailClient({
   const tCommon = useTranslations('common')
   const locale = useLocale()
   const router = useRouter()
+  const tImpersonation = useTranslations('admin.impersonation')
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [resendLink, setResendLink] = useState('')
   const [copied, setCopied] = useState(false)
+
+  async function handleImpersonate() {
+    const result = await startImpersonationAction(organization.id, organization.name)
+    if (result.success) {
+      router.push(`/${locale}/dashboard`)
+    }
+  }
 
   async function handleDelete() {
     const formData = new FormData()
@@ -147,7 +156,7 @@ export function OrgDetailClient({
               <ArrowLeft className="size-4" />
             </Link>
           </Button>
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl font-bold tracking-tight">
               {organization.name}
             </h1>
@@ -155,6 +164,30 @@ export function OrgDetailClient({
               {organization.slug}
             </p>
           </div>
+          {isSuperadmin && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <Eye className="mr-2 size-4" />
+                  {tImpersonation('viewAsOrg')}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{tImpersonation('confirmTitle')}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {tImpersonation('confirmDescription', { orgName: organization.name })}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleImpersonate}>
+                    {tImpersonation('confirm')}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
 
         <Tabs defaultValue="details">

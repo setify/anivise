@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.9.0
+**Version:** 0.10.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add email template management with preview and test send
+**Last Commit:** feat(admin): add organization impersonation for superadmins
 
 ## What's Implemented
 
@@ -94,6 +94,8 @@
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination
 - [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)
 - [x] Superadmin Email Templates page (`/admin/settings/emails`) with editor, preview, variables, reset
+- [x] Impersonation: "View as Organization" button on org detail (superadmin only)
+- [x] Impersonation banner in dashboard layout with signed cookie and 2h timeout
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
@@ -126,6 +128,8 @@
 - [x] updateEmailTemplate - update email template content with audit logging
 - [x] resetEmailTemplate - reset system template to default content
 - [x] sendTemplatedEmail / renderTemplatedEmail - email send helper with DB templates
+- [x] startImpersonationAction - start impersonation as org admin with audit logging
+- [x] endImpersonationAction - end impersonation and redirect back to admin
 
 ### Integrations
 - [ ] n8n webhook trigger
@@ -198,6 +202,9 @@
 - `src/app/[locale]/(superadmin)/admin/settings/emails/page.tsx` - Email templates page (server)
 - `src/app/[locale]/(superadmin)/admin/settings/emails/email-templates-client.tsx` - Email templates editor (client)
 - `src/lib/email/send.ts` - Email send helper with DB template rendering
+- `src/lib/auth/impersonation.ts` - Impersonation cookie management (sign/verify/parse)
+- `src/components/layout/impersonation-banner.tsx` - Impersonation banner component
+- `src/app/[locale]/(dashboard)/impersonation-actions.ts` - End impersonation server action
 - `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (6 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown

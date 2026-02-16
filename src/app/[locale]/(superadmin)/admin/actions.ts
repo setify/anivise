@@ -20,6 +20,7 @@ import {
   deleteOrganizationSchema,
 } from '@/lib/validations/admin'
 import { logAudit } from '@/lib/audit/log'
+import { startImpersonation } from '@/lib/auth/impersonation'
 import { setSetting, getSetting, type PlatformSettings } from '@/lib/settings/platform'
 import crypto from 'crypto'
 
@@ -713,6 +714,25 @@ export async function updatePlatformSettings(
   } catch {
     return { success: false, error: 'Failed to save settings' }
   }
+}
+
+// ─── Impersonation ───
+
+export async function startImpersonationAction(orgId: string, orgName: string) {
+  const currentUser = await requirePlatformRole('superadmin')
+
+  await startImpersonation(orgId, orgName, 'org_admin')
+
+  await logAudit({
+    actorId: currentUser.id,
+    actorEmail: currentUser.email,
+    action: 'impersonation.started',
+    entityType: 'organization',
+    entityId: orgId,
+    metadata: { orgName },
+  })
+
+  return { success: true }
 }
 
 // ─── Email Templates ───

@@ -340,6 +340,14 @@
       "resetToDefault": "Auf Standard zuruecksetzen",
       "resetSuccess": "Template auf Standard zurueckgesetzt"
     },
+    "impersonation": {
+      "viewAsOrg": "Als Organisation ansehen",
+      "confirmTitle": "Zur Organisationsansicht wechseln",
+      "confirmDescription": "Sie wechseln zum Dashboard von {orgName} und sehen, was ein Org-Admin sieht. Alle Aktionen werden im Audit-Log protokolliert.",
+      "confirm": "Ansicht wechseln",
+      "banner": "Sie sehen {orgName} als {role} (Superadmin-Impersonation). Alle Aktionen werden protokolliert.",
+      "endImpersonation": "Zurueck zum Admin"
+    },
     "activity": {
       "title": "Aktivitaet",
       "description": "Protokoll aller Plattform-Aktionen",
