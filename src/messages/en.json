@@ -267,6 +267,50 @@
       },
       "error": "An error occurred"
     },
+    "platformSettings": {
+      "title": "Settings",
+      "description": "Manage platform-wide configuration",
+      "tabs": {
+        "general": "General",
+        "invitations": "Invitations",
+        "organizations": "Organizations",
+        "analysis": "Analysis"
+      },
+      "general": {
+        "title": "General Settings",
+        "description": "Basic platform configuration",
+        "platformName": "Platform Name",
+        "defaultLocale": "Default Language",
+        "defaultOrgTier": "Default Subscription Tier for New Organizations",
+        "tiers": {
+          "individual": "Individual",
+          "team": "Team",
+          "enterprise": "Enterprise"
+        }
+      },
+      "invitations": {
+        "title": "Invitation Settings",
+        "description": "Configure how invitations work",
+        "expiryDays": "Invitation Expiry (Days)",
+        "maxResends": "Maximum Resends per Invitation"
+      },
+      "organizations": {
+        "title": "Organization Settings",
+        "description": "Configure organization defaults",
+        "reservedSlugs": "Reserved Slugs",
+        "addSlugPlaceholder": "Add reserved slug...",
+        "maxMembersTrial": "Maximum Members in Trial"
+      },
+      "analysis": {
+        "title": "Analysis Settings",
+        "description": "Configure analysis pipeline settings",
+        "maxTranscriptSize": "Maximum Transcript Size (MB)",
+        "n8nWebhookUrl": "n8n Webhook URL"
+      },
+      "save": "Save Settings",
+      "saved": "Settings saved successfully",
+      "error": "Failed to save settings"
+    },
     "activity": {
       "title": "Activity",
       "description": "Audit trail of all platform actions",

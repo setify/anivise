@@ -19,6 +19,7 @@ import {
   deleteOrganizationSchema,
 } from '@/lib/validations/admin'
 import { logAudit } from '@/lib/audit/log'
+import { setSetting, getSetting, type PlatformSettings } from '@/lib/settings/platform'
 import crypto from 'crypto'
 
 // ─── Profile Actions ───
@@ -159,7 +160,8 @@ export async function inviteTeamMember(formData: FormData) {
 
   // Otherwise create an invitation
   const token = crypto.randomBytes(32).toString('hex')
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+  const expiryDays = await getSetting('invitation.expiry_days')
+  const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
 
   const [invitation] = await db
     .insert(teamInvitations)
@@ -338,6 +340,12 @@ export async function createOrganization(formData: FormData) {
     return { success: false, error: 'Invalid input' }
   }
 
+  // Check reserved slugs
+  const reservedSlugs = await getSetting('org.reserved_slugs')
+  if (reservedSlugs.includes(parsed.data.slug)) {
+    return { success: false, error: 'This slug is reserved' }
+  }
+
   // Check slug uniqueness
   const [existing] = await db
     .select({ id: organizations.id })
@@ -431,6 +439,12 @@ export async function createOrganizationWithAdmin(formData: FormData) {
     return { success: false, error: 'Admin email is required' }
   }
 
+  // Check reserved slugs
+  const reservedSlugs = await getSetting('org.reserved_slugs')
+  if (reservedSlugs.includes(parsed.data.slug)) {
+    return { success: false, error: 'This slug is reserved' }
+  }
+
   // Check slug uniqueness
   const [existing] = await db
     .select({ id: organizations.id })
@@ -454,7 +468,8 @@ export async function createOrganizationWithAdmin(formData: FormData) {
 
   // Create org-admin invitation
   const token = crypto.randomBytes(32).toString('hex')
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  const expiryDays = await getSetting('invitation.expiry_days')
+  const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
 
   await db.insert(teamInvitations).values({
     email: adminEmail,
@@ -532,7 +547,8 @@ export async function resendOrgInvitation(invitationId: string) {
 
   // Create new invitation with same details
   const token = crypto.randomBytes(32).toString('hex')
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  const expiryDays = await getSetting('invitation.expiry_days')
+  const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
 
   const [newInvitation] = await db
     .insert(teamInvitations)
@@ -645,6 +661,56 @@ export async function getAuditLogs(params?: {
   return {
     logs,
     total: countResult?.value ?? 0,
+  }
+}
+
+// ─── Platform Settings ───
+
+export async function updatePlatformSettings(
+  section: string,
+  data: Record<string, unknown>
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    const allowedKeys: (keyof PlatformSettings)[] = [
+      'platform.name',
+      'platform.default_locale',
+      'platform.default_org_tier',
+      'invitation.expiry_days',
+      'invitation.max_resends',
+      'org.reserved_slugs',
+      'org.max_members_trial',
+      'analysis.max_transcript_size_mb',
+      'analysis.n8n_webhook_url',
+    ]
+
+    const changedKeys: string[] = []
+
+    for (const [key, value] of Object.entries(data)) {
+      if (!allowedKeys.includes(key as keyof PlatformSettings)) continue
+      await setSetting(
+        key as keyof PlatformSettings,
+        value as PlatformSettings[keyof PlatformSettings],
+        currentUser.id
+      )
+      changedKeys.push(key)
+    }
+
+    if (changedKeys.length > 0) {
+      await logAudit({
+        actorId: currentUser.id,
+        actorEmail: currentUser.email,
+        action: 'settings.updated',
+        entityType: 'platform_settings',
+        metadata: { section, changedKeys },
+      })
+    }
+
+    revalidatePath('/admin/settings')
+    return { success: true }
+  } catch {
+    return { success: false, error: 'Failed to save settings' }
   }
 }
 

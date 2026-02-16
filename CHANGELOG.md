@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.0] - 2026-02-16
+### Added
+- `platform_settings` table with key-value store for platform-wide configuration
+- Settings helper (`src/lib/settings/platform.ts`) with typed `getSetting`/`setSetting`/`getAllSettings` functions and defaults
+- Platform Settings page (`/admin/settings`) with 4 tabs:
+  - General: Platform name, default language, default org tier
+  - Invitations: Expiry days, max resends
+  - Organizations: Reserved slugs (tag input), max trial members
+  - Analysis: Max transcript size, n8n webhook URL
+- "Settings" nav item added to admin sidebar (6 items now, only visible to superadmin)
+- `updatePlatformSettings` server action with audit logging (`settings.updated`)
+- `PlatformSetting` and `NewPlatformSetting` TypeScript types
+- i18n translations for settings page (`admin.platformSettings` namespace, de + en)
+
+### Changed
+- Invitation expiry now reads from `platform_settings` instead of hardcoded 7 days
+- Org creation now checks reserved slugs from `platform_settings` before slug uniqueness check
+
 ## [0.7.0] - 2026-02-16
 ### Added
 - Audit trail / activity log system with `audit_logs` table (append-only, indexed on `created_at` and `action`)

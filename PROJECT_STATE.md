@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.7.0
+**Version:** 0.8.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add audit trail and activity log page
+**Last Commit:** feat(admin): add platform settings management
 
 ## What's Implemented
 
@@ -29,8 +29,9 @@
 - [x] Schema: reports (jsonb report_data, unique analysis_job_id, subject viewing)
 - [x] Schema: team_invitations (email, role, status, token, expiry, invitation_type, organization_id, target_org_role)
 - [x] Schema: audit_logs (append-only, actor, action, entity, metadata, IP, indexed)
+- [x] Schema: platform_settings (key-value store with typed defaults)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -80,7 +81,7 @@
 - [x] Analyses page with empty state
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (5 nav items: Dashboard, Profile, Team, Organizations, Activity)
+- [x] Superadmin layout with admin sidebar (6 nav items: Dashboard, Profile, Team, Organizations, Activity, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
@@ -90,6 +91,7 @@
 - [x] Superadmin Organization detail page with danger zone (soft-delete) and invitations tab
 - [x] Org creation form with "First Org-Admin" section and auto-invitation
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination
+- [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
@@ -117,6 +119,8 @@
 - [x] cancelOrgInvitation - cancel an org invitation
 - [x] logAudit - append audit log entry (20 action types)
 - [x] getAuditLogs - list audit logs with action/period filters and pagination
+- [x] updatePlatformSettings - update platform settings with audit logging
+- [x] getSetting / setSetting / getAllSettings - typed platform settings helpers
 
 ### Integrations
 - [ ] n8n webhook trigger
@@ -181,7 +185,11 @@
 - `src/app/[locale]/(superadmin)/admin/activity/activity-page-client.tsx` - Activity log table (client)
 - `src/lib/audit/log.ts` - Audit logging helper (logAudit, AuditAction type)
 - `src/lib/db/schema/audit-logs.ts` - Audit logs table schema
-- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (5 items)
+- `src/app/[locale]/(superadmin)/admin/settings/page.tsx` - Settings page (server)
+- `src/app/[locale]/(superadmin)/admin/settings/settings-page-client.tsx` - Settings form (client)
+- `src/lib/settings/platform.ts` - Platform settings helper (typed key-value store)
+- `src/lib/db/schema/platform-settings.ts` - Platform settings table schema
+- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (6 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration

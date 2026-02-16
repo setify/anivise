@@ -267,6 +267,50 @@
       },
       "error": "Ein Fehler ist aufgetreten"
     },
+    "platformSettings": {
+      "title": "Einstellungen",
+      "description": "Plattformweite Konfiguration verwalten",
+      "tabs": {
+        "general": "Allgemein",
+        "invitations": "Einladungen",
+        "organizations": "Organisationen",
+        "analysis": "Analyse"
+      },
+      "general": {
+        "title": "Allgemeine Einstellungen",
+        "description": "Grundlegende Plattform-Konfiguration",
+        "platformName": "Plattformname",
+        "defaultLocale": "Standardsprache",
+        "defaultOrgTier": "Standard-Abo-Stufe fuer neue Organisationen",
+        "tiers": {
+          "individual": "Einzelperson",
+          "team": "Team",
+          "enterprise": "Enterprise"
+        }
+      },
+      "invitations": {
+        "title": "Einladungs-Einstellungen",
+        "description": "Konfigurieren Sie das Einladungssystem",
+        "expiryDays": "Einladungs-Ablaufzeit (Tage)",
+        "maxResends": "Maximale Neuversendungen pro Einladung"
+      },
+      "organizations": {
+        "title": "Organisations-Einstellungen",
+        "description": "Standardwerte fuer Organisationen konfigurieren",
+        "reservedSlugs": "Reservierte Slugs",
+        "addSlugPlaceholder": "Reservierten Slug hinzufuegen...",
+        "maxMembersTrial": "Maximale Mitglieder im Trial"
+      },
+      "analysis": {
+        "title": "Analyse-Einstellungen",
+        "description": "Analyse-Pipeline konfigurieren",
+        "maxTranscriptSize": "Maximale Transkript-Groesse (MB)",
+        "n8nWebhookUrl": "n8n Webhook URL"
+      },
+      "save": "Einstellungen speichern",
+      "saved": "Einstellungen erfolgreich gespeichert",
+      "error": "Fehler beim Speichern der Einstellungen"
+    },
     "activity": {
       "title": "Aktivitaet",
       "description": "Protokoll aller Plattform-Aktionen",
