@@ -226,6 +226,37 @@
       "noOrgs": "No organizations yet.",
       "orgCreated": "Organization created",
       "orgDeleted": "Organization deleted",
+      "create": {
+        "adminSection": "First Org Admin",
+        "adminHint": "This person will receive an invitation and will be automatically set up as the organization administrator.",
+        "adminEmail": "Email Address",
+        "adminFirstName": "First Name",
+        "adminLastName": "Last Name",
+        "adminFirstNamePlaceholder": "John",
+        "adminLastNamePlaceholder": "Doe",
+        "inviteLinkTitle": "Invitation Link",
+        "inviteLinkDescription": "The invitation link has been created. Since no email service is configured, copy the link and send it manually.",
+        "inviteLinkExpiry": "This link is valid for 7 days.",
+        "linkCopied": "Link copied"
+      },
+      "invitations": {
+        "title": "Invitations",
+        "description": "Manage invitations for this organization",
+        "noInvitations": "No invitations yet.",
+        "resend": "Resend",
+        "cancel": "Cancel",
+        "resent": "Invitation resent",
+        "cancelled": "Invitation cancelled",
+        "linkTitle": "New Invitation Link",
+        "linkDescription": "A new invitation link has been created. Copy it and send it manually.",
+        "linkCopied": "Link copied",
+        "status": {
+          "pending": "Pending",
+          "accepted": "Accepted",
+          "expired": "Expired",
+          "cancelled": "Cancelled"
+        }
+      },
       "detail": {
         "title": "Organization Details",
         "dangerZone": "Danger Zone",

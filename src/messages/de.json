@@ -226,6 +226,37 @@
       "noOrgs": "Noch keine Organisationen vorhanden.",
       "orgCreated": "Organisation erstellt",
       "orgDeleted": "Organisation geloescht",
+      "create": {
+        "adminSection": "Erster Org-Admin",
+        "adminHint": "Diese Person erhaelt eine Einladung und wird automatisch als Administrator der Organisation eingerichtet.",
+        "adminEmail": "E-Mail-Adresse",
+        "adminFirstName": "Vorname",
+        "adminLastName": "Nachname",
+        "adminFirstNamePlaceholder": "Max",
+        "adminLastNamePlaceholder": "Mustermann",
+        "inviteLinkTitle": "Einladungslink",
+        "inviteLinkDescription": "Der Einladungslink wurde erstellt. Da kein E-Mail-Service konfiguriert ist, kopieren Sie den Link und senden Sie ihn manuell.",
+        "inviteLinkExpiry": "Dieser Link ist 7 Tage gueltig.",
+        "linkCopied": "Link kopiert"
+      },
+      "invitations": {
+        "title": "Einladungen",
+        "description": "Einladungen fuer diese Organisation verwalten",
+        "noInvitations": "Keine Einladungen vorhanden.",
+        "resend": "Erneut senden",
+        "cancel": "Zurueckziehen",
+        "resent": "Einladung erneut gesendet",
+        "cancelled": "Einladung zurueckgezogen",
+        "linkTitle": "Neuer Einladungslink",
+        "linkDescription": "Ein neuer Einladungslink wurde erstellt. Kopieren Sie ihn und senden Sie ihn manuell.",
+        "linkCopied": "Link kopiert",
+        "status": {
+          "pending": "Ausstehend",
+          "accepted": "Angenommen",
+          "expired": "Abgelaufen",
+          "cancelled": "Zurueckgezogen"
+        }
+      },
       "detail": {
         "title": "Organisation Details",
         "dangerZone": "Gefahrenzone",

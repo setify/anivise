@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.1] - 2026-02-16
+### Added
+- Org creation form now includes "First Org-Admin" section (email, first name, last name)
+- `createOrganizationWithAdmin` server action: creates org + org-admin invitation in one step
+- Org-admin invitation generates token and shows invite link in dialog (since Resend not yet configured)
+- Org detail page now has "Invitations" tab showing all invitations for that organization
+- Resend invitation: cancels old token, creates new one, shows new link
+- Cancel invitation from org detail page
+- `getOrgInvitations`, `resendOrgInvitation`, `cancelOrgInvitation` server actions
+- Email templates (React components): `org-invitation.tsx` and `team-invitation.tsx` for future Resend integration
+- i18n translations for org creation admin section (`admin.orgs.create`) and org invitations (`admin.orgs.invitations`)
+
 ## [0.6.0] - 2026-02-16
 ### Added
 - Reusable `StatCard` component (`src/components/admin/stat-card.tsx`) with icon, value, description, and trend support

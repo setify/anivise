@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.6.0
+**Version:** 0.6.1
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add dashboard placeholder and invitation acceptance flow
+**Last Commit:** feat(admin): add org-admin invitation on organization creation
 
 ## What's Implemented
 
@@ -86,7 +86,8 @@
 - [x] Superadmin Team management page (members table, invite dialog, role change, remove, invitations tab)
 - [x] Superadmin Organizations list page with table
 - [x] Superadmin Create Organization page with form
-- [x] Superadmin Organization detail page with danger zone (soft-delete)
+- [x] Superadmin Organization detail page with danger zone (soft-delete) and invitations tab
+- [x] Org creation form with "First Org-Admin" section and auto-invitation
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
@@ -108,6 +109,10 @@
 - [x] validateInviteToken - validate invitation token and return invitation info
 - [x] acceptInvitation - accept invitation for logged-in users (platform role or org membership)
 - [x] registerAndAcceptInvitation - register new account and accept invitation in one step
+- [x] createOrganizationWithAdmin - create org and org-admin invitation in one step
+- [x] getOrgInvitations - list invitations for a specific organization
+- [x] resendOrgInvitation - cancel old invitation and create new one
+- [x] cancelOrgInvitation - cancel an org invitation
 
 ### Integrations
 - [ ] n8n webhook trigger
@@ -129,6 +134,7 @@
 - User invitation flow (for org-level)
 - Testing (Vitest, Playwright)
 - Avatar upload in profile page
+- Email templates created (React components) but Resend not yet integrated
 - Team invitation email sending (invitations created but email not sent)
 - Invitation acceptance page needs email notifications when invitation is accepted
 

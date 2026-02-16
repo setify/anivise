@@ -308,6 +308,140 @@ export async function deleteOrganization(formData: FormData) {
   return { success: true }
 }
 
+export async function createOrganizationWithAdmin(formData: FormData) {
+  const currentUser = await requirePlatformRole('superadmin')
+
+  const raw = {
+    name: formData.get('name') as string,
+    slug: formData.get('slug') as string,
+    subscriptionTier: formData.get('subscriptionTier') as string,
+  }
+
+  const parsed = createOrganizationSchema.safeParse(raw)
+  if (!parsed.success) {
+    return { success: false, error: 'Invalid input' }
+  }
+
+  const adminEmail = (formData.get('adminEmail') as string)?.trim()
+  if (!adminEmail) {
+    return { success: false, error: 'Admin email is required' }
+  }
+
+  // Check slug uniqueness
+  const [existing] = await db
+    .select({ id: organizations.id })
+    .from(organizations)
+    .where(eq(organizations.slug, parsed.data.slug))
+    .limit(1)
+
+  if (existing) {
+    return { success: false, error: 'Slug already in use' }
+  }
+
+  // Create the organization
+  const [newOrg] = await db
+    .insert(organizations)
+    .values({
+      name: parsed.data.name,
+      slug: parsed.data.slug,
+      subscriptionTier: parsed.data.subscriptionTier,
+    })
+    .returning()
+
+  // Create org-admin invitation
+  const token = crypto.randomBytes(32).toString('hex')
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+
+  await db.insert(teamInvitations).values({
+    email: adminEmail,
+    invitationType: 'organization',
+    organizationId: newOrg.id,
+    targetOrgRole: 'org_admin',
+    role: null,
+    invitedBy: currentUser.id,
+    token,
+    expiresAt,
+  })
+
+  // Build invite link (show in dialog since Resend is not configured yet)
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
+  const inviteLink = `${appUrl}/de/invite/${token}`
+
+  revalidatePath('/admin/organizations')
+  return { success: true, inviteLink }
+}
+
+// ─── Org Invitation Management ───
+
+export async function getOrgInvitations(organizationId: string) {
+  await requirePlatformRole('staff')
+
+  const invitations = await db
+    .select()
+    .from(teamInvitations)
+    .where(
+      and(
+        eq(teamInvitations.organizationId, organizationId),
+        eq(teamInvitations.invitationType, 'organization')
+      )
+    )
+
+  return invitations
+}
+
+export async function resendOrgInvitation(invitationId: string) {
+  const currentUser = await requirePlatformRole('superadmin')
+
+  // Cancel old invitation
+  const [oldInvitation] = await db
+    .select()
+    .from(teamInvitations)
+    .where(eq(teamInvitations.id, invitationId))
+    .limit(1)
+
+  if (!oldInvitation) {
+    return { success: false, error: 'Invitation not found' }
+  }
+
+  await db
+    .update(teamInvitations)
+    .set({ status: 'cancelled', updatedAt: new Date() })
+    .where(eq(teamInvitations.id, invitationId))
+
+  // Create new invitation with same details
+  const token = crypto.randomBytes(32).toString('hex')
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+
+  await db.insert(teamInvitations).values({
+    email: oldInvitation.email,
+    invitationType: oldInvitation.invitationType,
+    organizationId: oldInvitation.organizationId,
+    targetOrgRole: oldInvitation.targetOrgRole,
+    role: oldInvitation.role,
+    invitedBy: currentUser.id,
+    token,
+    expiresAt,
+  })
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
+  const inviteLink = `${appUrl}/de/invite/${token}`
+
+  revalidatePath('/admin/organizations')
+  return { success: true, inviteLink }
+}
+
+export async function cancelOrgInvitation(invitationId: string) {
+  await requirePlatformRole('superadmin')
+
+  await db
+    .update(teamInvitations)
+    .set({ status: 'cancelled', updatedAt: new Date() })
+    .where(eq(teamInvitations.id, invitationId))
+
+  revalidatePath('/admin/organizations')
+  return { success: true }
+}
+
 // ─── Stats ───
 
 export async function getPlatformStats() {

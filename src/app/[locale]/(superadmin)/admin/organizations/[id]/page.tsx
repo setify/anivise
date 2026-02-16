@@ -1,5 +1,5 @@
 import { requirePlatformRole } from '@/lib/auth/require-platform-role'
-import { getOrganizationById } from '../../actions'
+import { getOrganizationById, getOrgInvitations } from '../../actions'
 import { OrgDetailClient } from './org-detail-client'
 import { notFound } from 'next/navigation'
 
@@ -16,9 +16,12 @@ export default async function OrganizationDetailPage({
     notFound()
   }
 
+  const invitations = await getOrgInvitations(id)
+
   return (
     <OrgDetailClient
       organization={org}
+      invitations={invitations}
       isSuperadmin={currentUser.platformRole === 'superadmin'}
     />
   )
