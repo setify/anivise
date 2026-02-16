@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { useActionState } from 'react'
+import { useActionState, useEffect, useRef } from 'react'
 import { createOrganization } from '../../actions'
 import {
   Card,
@@ -37,13 +37,19 @@ export function CreateOrganizationForm() {
   const locale = useLocale()
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(handleSubmit, null)
+  const prevState = useRef(state)
 
-  if (state?.success) {
-    toast.success(t('orgCreated'))
-    router.push(`/${locale}/admin/organizations`)
-  } else if (state && !state.success) {
-    toast.error(state.error || t('error'))
-  }
+  useEffect(() => {
+    if (state === prevState.current) return
+    prevState.current = state
+
+    if (state?.success) {
+      toast.success(t('orgCreated'))
+      router.push(`/${locale}/admin/organizations`)
+    } else if (state && !state.success) {
+      toast.error(state.error || t('error'))
+    }
+  }, [state, t, router, locale])
 
   return (
     <div className="space-y-6">

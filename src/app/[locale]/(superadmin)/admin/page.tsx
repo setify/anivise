@@ -1,36 +1,57 @@
 import { useTranslations } from 'next-intl'
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Building2, Users } from 'lucide-react'
-import { getPlatformStats } from './actions'
+  Building2,
+  Users,
+  Activity,
+  UserPlus,
+  Mail,
+  AlertTriangle,
+} from 'lucide-react'
+import { StatCard } from '@/components/admin/stat-card'
 
-export default async function AdminPage() {
-  const stats = await getPlatformStats()
-
-  return <AdminDashboard stats={stats} />
+export default function AdminPage() {
+  return <AdminDashboard />
 }
 
-function AdminDashboard({
-  stats,
-}: {
-  stats: { totalOrganizations: number; totalUsers: number }
-}) {
+function AdminDashboard() {
   const t = useTranslations('admin')
 
   const statCards = [
     {
       title: t('stats.totalOrganizations'),
-      value: stats.totalOrganizations.toString(),
+      value: '—',
       icon: Building2,
+      description: t('stats.placeholder'),
     },
     {
-      title: t('stats.totalUsers'),
-      value: stats.totalUsers.toString(),
+      title: t('stats.activeUsers'),
+      value: '—',
       icon: Users,
+      description: t('stats.placeholder'),
+    },
+    {
+      title: t('stats.runningAnalyses'),
+      value: '—',
+      icon: Activity,
+      description: t('stats.placeholder'),
+    },
+    {
+      title: t('stats.newSignups'),
+      value: '—',
+      icon: UserPlus,
+      description: t('stats.placeholder'),
+    },
+    {
+      title: t('stats.openInvitations'),
+      value: '—',
+      icon: Mail,
+      description: t('stats.placeholder'),
+    },
+    {
+      title: t('stats.failedJobs'),
+      value: '—',
+      icon: AlertTriangle,
+      description: t('stats.placeholder'),
     },
   ]
 
@@ -41,19 +62,9 @@ function AdminDashboard({
         <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className="text-muted-foreground size-4" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-            </CardContent>
-          </Card>
+          <StatCard key={stat.title} {...stat} />
         ))}
       </div>
     </div>

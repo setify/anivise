@@ -86,7 +86,12 @@ export async function getPendingInvitations() {
   const invitations = await db
     .select()
     .from(teamInvitations)
-    .where(eq(teamInvitations.status, 'pending'))
+    .where(
+      and(
+        eq(teamInvitations.status, 'pending'),
+        eq(teamInvitations.invitationType, 'platform')
+      )
+    )
 
   return invitations
 }
@@ -136,6 +141,7 @@ export async function inviteTeamMember(formData: FormData) {
   await db.insert(teamInvitations).values({
     email: parsed.data.email,
     role: parsed.data.role,
+    invitationType: 'platform',
     invitedBy: currentUser.id,
     token,
     expiresAt,

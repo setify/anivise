@@ -20,7 +20,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-The development server starts at [http://localhost:3000](http://localhost:3000).
+The development server starts at [http://localhost:3001](http://localhost:3001).
 
 ## Tech Stack
 
@@ -63,7 +63,18 @@ The platform uses a single database with shared schema. Tenant isolation is enfo
 | `manager` | 50 | Team/department |
 | `member` | 25 | Self only |
 
-Roles are stored in the `organization_members` junction table. Superadmin is a boolean flag on the `users` table (not org-scoped).
+Roles are stored in the `organization_members` junction table. Platform role (`superadmin` | `staff`) is stored on the `users` table (not org-scoped).
+
+### Invitation Flow
+
+The platform uses a unified invitation system for both platform team members and organization admins. Invitations are stored in the `team_invitations` table with `invitation_type` distinguishing between `platform` and `organization` invitations.
+
+**Flow:**
+1. Admin creates invitation (generates token, stores in DB)
+2. Invitee receives link: `/{locale}/invite/{token}`
+3. If logged in: one-click acceptance
+4. If not logged in: register or sign in, then accept
+5. On acceptance: platform role is set (for platform invitations) or organization membership is created (for org invitations)
 
 **Permission Helpers:**
 ```typescript
@@ -114,6 +125,7 @@ The database is managed via **Drizzle ORM** with schemas defined in `src/lib/db/
 | `consents` | Consent records (type, status, timestamps) | Yes |
 | `analysis_jobs` | Analysis job lifecycle (pending -> completed/failed) | Yes |
 | `reports` | Analysis results (jsonb report_data, 1:1 with job) | Yes |
+| `team_invitations` | Platform + org invitations with token-based acceptance | No (global) |
 
 #### Enums
 
@@ -126,6 +138,9 @@ The database is managed via **Drizzle ORM** with schemas defined in `src/lib/db/
 | `consent_status` | active, revoked |
 | `job_status` | pending, processing, completed, failed, cancelled |
 | `locale` | de, en |
+| `platform_role` | superadmin, staff |
+| `invitation_status` | pending, accepted, expired, cancelled |
+| `invitation_type` | platform, organization |
 
 #### Supabase Clients
 
@@ -159,7 +174,7 @@ Supabase Storage with tenant-isolated paths: `transcripts/{org_id}/{job_id}/` an
 ### Internationalization
 next-intl with App Router integration. Default locale: `de`. Supported: `['de', 'en']`. Translation files in `src/messages/`.
 
-Translation namespaces: `common`, `nav`, `theme`, `auth`, `errors`, `dashboard`, `analyses`, `team`, `settings`, `admin`.
+Translation namespaces: `common`, `nav`, `theme`, `auth` (incl. `auth.invite`), `errors`, `dashboard`, `analyses`, `team`, `settings`, `admin`.
 
 ```typescript
 // In Server or Client Components:
@@ -207,6 +222,7 @@ src/
 ├── components/
 │   ├── ui/                    # shadcn/ui components
 │   ├── layout/                # AppShell, Sidebar, Header, AdminSidebar
+│   ├── admin/                 # Admin components (StatCard)
 │   ├── forms/                 # Reusable form components
 │   ├── analyses/              # Analysis-specific components
 │   └── shared/                # ThemeProvider, ThemeToggle

@@ -67,6 +67,46 @@
       "submit": "Registrieren",
       "hasAccount": "Bereits ein Konto?",
       "login": "Anmelden"
+    },
+    "invite": {
+      "title": "Einladung",
+      "description": "Sie wurden eingeladen, der Anivise-Plattform beizutreten",
+      "invitedBy": "Eingeladen von",
+      "role": "Rolle",
+      "organization": "Organisation",
+      "email": "E-Mail",
+      "accept": "Einladung annehmen",
+      "accepting": "Wird angenommen...",
+      "accepted": "Einladung erfolgreich angenommen",
+      "acceptError": "Einladung konnte nicht angenommen werden",
+      "createAccount": "Konto erstellen",
+      "alreadyHaveAccount": "Ich habe bereits ein Konto",
+      "fullName": "Vollstaendiger Name",
+      "fullNamePlaceholder": "Max Mustermann",
+      "password": "Passwort",
+      "passwordPlaceholder": "Mindestens 8 Zeichen",
+      "registerAndAccept": "Registrieren und annehmen",
+      "registering": "Wird registriert...",
+      "back": "Zurueck",
+      "backToLogin": "Zur Anmeldung",
+      "errors": {
+        "not_found": {
+          "title": "Einladung nicht gefunden",
+          "description": "Diese Einladung existiert nicht oder der Link ist ungueltig."
+        },
+        "expired": {
+          "title": "Einladung abgelaufen",
+          "description": "Diese Einladung ist leider abgelaufen. Bitte fordern Sie eine neue Einladung an."
+        },
+        "already_used": {
+          "title": "Einladung bereits verwendet",
+          "description": "Diese Einladung wurde bereits angenommen."
+        },
+        "cancelled": {
+          "title": "Einladung zurueckgezogen",
+          "description": "Diese Einladung wurde zurueckgezogen. Bitte kontaktieren Sie den Einladenden."
+        }
+      }
     }
   },
   "errors": {
@@ -118,9 +158,15 @@
     "organizationsDescription": "Alle Organisationen auf der Plattform verwalten",
     "noOrganizations": "Noch keine Organisationen vorhanden.",
     "stats": {
-      "totalOrganizations": "Organisationen gesamt",
+      "totalOrganizations": "Organisationen",
       "totalUsers": "Benutzer gesamt",
-      "totalAnalyses": "Analysen gesamt"
+      "totalAnalyses": "Analysen gesamt",
+      "activeUsers": "Aktive Nutzer",
+      "runningAnalyses": "Laufende Analysen",
+      "newSignups": "Neue Anmeldungen (7 Tage)",
+      "openInvitations": "Offene Einladungen",
+      "failedJobs": "Fehlgeschlagene Jobs",
+      "placeholder": "Daten verfuegbar sobald Kunden aktiv sind"
     },
     "profile": {
       "title": "Profil",

@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.6.0] - 2026-02-16
+### Added
+- Reusable `StatCard` component (`src/components/admin/stat-card.tsx`) with icon, value, description, and trend support
+- Admin dashboard expanded with 6 placeholder stat cards (Organizations, Active Users, Running Analyses, New Signups, Open Invitations, Failed Jobs)
+- `invitation_type` enum (`platform` | `organization`) for distinguishing platform vs org invitations
+- Extended `team_invitations` table with `invitation_type`, `organization_id`, and `target_org_role` columns
+- Invitation acceptance page (`/[locale]/invite/[token]`) with full flow:
+  - Token validation (expired, used, cancelled, not found states)
+  - Logged-in users: accept invitation with one click
+  - New users: register account and accept in one flow
+  - Existing users not logged in: redirect to login then back to invitation
+- Server actions for invitation validation, acceptance, and registration+acceptance
+- Invite route added to public middleware patterns (no auth required)
+- Comprehensive i18n translations for invitation flow (`auth.invite` namespace, de + en)
+- New dashboard stat translations (`admin.stats` namespace): activeUsers, runningAnalyses, newSignups, openInvitations, failedJobs, placeholder
+
+### Changed
+- `team_invitations.role` column is now nullable (null for organization invitations)
+- `getPendingInvitations` action now filters to platform invitations only
+- `inviteTeamMember` action explicitly sets `invitationType: 'platform'`
+- Team page invitation interface updated to handle nullable role
+
 ## [0.5.0] - 2026-02-16
 ### Added
 - Superadmin Profile page (`/admin/profile`) with editable form (first name, last name, display name, phone, timezone, locale)

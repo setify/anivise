@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.5.0
+**Version:** 0.6.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add superadmin profile, team management and org overview v0.5.0
+**Last Commit:** feat(admin): add dashboard placeholder and invitation acceptance flow
 
 ## What's Implemented
 
@@ -19,7 +19,7 @@
 ### Database
 - [x] Drizzle ORM configured with PostgreSQL (postgres.js driver)
 - [x] drizzle.config.ts with schema path and migrations output
-- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status)
+- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type)
 - [x] Schema: organizations (name, slug, settings, subscription tier/status, soft-delete)
 - [x] Schema: users (Supabase Auth ID, email, first/last/display name, phone, timezone, avatar, platform_role, locale)
 - [x] Schema: organization_members (junction table, role enum, unique constraint)
@@ -27,7 +27,7 @@
 - [x] Schema: consents (consent_type, status, granted_at, revoked_at, ip_address)
 - [x] Schema: analysis_jobs (status lifecycle, n8n timestamps, transcript path, error tracking)
 - [x] Schema: reports (jsonb report_data, unique analysis_job_id, subject viewing)
-- [x] Schema: team_invitations (email, role, status, token, expiry)
+- [x] Schema: team_invitations (email, role, status, token, expiry, invitation_type, organization_id, target_org_role)
 - [x] Drizzle DB client instance
 - [x] TypeScript inferred types (Select + Insert for all tables including team_invitations)
 - [x] Supabase browser client (@supabase/ssr)
@@ -80,13 +80,15 @@
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
 - [x] Superadmin layout with admin sidebar (4 nav items: Dashboard, Profile, Team, Organizations)
-- [x] Superadmin dashboard page with real platform stats
+- [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
+- [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
 - [x] Superadmin Team management page (members table, invite dialog, role change, remove, invitations tab)
 - [x] Superadmin Organizations list page with table
 - [x] Superadmin Create Organization page with form
 - [x] Superadmin Organization detail page with danger zone (soft-delete)
 - [x] Home page (redirects to dashboard)
+- [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
 - [ ] Report viewer
 
@@ -103,6 +105,9 @@
 - [x] createOrganization - create new organization with slug uniqueness check
 - [x] deleteOrganization - soft-delete an organization
 - [x] getPlatformStats - get platform-wide stats (org count, user count)
+- [x] validateInviteToken - validate invitation token and return invitation info
+- [x] acceptInvitation - accept invitation for logged-in users (platform role or org membership)
+- [x] registerAndAcceptInvitation - register new account and accept invitation in one step
 
 ### Integrations
 - [ ] n8n webhook trigger
@@ -125,6 +130,7 @@
 - Testing (Vitest, Playwright)
 - Avatar upload in profile page
 - Team invitation email sending (invitations created but email not sent)
+- Invitation acceptance page needs email notifications when invitation is accepted
 
 ## Known Issues / Tech Debt
 - Sidebar user section shows hardcoded placeholder ("User") - needs wiring to auth session
@@ -154,6 +160,10 @@
 - `src/app/[locale]/(superadmin)/admin/organizations/new/create-org-form.tsx` - Create org form (client)
 - `src/app/[locale]/(superadmin)/admin/organizations/[id]/page.tsx` - Org detail (server)
 - `src/app/[locale]/(superadmin)/admin/organizations/[id]/org-detail-client.tsx` - Org detail (client)
+- `src/components/admin/stat-card.tsx` - Reusable stat card component with icon, value, trend
+- `src/app/[locale]/(auth)/invite/[token]/page.tsx` - Invitation acceptance page (server)
+- `src/app/[locale]/(auth)/invite/[token]/invite-client.tsx` - Invitation acceptance UI (client)
+- `src/app/[locale]/(auth)/invite/[token]/actions.ts` - Invitation validation and acceptance server actions
 - `src/components/layout/app-shell.tsx` - Main wrapper (sidebar + header + content)
 - `src/components/layout/sidebar.tsx` - Navigation sidebar with nav links
 - `src/components/layout/header.tsx` - Top bar with menu toggle, theme, user menu

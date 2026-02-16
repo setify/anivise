@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { useActionState } from 'react'
+import { useActionState, useEffect, useRef } from 'react'
 import { updateProfile } from '../actions'
 import {
   Card,
@@ -51,12 +51,18 @@ export function ProfileForm({ user }: { user: ProfileUser }) {
   const tCommon = useTranslations('common')
   const tTeam = useTranslations('admin.team')
   const [state, formAction, isPending] = useActionState(handleSubmit, null)
+  const prevState = useRef(state)
 
-  if (state?.success) {
-    toast.success(t('saved'))
-  } else if (state && !state.success) {
-    toast.error(t('error'))
-  }
+  useEffect(() => {
+    if (state === prevState.current) return
+    prevState.current = state
+
+    if (state?.success) {
+      toast.success(t('saved'))
+    } else if (state && !state.success) {
+      toast.error(t('error'))
+    }
+  }, [state, t])
 
   return (
     <div className="space-y-6">

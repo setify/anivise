@@ -9,6 +9,7 @@ const intlMiddleware = createIntlMiddleware(routing)
 const PUBLIC_PATTERNS = [
   /^\/(de|en)\/login(\/|$)/,
   /^\/(de|en)\/register(\/|$)/,
+  /^\/(de|en)\/invite(\/|$)/,
   /^\/api\//,
 ]
 
@@ -19,13 +20,19 @@ function isPublicRoute(pathname: string): boolean {
 
 /** Extract subdomain from the hostname */
 function getSubdomain(hostname: string): string | null {
-  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'localhost:3000'
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'localhost:3001'
   // Remove port for comparison
   const baseDomain = appDomain.replace(/:\d+$/, '')
   const hostWithoutPort = hostname.replace(/:\d+$/, '')
 
-  // localhost / development: no subdomains
+  // Development: extract subdomain from *.localhost
+  // Modern browsers resolve *.localhost to 127.0.0.1 automatically
+  // e.g. acme.localhost:3001 → "acme", admin.localhost:3001 → "admin"
   if (baseDomain === 'localhost' || baseDomain === '127.0.0.1') {
+    if (hostWithoutPort.endsWith('.localhost')) {
+      const sub = hostWithoutPort.slice(0, -'.localhost'.length)
+      return sub || null
+    }
     return null
   }
 

@@ -51,3 +51,8 @@ export const invitationStatusEnum = pgEnum('invitation_status', [
   'expired',
   'cancelled',
 ])
+
+export const invitationTypeEnum = pgEnum('invitation_type', [
+  'platform',
+  'organization',
+])

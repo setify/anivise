@@ -67,6 +67,46 @@
       "submit": "Register",
       "hasAccount": "Already have an account?",
       "login": "Sign In"
+    },
+    "invite": {
+      "title": "Invitation",
+      "description": "You have been invited to join the Anivise platform",
+      "invitedBy": "Invited by",
+      "role": "Role",
+      "organization": "Organization",
+      "email": "Email",
+      "accept": "Accept Invitation",
+      "accepting": "Accepting...",
+      "accepted": "Invitation accepted successfully",
+      "acceptError": "Could not accept invitation",
+      "createAccount": "Create Account",
+      "alreadyHaveAccount": "I already have an account",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "registerAndAccept": "Register and Accept",
+      "registering": "Registering...",
+      "back": "Back",
+      "backToLogin": "Back to Login",
+      "errors": {
+        "not_found": {
+          "title": "Invitation Not Found",
+          "description": "This invitation does not exist or the link is invalid."
+        },
+        "expired": {
+          "title": "Invitation Expired",
+          "description": "This invitation has expired. Please request a new one."
+        },
+        "already_used": {
+          "title": "Invitation Already Used",
+          "description": "This invitation has already been accepted."
+        },
+        "cancelled": {
+          "title": "Invitation Cancelled",
+          "description": "This invitation has been cancelled. Please contact the person who invited you."
+        }
+      }
     }
   },
   "errors": {
@@ -118,9 +158,15 @@
     "organizationsDescription": "Manage all organizations on the platform",
     "noOrganizations": "No organizations yet.",
     "stats": {
-      "totalOrganizations": "Total Organizations",
+      "totalOrganizations": "Organizations",
       "totalUsers": "Total Users",
-      "totalAnalyses": "Total Analyses"
+      "totalAnalyses": "Total Analyses",
+      "activeUsers": "Active Users",
+      "runningAnalyses": "Running Analyses",
+      "newSignups": "New Signups (7 Days)",
+      "openInvitations": "Open Invitations",
+      "failedJobs": "Failed Jobs",
+      "placeholder": "Data available once customers are active"
     },
     "profile": {
       "title": "Profile",

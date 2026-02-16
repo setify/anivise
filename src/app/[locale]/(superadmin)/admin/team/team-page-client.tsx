@@ -79,7 +79,7 @@ interface TeamMember {
 interface Invitation {
   id: string
   email: string
-  role: 'superadmin' | 'staff'
+  role: 'superadmin' | 'staff' | null
   status: 'pending' | 'accepted' | 'expired' | 'cancelled'
   expiresAt: Date
   createdAt: Date
@@ -358,7 +358,7 @@ export function TeamPageClient({
                         <TableCell>{inv.email}</TableCell>
                         <TableCell>
                           <Badge variant="secondary">
-                            {t(`roles.${inv.role}`)}
+                            {inv.role ? t(`roles.${inv.role}`) : '—'}
                           </Badge>
                         </TableCell>
                         <TableCell>

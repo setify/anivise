@@ -9,6 +9,7 @@ export {
   localeEnum,
   platformRoleEnum,
   invitationStatusEnum,
+  invitationTypeEnum,
 } from './enums'
 
 // Tables
