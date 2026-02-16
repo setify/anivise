@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.13.2] - 2026-02-16
+### Added
+- "Send test email to me" button in email template editor (tests unsaved changes with [TEST] prefix)
+- "Test" button on each template in the list view for quick test sends
+- Full email layout preview in template editor (uses configured colors, logo, footer from email layout settings)
+- Preview locale toggle (DE/EN) in template preview
+- `sendTestTemplateEmail` server action with example variable rendering, layout wrapping, and audit logging
+- `last_test_sent_at` column on `email_templates` table (updated on each test send)
+- i18n translations for test send (sendTest, sendTestToMe, testSent, testError)
+
+### Changed
+- Email template preview now renders with full base layout (colors, logo, footer) instead of raw HTML
+- Email templates page now receives and passes `layoutConfig` prop for accurate previews
+
 ## [0.13.1] - 2026-02-16
 ### Added
 - Configurable email base layout page (`/admin/settings/email-layout`) with:

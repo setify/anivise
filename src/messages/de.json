@@ -341,7 +341,11 @@
       "saved": "Template erfolgreich gespeichert",
       "error": "Fehler beim Speichern des Templates",
       "resetToDefault": "Auf Standard zuruecksetzen",
-      "resetSuccess": "Template auf Standard zurueckgesetzt"
+      "resetSuccess": "Template auf Standard zurueckgesetzt",
+      "sendTest": "Test",
+      "sendTestToMe": "Test-E-Mail an mich senden",
+      "testSent": "Test-E-Mail wurde an Ihre Adresse gesendet",
+      "testError": "Fehler beim Senden der Test-E-Mail"
     },
     "impersonation": {
       "viewAsOrg": "Als Organisation ansehen",

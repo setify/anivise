@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useMemo } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { toast } from 'sonner'
 import {
@@ -12,6 +12,7 @@ import {
   Save,
   Loader2,
   Copy,
+  Send,
 } from 'lucide-react'
 import {
   Card,
@@ -34,20 +35,19 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { updateEmailTemplate, resetEmailTemplate } from '../../actions'
+import { Separator } from '@/components/ui/separator'
+import {
+  updateEmailTemplate,
+  resetEmailTemplate,
+  sendTestTemplateEmail,
+} from '../../actions'
 import Link from 'next/link'
+import type { EmailLayoutConfig } from '@/lib/email/send'
 
 interface EmailTemplate {
   id: string
@@ -60,15 +60,16 @@ interface EmailTemplate {
   bodyEn: string
   availableVariables: unknown
   isSystem: boolean
+  lastTestSentAt: Date | null
   updatedAt: Date
 }
 
 interface Props {
   templates: EmailTemplate[]
   currentUser: { id: string }
+  layoutConfig: EmailLayoutConfig
 }
 
-// Example values for preview
 const EXAMPLE_VARIABLES: Record<string, string> = {
   inviterName: 'Max Mustermann',
   role: 'Superadmin',
@@ -83,14 +84,28 @@ const EXAMPLE_VARIABLES: Record<string, string> = {
   reportLink: 'https://app.anivise.com/reports/abc123',
 }
 
-export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
+function renderWithVariables(template: string): string {
+  let result = template
+  for (const [key, value] of Object.entries(EXAMPLE_VARIABLES)) {
+    result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value)
+  }
+  return result
+}
+
+export function EmailTemplatesClient({
+  templates: initialTemplates,
+  layoutConfig,
+}: Props) {
   const t = useTranslations('admin.emailTemplates')
   const locale = useLocale()
   const [isPending, startTransition] = useTransition()
 
   const [templates, setTemplates] = useState(initialTemplates)
-  const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null)
-  const [previewHtml, setPreviewHtml] = useState<string | null>(null)
+  const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(
+    null
+  )
+  const [showPreview, setShowPreview] = useState(false)
+  const [previewLocale, setPreviewLocale] = useState<'de' | 'en'>('de')
 
   // Edit state
   const [editSubjectDe, setEditSubjectDe] = useState('')
@@ -104,29 +119,15 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
     setEditSubjectEn(template.subjectEn)
     setEditBodyDe(template.bodyDe)
     setEditBodyEn(template.bodyEn)
-    setPreviewHtml(null)
+    setShowPreview(false)
   }
 
   function cancelEdit() {
     setEditingTemplate(null)
-    setPreviewHtml(null)
-  }
-
-  function renderPreview(body: string, subject: string) {
-    let rendered = body
-    let renderedSubject = subject
-    for (const [key, value] of Object.entries(EXAMPLE_VARIABLES)) {
-      const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g')
-      rendered = rendered.replace(regex, value)
-      renderedSubject = renderedSubject.replace(regex, value)
-    }
-    setPreviewHtml(
-      `<div style="padding:8px;"><p style="margin:0 0 8px;font-weight:600;">Subject: ${renderedSubject}</p><hr/>${rendered}</div>`
-    )
+    setShowPreview(false)
   }
 
   function insertVariable(variable: string) {
-    // Insert at cursor position of the active textarea
     const placeholder = `{{${variable}}}`
     navigator.clipboard.writeText(placeholder)
     toast.success(t('variableCopied', { variable: placeholder }), {
@@ -149,7 +150,6 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
           className: 'rounded-full',
           position: 'top-center',
         })
-        // Update local state
         setTemplates((prev) =>
           prev.map((tpl) =>
             tpl.id === editingTemplate.id
@@ -165,7 +165,7 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
           )
         )
         setEditingTemplate(null)
-        setPreviewHtml(null)
+        setShowPreview(false)
       } else {
         toast.error(result.error || t('error'), {
           className: 'rounded-full',
@@ -197,6 +197,97 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
       }
     })
   }
+
+  function handleSendTest(templateOrEdit?: EmailTemplate) {
+    const tpl = templateOrEdit || editingTemplate
+    if (!tpl) return
+
+    const isEditing = !templateOrEdit
+    const subjectDe = isEditing ? editSubjectDe : tpl.subjectDe
+    const subjectEn = isEditing ? editSubjectEn : tpl.subjectEn
+    const bodyDe = isEditing ? editBodyDe : tpl.bodyDe
+    const bodyEn = isEditing ? editBodyEn : tpl.bodyEn
+
+    startTransition(async () => {
+      const result = await sendTestTemplateEmail({
+        subjectDe,
+        subjectEn,
+        bodyDe,
+        bodyEn,
+        templateId: tpl.id,
+        templateSlug: tpl.slug,
+        locale: (locale as 'de' | 'en') || 'de',
+      })
+      if (result.success) {
+        toast.success(t('testSent'), {
+          className: 'rounded-full',
+          position: 'top-center',
+        })
+        setTemplates((prev) =>
+          prev.map((p) =>
+            p.id === tpl.id ? { ...p, lastTestSentAt: new Date() } : p
+          )
+        )
+      } else {
+        toast.error(result.error || t('testError'), {
+          className: 'rounded-full',
+          position: 'top-center',
+        })
+      }
+    })
+  }
+
+  // Full layout preview HTML
+  const previewHtml = useMemo(() => {
+    if (!editingTemplate) return ''
+    const body = previewLocale === 'de' ? editBodyDe : editBodyEn
+    const subject = previewLocale === 'de' ? editSubjectDe : editSubjectEn
+    const renderedBody = renderWithVariables(body)
+    const renderedSubject = renderWithVariables(subject)
+
+    const logoHtml = layoutConfig.logoUrl
+      ? `<img src="${layoutConfig.logoUrl}" alt="${layoutConfig.platformName}" style="max-height:40px;max-width:200px;" />`
+      : `<span style="font-size:20px;font-weight:700;color:${layoutConfig.primaryColor};">${layoutConfig.platformName}</span>`
+
+    const footerTemplate =
+      previewLocale === 'de'
+        ? layoutConfig.footerTextDe
+        : layoutConfig.footerTextEn
+    const footerText = footerTemplate
+      .replace(/\{\{platformName\}\}/g, layoutConfig.platformName)
+      .replace(/\{\{currentYear\}\}/g, new Date().getFullYear().toString())
+      .replace(
+        /\{\{supportEmail\}\}/g,
+        layoutConfig.supportEmail || 'support@anivise.com'
+      )
+
+    return `
+      <div style="margin-bottom:12px;padding:8px 12px;background:#f0f0f0;border-radius:6px;">
+        <strong>Subject:</strong> [TEST] ${renderedSubject}
+      </div>
+      <div style="background:${layoutConfig.bgColor};padding:40px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <div style="max-width:600px;margin:0 auto;">
+          <div style="background:${layoutConfig.contentBgColor};border-radius:${layoutConfig.borderRadius}px;padding:32px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+            <div style="text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #e4e4e7;">
+              ${logoHtml}
+            </div>
+            ${renderedBody}
+          </div>
+          <div style="text-align:center;margin-top:24px;color:#a1a1aa;font-size:12px;">
+            <p>${footerText}</p>
+          </div>
+        </div>
+      </div>
+    `
+  }, [
+    editingTemplate,
+    previewLocale,
+    editBodyDe,
+    editBodyEn,
+    editSubjectDe,
+    editSubjectEn,
+    layoutConfig,
+  ])
 
   const variables = editingTemplate
     ? (editingTemplate.availableVariables as string[])
@@ -247,7 +338,10 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
                 </div>
                 <Button
                   variant="outline"
-                  onClick={() => renderPreview(editBodyDe, editSubjectDe)}
+                  onClick={() => {
+                    setPreviewLocale('de')
+                    setShowPreview(true)
+                  }}
                 >
                   <Eye className="mr-2 size-4" />
                   {t('preview')}
@@ -272,7 +366,10 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
                 </div>
                 <Button
                   variant="outline"
-                  onClick={() => renderPreview(editBodyEn, editSubjectEn)}
+                  onClick={() => {
+                    setPreviewLocale('en')
+                    setShowPreview(true)
+                  }}
                 >
                   <Eye className="mr-2 size-4" />
                   {t('preview')}
@@ -280,21 +377,42 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
               </TabsContent>
             </Tabs>
 
-            {previewHtml && (
+            {showPreview && (
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">{t('previewTitle')}</CardTitle>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">
+                      {t('previewTitle')}
+                    </CardTitle>
+                    <Tabs
+                      value={previewLocale}
+                      onValueChange={(v) =>
+                        setPreviewLocale(v as 'de' | 'en')
+                      }
+                    >
+                      <TabsList className="h-8">
+                        <TabsTrigger value="de" className="h-6 px-2 text-xs">
+                          DE
+                        </TabsTrigger>
+                        <TabsTrigger value="en" className="h-6 px-2 text-xs">
+                          EN
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <Separator />
+                <CardContent className="p-0">
                   <div
-                    className="rounded-md border bg-white p-4"
+                    className="overflow-auto"
+                    style={{ maxHeight: '500px' }}
                     dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
                 </CardContent>
               </Card>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <Button disabled={isPending} onClick={handleSave}>
                 {isPending ? (
                   <Loader2 className="mr-2 size-4 animate-spin" />
@@ -302,6 +420,18 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
                   <Save className="mr-2 size-4" />
                 )}
                 {t('saveTemplate')}
+              </Button>
+              <Button
+                variant="outline"
+                disabled={isPending}
+                onClick={() => handleSendTest()}
+              >
+                {isPending ? (
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                ) : (
+                  <Send className="mr-2 size-4" />
+                )}
+                {t('sendTestToMe')}
               </Button>
               {editingTemplate.isSystem && (
                 <Button
@@ -368,7 +498,9 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
                     {t('columnDescription')}
                   </TableHead>
                   <TableHead>{t('columnType')}</TableHead>
-                  <TableHead className="w-[100px]">{t('columnActions')}</TableHead>
+                  <TableHead className="w-[180px]">
+                    {t('columnActions')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -387,19 +519,40 @@ export function EmailTemplatesClient({ templates: initialTemplates }: Props) {
                       {template.description}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={template.isSystem ? 'secondary' : 'outline'}>
-                        {template.isSystem ? t('systemTemplate') : t('customTemplate')}
+                      <Badge
+                        variant={
+                          template.isSystem ? 'secondary' : 'outline'
+                        }
+                      >
+                        {template.isSystem
+                          ? t('systemTemplate')
+                          : t('customTemplate')}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => startEdit(template)}
-                      >
-                        <Pencil className="mr-1 size-3.5" />
-                        {t('edit')}
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => startEdit(template)}
+                        >
+                          <Pencil className="mr-1 size-3.5" />
+                          {t('edit')}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={isPending}
+                          onClick={() => handleSendTest(template)}
+                        >
+                          {isPending ? (
+                            <Loader2 className="mr-1 size-3.5 animate-spin" />
+                          ) : (
+                            <Send className="mr-1 size-3.5" />
+                          )}
+                          {t('sendTest')}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

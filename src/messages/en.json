@@ -341,7 +341,11 @@
       "saved": "Template saved successfully",
       "error": "Failed to save template",
       "resetToDefault": "Reset to Default",
-      "resetSuccess": "Template reset to default"
+      "resetSuccess": "Template reset to default",
+      "sendTest": "Test",
+      "sendTestToMe": "Send test email to me",
+      "testSent": "Test email sent to your address",
+      "testError": "Failed to send test email"
     },
     "impersonation": {
       "viewAsOrg": "View as Organization",

@@ -895,6 +895,112 @@ export async function resetEmailTemplate(
   }
 }
 
+// ─── Test Template Email ───
+
+export async function sendTestTemplateEmail(params: {
+  subjectDe: string
+  subjectEn: string
+  bodyDe: string
+  bodyEn: string
+  templateId: string
+  templateSlug: string
+  locale: 'de' | 'en'
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    const { getEmailLayoutConfig, wrapInBaseLayout } = await import(
+      '@/lib/email/send'
+    )
+    const { getIntegrationSecret } = await import('@/lib/crypto/secrets')
+
+    const layoutConfig = await getEmailLayoutConfig()
+
+    // Use example variables for the test
+    const exampleVars: Record<string, string> = {
+      inviterName: 'Max Mustermann',
+      role: 'Superadmin',
+      inviteLink: 'https://app.anivise.com/invite/abc123',
+      expiryDays: '7',
+      orgName: 'Acme Corp',
+      userName: currentUser.email.split('@')[0] || 'User',
+      loginLink: 'https://app.anivise.com/login',
+      resetLink: 'https://app.anivise.com/reset/abc123',
+      expiryMinutes: '60',
+      subjectName: 'Thomas Schmidt',
+      reportLink: 'https://app.anivise.com/reports/abc123',
+    }
+
+    const subject = params.locale === 'de' ? params.subjectDe : params.subjectEn
+    const body = params.locale === 'de' ? params.bodyDe : params.bodyEn
+
+    let rendered = body
+    let renderedSubject = subject
+    for (const [key, value] of Object.entries(exampleVars)) {
+      const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g')
+      rendered = rendered.replace(regex, value)
+      renderedSubject = renderedSubject.replace(regex, value)
+    }
+
+    const html = wrapInBaseLayout(rendered, params.locale, layoutConfig)
+
+    const apiKey =
+      (await getIntegrationSecret('resend', 'api_key')) ||
+      process.env.RESEND_API_KEY
+
+    if (!apiKey) {
+      return { success: false, error: 'Resend API key not configured' }
+    }
+
+    const fromEmail =
+      (await getIntegrationSecret('resend', 'from_email')) ||
+      process.env.RESEND_FROM_EMAIL ||
+      'noreply@anivise.com'
+    const fromName =
+      (await getIntegrationSecret('resend', 'from_name')) ||
+      layoutConfig.platformName ||
+      'Anivise'
+
+    const { Resend } = await import('resend')
+    const resend = new Resend(apiKey)
+
+    await resend.emails.send({
+      from: `${fromName} <${fromEmail}>`,
+      to: currentUser.email,
+      subject: `[TEST] ${renderedSubject}`,
+      html,
+    })
+
+    // Update last_test_sent_at
+    await db
+      .update(emailTemplates)
+      .set({ lastTestSentAt: new Date() })
+      .where(eq(emailTemplates.id, params.templateId))
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'email_template',
+      entityId: params.templateId,
+      metadata: {
+        slug: params.templateSlug,
+        action: 'email.test_sent',
+        recipient: currentUser.email,
+        locale: params.locale,
+      },
+    })
+
+    revalidatePath('/admin/settings/emails')
+    return { success: true }
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Failed to send test email',
+    }
+  }
+}
+
 // ─── Notifications ───
 
 export async function getRecentNotifications() {

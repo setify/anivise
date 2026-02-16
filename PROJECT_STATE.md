@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.13.1
+**Version:** 0.13.2
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add configurable email base layout with live preview
+**Last Commit:** feat(admin): enhance email template testing with layout preview and test send
 
 ## What's Implemented
 
@@ -96,7 +96,7 @@
 - [x] Org creation form with "First Org-Admin" section and auto-invitation
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination
 - [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)
-- [x] Superadmin Email Templates page (`/admin/settings/emails`) with editor, preview, variables, reset
+- [x] Superadmin Email Templates page (`/admin/settings/emails`) with editor, preview, variables, reset, test send
 - [x] Email Layout page (`/admin/settings/email-layout`) with logo, colors, footer, border radius, live preview, test send
 - [x] Impersonation: "View as Organization" button on org detail (superadmin only)
 - [x] Impersonation banner in dashboard layout with signed cookie and 2h timeout
@@ -151,6 +151,7 @@
 - [x] cancelAnalysisJob - cancel pending/processing job with audit logging
 - [x] retryAnalysisJob - reset failed/cancelled job to pending with audit logging
 - [x] checkN8nHealthAction - check n8n webhook connectivity
+- [x] sendTestTemplateEmail - send test email with unsaved template content and layout
 - [x] saveIntegrationSecrets - save encrypted secrets for a service
 - [x] getIntegrationSecretsForUI - load masked secrets for display
 - [x] testSupabaseConnection - test Supabase API connectivity

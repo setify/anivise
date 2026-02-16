@@ -2,6 +2,7 @@ import { requirePlatformRole } from '@/lib/auth/require-platform-role'
 import { db } from '@/lib/db'
 import { emailTemplates } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
+import { getEmailLayoutConfig } from '@/lib/email/send'
 import { EmailTemplatesClient } from './email-templates-client'
 
 export default async function EmailTemplatesPage() {
@@ -11,5 +12,13 @@ export default async function EmailTemplatesPage() {
     .from(emailTemplates)
     .orderBy(desc(emailTemplates.isSystem))
 
-  return <EmailTemplatesClient templates={templates} currentUser={currentUser} />
+  const layoutConfig = await getEmailLayoutConfig()
+
+  return (
+    <EmailTemplatesClient
+      templates={templates}
+      currentUser={currentUser}
+      layoutConfig={layoutConfig}
+    />
+  )
 }

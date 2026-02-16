@@ -12,6 +12,7 @@ export const emailTemplates = pgTable('email_templates', {
   bodyEn: text('body_en').notNull(),
   availableVariables: jsonb('available_variables').notNull(),
   isSystem: boolean('is_system').notNull().default(true),
+  lastTestSentAt: timestamp('last_test_sent_at', { withTimezone: true }),
   updatedBy: uuid('updated_by').references(() => users.id),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
