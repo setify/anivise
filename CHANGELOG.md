@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.1] - 2026-02-16
+### Added
+- Breadcrumbs component for admin pages (auto-generated from URL path with segment labels)
+- Staff permission filtering on admin sidebar (Settings only visible to superadmin)
+
+### Changed
+- Superadmin layout refactored from client-only to server+client architecture
+  - Layout is now a server component that fetches user role via `requirePlatformRole`
+  - Interactive parts (mobile sidebar, etc.) moved to `AdminLayoutClient` wrapper
+  - `AdminSidebar` now receives `platformRole` prop for permission-based nav filtering
+- Breadcrumbs visible in admin header on desktop (hidden on mobile)
+
 ## [0.12.0] - 2026-02-16
 ### Added
 - n8n integration: webhook trigger helper (`triggerN8nWebhook`) and health check (`checkN8nHealth`)

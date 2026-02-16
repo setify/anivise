@@ -23,14 +23,16 @@ interface NavItem {
   label: string
   icon: React.ComponentType<{ className?: string }>
   badge?: number
+  superadminOnly?: boolean
 }
 
-export function AdminSidebar() {
+export function AdminSidebar({ platformRole }: { platformRole?: string | null }) {
   const t = useTranslations('nav')
   const tAdmin = useTranslations('admin')
   const locale = useLocale()
   const pathname = usePathname()
   const [unreadCount, setUnreadCount] = useState(0)
+  const isSuperadmin = platformRole === 'superadmin'
 
   useEffect(() => {
     loadUnreadCount()
@@ -84,8 +86,13 @@ export function AdminSidebar() {
       href: `/${locale}/admin/settings`,
       label: tAdmin('platformSettings.title'),
       icon: Settings,
+      superadminOnly: true,
     },
   ]
+
+  const visibleNavItems = navItems.filter(
+    (item) => !item.superadminOnly || isSuperadmin
+  )
 
   return (
     <div className="flex h-full flex-col">
@@ -99,7 +106,7 @@ export function AdminSidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-3">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive =
             item.href === `/${locale}/admin`
               ? pathname === item.href

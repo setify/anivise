@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.12.0
+**Version:** 0.12.1
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add n8n health check, analysis job management, and webhook handler
+**Last Commit:** refactor(admin): add breadcrumbs, staff permissions, server layout
 
 ## What's Implemented
 
@@ -62,6 +62,7 @@
 - [x] Role permissions map for client-side UX checks
 - [x] Role-based middleware guards (auth redirect for protected routes)
 - [x] requirePlatformRole server-side guard for admin pages
+- [x] Staff/superadmin filtering on admin sidebar nav items
 - [ ] UI-level permission checks in dashboard components (hooks available, not yet wired)
 
 ### Hooks
@@ -100,6 +101,8 @@
 - [x] NotificationBell component in admin header (popover, polling, unread badge)
 - [x] Notifications page (`/admin/notifications`) with All/Unread tabs, mark-all-read, pagination
 - [x] Analysis Jobs page (`/admin/jobs`) with n8n health check, stats, filters, retry/cancel actions
+- [x] Breadcrumbs component in admin header (auto-generated from URL path)
+- [x] Staff permission filtering on admin sidebar (Settings hidden for staff)
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
