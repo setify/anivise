@@ -7,6 +7,7 @@ import type {
   consents,
   analysisJobs,
   reports,
+  teamInvitations,
 } from '@/lib/db/schema'
 
 // Organization
@@ -36,3 +37,10 @@ export type NewAnalysisJob = InferInsertModel<typeof analysisJobs>
 // Report
 export type Report = InferSelectModel<typeof reports>
 export type NewReport = InferInsertModel<typeof reports>
+
+// Team Invitation
+export type TeamInvitation = InferSelectModel<typeof teamInvitations>
+export type NewTeamInvitation = InferInsertModel<typeof teamInvitations>
+
+// Platform Role type
+export type PlatformRole = 'superadmin' | 'staff'

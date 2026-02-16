@@ -12,7 +12,18 @@
     "confirm": "Bestaetigen",
     "search": "Suchen...",
     "noResults": "Keine Ergebnisse gefunden",
-    "comingSoon": "In Kuerze verfuegbar"
+    "comingSoon": "In Kuerze verfuegbar",
+    "actions": "Aktionen",
+    "create": "Erstellen",
+    "invite": "Einladen",
+    "remove": "Entfernen",
+    "role": "Rolle",
+    "email": "E-Mail",
+    "status": "Status",
+    "name": "Name",
+    "date": "Datum",
+    "success": "Erfolgreich",
+    "saving": "Speichern..."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -110,6 +121,74 @@
       "totalOrganizations": "Organisationen gesamt",
       "totalUsers": "Benutzer gesamt",
       "totalAnalyses": "Analysen gesamt"
+    },
+    "profile": {
+      "title": "Profil",
+      "description": "Verwalten Sie Ihre persoenlichen Informationen",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "displayName": "Anzeigename",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefon",
+      "timezone": "Zeitzone",
+      "locale": "Sprache",
+      "saved": "Profil erfolgreich gespeichert",
+      "error": "Fehler beim Speichern des Profils"
+    },
+    "team": {
+      "title": "Team",
+      "description": "Plattform-Teammitglieder verwalten",
+      "members": "Mitglieder",
+      "invitations": "Einladungen",
+      "inviteMember": "Mitglied einladen",
+      "inviteDescription": "Laden Sie einen neuen Teammitglied zur Plattform ein",
+      "noMembers": "Noch keine Teammitglieder vorhanden.",
+      "noInvitations": "Keine ausstehenden Einladungen.",
+      "changeRole": "Rolle aendern",
+      "removeMember": "Mitglied entfernen",
+      "removeConfirm": "Sind Sie sicher, dass Sie dieses Mitglied entfernen moechten?",
+      "removeWarning": "Der Zugang zur Administrationsoberflaeche wird entzogen.",
+      "cancelInvitation": "Einladung zurueckziehen",
+      "roles": {
+        "superadmin": "Superadmin",
+        "staff": "Staff"
+      },
+      "invited": "Einladung gesendet",
+      "roleUpdated": "Rolle aktualisiert",
+      "memberRemoved": "Mitglied entfernt",
+      "invitationCancelled": "Einladung zurueckgezogen",
+      "error": "Ein Fehler ist aufgetreten"
+    },
+    "orgs": {
+      "title": "Organisationen",
+      "description": "Alle Organisationen auf der Plattform verwalten",
+      "createOrg": "Organisation erstellen",
+      "createDescription": "Erstellen Sie eine neue Organisation",
+      "name": "Name",
+      "slug": "Slug",
+      "slugHelp": "Wird fuer die Subdomain verwendet (z.B. acme.anivise.com)",
+      "tier": "Abo-Stufe",
+      "tierStatus": "Abo-Status",
+      "individual": "Einzelperson",
+      "teamTier": "Team",
+      "enterprise": "Enterprise",
+      "trial": "Testphase",
+      "active": "Aktiv",
+      "cancelled": "Gekuendigt",
+      "expired": "Abgelaufen",
+      "created": "Erstellt am",
+      "noOrgs": "Noch keine Organisationen vorhanden.",
+      "orgCreated": "Organisation erstellt",
+      "orgDeleted": "Organisation geloescht",
+      "detail": {
+        "title": "Organisation Details",
+        "dangerZone": "Gefahrenzone",
+        "deleteOrg": "Organisation loeschen",
+        "deleteWarning": "Diese Aktion kann nicht rueckgaengig gemacht werden. Alle Daten der Organisation werden dauerhaft geloescht.",
+        "deleteConfirm": "Sind Sie sicher, dass Sie diese Organisation loeschen moechten?",
+        "notFound": "Organisation nicht gefunden"
+      },
+      "error": "Ein Fehler ist aufgetreten"
     }
   }
 }

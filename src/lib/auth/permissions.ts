@@ -1,4 +1,4 @@
-import { hasRole, type Role } from './roles'
+import { hasRole, hasPlatformRole, type Role, type PlatformRole } from './roles'
 
 /** Can manage organization settings and users (org_admin+) */
 export function canManageOrganization(role: Role): boolean {
@@ -21,9 +21,14 @@ export function canManageTeam(role: Role): boolean {
   return hasRole(role, 'manager')
 }
 
-/** Can access the superadmin panel */
-export function canAccessSuperadmin(isSuperadmin: boolean): boolean {
-  return isSuperadmin
+/** Can access the superadmin panel (any platform role: superadmin or staff) */
+export function canAccessSuperadmin(platformRole: PlatformRole | null): boolean {
+  return hasPlatformRole(platformRole, 'staff')
+}
+
+/** Can manage platform team (invite/remove staff) — superadmin only */
+export function canManagePlatformTeam(platformRole: PlatformRole | null): boolean {
+  return hasPlatformRole(platformRole, 'superadmin')
 }
 
 /** Permissions map per role for client-side UX checks */
@@ -34,6 +39,7 @@ export const ROLE_PERMISSIONS = {
     viewAllReports: true,
     manageTeam: true,
     accessSuperadmin: true,
+    managePlatformTeam: true,
   },
   org_admin: {
     manageOrganization: true,
@@ -41,6 +47,7 @@ export const ROLE_PERMISSIONS = {
     viewAllReports: true,
     manageTeam: true,
     accessSuperadmin: false,
+    managePlatformTeam: false,
   },
   manager: {
     manageOrganization: false,
@@ -48,6 +55,7 @@ export const ROLE_PERMISSIONS = {
     viewAllReports: true,
     manageTeam: true,
     accessSuperadmin: false,
+    managePlatformTeam: false,
   },
   member: {
     manageOrganization: false,
@@ -55,5 +63,6 @@ export const ROLE_PERMISSIONS = {
     viewAllReports: false,
     manageTeam: false,
     accessSuperadmin: false,
+    managePlatformTeam: false,
   },
 } as const satisfies Record<Role, Record<string, boolean>>

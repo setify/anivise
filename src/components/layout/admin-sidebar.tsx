@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { Building2, LayoutDashboard } from 'lucide-react'
+import { Building2, LayoutDashboard, User, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface NavItem {
@@ -25,8 +25,18 @@ export function AdminSidebar() {
       icon: LayoutDashboard,
     },
     {
+      href: `/${locale}/admin/profile`,
+      label: tAdmin('profile.title'),
+      icon: User,
+    },
+    {
+      href: `/${locale}/admin/team`,
+      label: tAdmin('team.title'),
+      icon: Users,
+    },
+    {
       href: `/${locale}/admin/organizations`,
-      label: tAdmin('organizations'),
+      label: tAdmin('orgs.title'),
       icon: Building2,
     },
   ]
@@ -45,7 +55,9 @@ export function AdminSidebar() {
       <nav className="flex-1 space-y-1 px-3 py-3">
         {navItems.map((item) => {
           const isActive =
-            pathname === item.href || pathname.startsWith(item.href + '/')
+            item.href === `/${locale}/admin`
+              ? pathname === item.href
+              : pathname === item.href || pathname.startsWith(item.href + '/')
           return (
             <Link
               key={item.href}

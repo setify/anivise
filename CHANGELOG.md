@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.5.0] - 2026-02-16
+### Added
+- Superadmin Profile page (`/admin/profile`) with editable form (first name, last name, display name, phone, timezone, locale)
+- Superadmin Team management page (`/admin/team`) with members table, role management, invite dialog, and pending invitations tab
+- Superadmin Organizations page (`/admin/organizations`) with list view, create form, and detail page with danger zone (soft-delete)
+- `platform_role` enum (`superadmin` | `staff`) replacing the `is_superadmin` boolean on users table
+- `invitation_status` enum for team invitations
+- `team_invitations` table for platform team invitations with token, expiry, and status tracking
+- Extended users table with `first_name`, `last_name`, `display_name`, `phone`, `timezone`, `avatar_storage_path`, `platform_role` columns
+- `require-platform-role` server-side helper for enforcing platform role access in server components and actions
+- `hasPlatformRole()` and `getPlatformRoleLevel()` role helpers
+- `canManagePlatformTeam()` permission helper (superadmin only)
+- Zod validation schemas for admin forms (`updateProfile`, `inviteTeamMember`, `updateTeamMemberRole`, `removeTeamMember`, `createOrganization`, `deleteOrganization`)
+- Server actions for profile update, team management (invite, role change, remove, cancel invitation), and organization CRUD
+- Platform stats (real counts from DB) on admin dashboard
+- Comprehensive i18n translations for admin profile, team, and organizations (de + en)
+- Additional shadcn/ui components: table, textarea, tabs, alert-dialog, skeleton, switch
+
+### Changed
+- Admin sidebar now has 4 nav items: Dashboard, Profile, Team, Organizations
+- `canAccessSuperadmin()` now accepts `PlatformRole | null` instead of `boolean`
+- `useRole` hook returns `platformRole` instead of `isSuperadmin`
+- RBAC roles module extended with `PlatformRole` type, `PLATFORM_ROLES` constant, and validation helpers
+- Admin dashboard page fetches real stats from database
+
+### Removed
+- `is_superadmin` boolean column from users table (replaced by `platform_role` enum)
+
 ## [0.4.0] - 2026-02-16
 ### Added
 - Dashboard app shell with responsive sidebar navigation (desktop fixed, mobile via Sheet)

@@ -7,6 +7,8 @@ export {
   consentStatusEnum,
   jobStatusEnum,
   localeEnum,
+  platformRoleEnum,
+  invitationStatusEnum,
 } from './enums'
 
 // Tables
@@ -17,3 +19,4 @@ export { analysisSubjects } from './analysis-subjects'
 export { consents } from './consents'
 export { analysisJobs } from './analysis-jobs'
 export { reports } from './reports'
+export { teamInvitations } from './team-invitations'

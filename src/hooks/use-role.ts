@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { OrgRole } from '@/lib/auth/roles'
+import type { OrgRole, PlatformRole } from '@/lib/auth/roles'
 import { useTenant } from './use-tenant'
 
 interface RoleContext {
   role: OrgRole | null
-  isSuperadmin: boolean
+  platformRole: PlatformRole | null
   isLoading: boolean
 }
 
@@ -20,7 +20,7 @@ interface RoleContext {
 export function useRole(): RoleContext {
   const { organizationSlug } = useTenant()
   const [role, setRole] = useState<OrgRole | null>(null)
-  const [isSuperadmin, setIsSuperadmin] = useState(false)
+  const [platformRole, setPlatformRole] = useState<PlatformRole | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -35,15 +35,15 @@ export function useRole(): RoleContext {
         return
       }
 
-      // Check superadmin flag from users table
+      // Check platform_role from users table
       const { data: userData } = await supabase
         .from('users')
-        .select('is_superadmin')
+        .select('platform_role')
         .eq('id', user.id)
         .single()
 
-      if (userData?.is_superadmin) {
-        setIsSuperadmin(true)
+      if (userData?.platform_role) {
+        setPlatformRole(userData.platform_role as PlatformRole)
       }
 
       // If we have an org context, fetch org role
@@ -74,5 +74,5 @@ export function useRole(): RoleContext {
     fetchRole()
   }, [organizationSlug])
 
-  return { role, isSuperadmin, isLoading }
+  return { role, platformRole, isLoading }
 }

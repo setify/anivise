@@ -2,30 +2,35 @@ import { useTranslations } from 'next-intl'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Building2, Users, BarChart3 } from 'lucide-react'
+import { Building2, Users } from 'lucide-react'
+import { getPlatformStats } from './actions'
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const stats = await getPlatformStats()
+
+  return <AdminDashboard stats={stats} />
+}
+
+function AdminDashboard({
+  stats,
+}: {
+  stats: { totalOrganizations: number; totalUsers: number }
+}) {
   const t = useTranslations('admin')
 
-  const stats = [
+  const statCards = [
     {
       title: t('stats.totalOrganizations'),
-      value: '0',
+      value: stats.totalOrganizations.toString(),
       icon: Building2,
     },
     {
       title: t('stats.totalUsers'),
-      value: '0',
+      value: stats.totalUsers.toString(),
       icon: Users,
-    },
-    {
-      title: t('stats.totalAnalyses'),
-      value: '0',
-      icon: BarChart3,
     },
   ]
 
@@ -37,7 +42,7 @@ export default function AdminPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((stat) => (
+        {statCards.map((stat) => (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">
@@ -51,16 +56,6 @@ export default function AdminPage() {
           </Card>
         ))}
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('organizations')}</CardTitle>
-          <CardDescription>{t('organizationsDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('noOrganizations')}</p>
-        </CardContent>
-      </Card>
     </div>
   )
 }

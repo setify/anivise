@@ -39,3 +39,15 @@ export const jobStatusEnum = pgEnum('job_status', [
 ])
 
 export const localeEnum = pgEnum('locale', ['de', 'en'])
+
+export const platformRoleEnum = pgEnum('platform_role', [
+  'superadmin',
+  'staff',
+])
+
+export const invitationStatusEnum = pgEnum('invitation_status', [
+  'pending',
+  'accepted',
+  'expired',
+  'cancelled',
+])
