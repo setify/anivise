@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import {
   Activity,
   Bell,
+  Briefcase,
   Building2,
   LayoutDashboard,
   Settings,
@@ -62,6 +63,11 @@ export function AdminSidebar() {
       href: `/${locale}/admin/organizations`,
       label: tAdmin('orgs.title'),
       icon: Building2,
+    },
+    {
+      href: `/${locale}/admin/jobs`,
+      label: tAdmin('jobs.title'),
+      icon: Briefcase,
     },
     {
       href: `/${locale}/admin/notifications`,

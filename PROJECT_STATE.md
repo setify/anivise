@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.11.0
+**Version:** 0.12.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add notification center with bell, page, and event integration
+**Last Commit:** feat(admin): add n8n health check, analysis job management, and webhook handler
 
 ## What's Implemented
 
@@ -83,7 +83,7 @@
 - [x] Analyses page with empty state
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (7 nav items: Dashboard, Profile, Team, Organizations, Notifications, Activity, Settings)
+- [x] Superadmin layout with admin sidebar (8 nav items: Dashboard, Profile, Team, Organizations, Jobs, Notifications, Activity, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
@@ -99,6 +99,7 @@
 - [x] Impersonation banner in dashboard layout with signed cookie and 2h timeout
 - [x] NotificationBell component in admin header (popover, polling, unread badge)
 - [x] Notifications page (`/admin/notifications`) with All/Unread tabs, mark-all-read, pagination
+- [x] Analysis Jobs page (`/admin/jobs`) with n8n health check, stats, filters, retry/cancel actions
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [ ] Analysis upload flow
@@ -139,10 +140,16 @@
 - [x] markNotificationRead - mark a single notification as read
 - [x] markAllNotificationsRead - mark all notifications as read
 - [x] createNotification - create notification for user or broadcast to all superadmins
+- [x] getAnalysisJobs - list analysis jobs with status/org filters and pagination
+- [x] getAnalysisJobStats - get counts by status
+- [x] cancelAnalysisJob - cancel pending/processing job with audit logging
+- [x] retryAnalysisJob - reset failed/cancelled job to pending with audit logging
+- [x] checkN8nHealthAction - check n8n webhook connectivity
 
 ### Integrations
-- [ ] n8n webhook trigger
-- [ ] n8n callback handler
+- [x] n8n webhook trigger (`triggerN8nWebhook` helper with secret header)
+- [x] n8n callback handler (`POST /api/webhooks/n8n/analysis-complete` with validation)
+- [x] n8n health check (`checkN8nHealth`)
 - [x] Resend email (package installed, sendTemplatedEmail helper ready)
 - [ ] Supabase Storage upload flow
 
@@ -219,7 +226,11 @@
 - `src/lib/db/schema/notifications.ts` - Notifications table schema
 - `src/app/[locale]/(superadmin)/admin/notifications/page.tsx` - Notifications page (server)
 - `src/app/[locale]/(superadmin)/admin/notifications/notifications-page-client.tsx` - Notifications list (client)
-- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (7 items)
+- `src/lib/n8n/trigger.ts` - n8n webhook trigger and health check
+- `src/app/api/webhooks/n8n/analysis-complete/route.ts` - n8n callback webhook handler
+- `src/app/[locale]/(superadmin)/admin/jobs/page.tsx` - Analysis jobs page (server)
+- `src/app/[locale]/(superadmin)/admin/jobs/jobs-page-client.tsx` - Analysis jobs table (client)
+- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (8 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration

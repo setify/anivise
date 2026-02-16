@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.12.0] - 2026-02-16
+### Added
+- n8n integration: webhook trigger helper (`triggerN8nWebhook`) and health check (`checkN8nHealth`)
+- n8n callback webhook handler (`POST /api/webhooks/n8n/analysis-complete`) with secret validation, job update, report storage, and notifications
+- Analysis Jobs page (`/admin/jobs`) with:
+  - n8n connection health check card
+  - 6 stat cards (total, pending, processing, completed, failed, cancelled)
+  - Filterable table by status and organization
+  - Retry action for failed/cancelled jobs
+  - Cancel action with confirmation dialog for pending/processing jobs
+  - Pagination
+- "Analysis Jobs" nav item in admin sidebar (8 items now)
+- Server actions: `getAnalysisJobs`, `getAnalysisJobStats`, `cancelAnalysisJob`, `retryAnalysisJob`, `checkN8nHealthAction`
+- i18n translations for analysis jobs (`admin.jobs` namespace, de + en)
+
 ## [0.11.0] - 2026-02-16
 ### Added
 - Notification center with `notifications` table (recipientId, type, title, body, link, isRead, metadata)
