@@ -1,5 +1,5 @@
-import { pgTable, uuid, text, jsonb, timestamp } from 'drizzle-orm/pg-core'
-import { subscriptionTierEnum, subscriptionStatusEnum } from './enums'
+import { pgTable, uuid, text, jsonb, timestamp, integer } from 'drizzle-orm/pg-core'
+import { subscriptionTierEnum, subscriptionStatusEnum, localeEnum } from './enums'
 
 export const organizations = pgTable('organizations', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -12,6 +12,10 @@ export const organizations = pgTable('organizations', {
   subscriptionStatus: subscriptionStatusEnum('subscription_status')
     .notNull()
     .default('trial'),
+  defaultLocale: localeEnum('default_locale'),
+  maxMembers: integer('max_members'),
+  maxAnalysesPerMonth: integer('max_analyses_per_month'),
+  internalNotes: text('internal_notes'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .defaultNow(),

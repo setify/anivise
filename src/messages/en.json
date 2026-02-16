@@ -265,6 +265,33 @@
         "deleteConfirm": "Are you sure you want to delete this organization?",
         "notFound": "Organization not found"
       },
+      "edit": {
+        "title": "Edit Organization",
+        "basicData": "Basic Data",
+        "basicDataDescription": "Name and subdomain of the organization",
+        "subdomainPreview": "Subdomain preview",
+        "slugTaken": "This slug is already in use by another organization.",
+        "slugReserved": "This slug is reserved and cannot be used.",
+        "slugInvalid": "Slug must be lowercase, alphanumeric with hyphens only, at least 2 characters.",
+        "slugUnavailable": "The chosen slug is not available. Please select a different one.",
+        "subscription": "Subscription",
+        "subscriptionDescription": "Subscription tier and status",
+        "tierChangeWarning": "Changing the subscription tier may affect available features and limits for this organization.",
+        "statusChangeWarning": "Setting the status to cancelled or expired will restrict access for organization members.",
+        "limitsAndSettings": "Limits & Settings",
+        "limitsDescription": "Configure organization-specific limits and defaults",
+        "defaultLanguage": "Default Language",
+        "inheritPlatform": "Inherit from platform",
+        "maxMembers": "Maximum Members",
+        "maxMembersHelp": "Leave empty for unlimited members.",
+        "maxAnalysesPerMonth": "Maximum Analyses per Month",
+        "maxAnalysesHelp": "Leave empty for unlimited analyses.",
+        "unlimited": "Unlimited",
+        "internalNotes": "Internal Notes",
+        "internalNotesDescription": "Internal notes about this organization (only visible to superadmins)",
+        "internalNotesPlaceholder": "Add internal notes about this organization...",
+        "saved": "Organization updated successfully"
+      },
       "error": "An error occurred"
     },
     "platformSettings": {

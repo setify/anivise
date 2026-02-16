@@ -20,6 +20,7 @@ import {
   removeTeamMemberSchema,
   createOrganizationSchema,
   deleteOrganizationSchema,
+  updateOrganizationSchema,
 } from '@/lib/validations/admin'
 import { logAudit } from '@/lib/audit/log'
 import { startImpersonation } from '@/lib/auth/impersonation'
@@ -431,6 +432,130 @@ export async function deleteOrganization(formData: FormData) {
 
   revalidatePath('/admin/organizations')
   return { success: true }
+}
+
+export async function updateOrganization(
+  data: {
+    id: string
+    name: string
+    slug: string
+    subscriptionTier: 'individual' | 'team' | 'enterprise'
+    subscriptionStatus: 'trial' | 'active' | 'cancelled' | 'expired'
+    defaultLocale: 'de' | 'en' | null
+    maxMembers: number | null
+    maxAnalysesPerMonth: number | null
+    internalNotes: string | null
+  }
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    const parsed = updateOrganizationSchema.safeParse(data)
+    if (!parsed.success) {
+      return { success: false, error: 'Invalid input' }
+    }
+
+    // Check reserved slugs
+    const reservedSlugs = await getSetting('org.reserved_slugs')
+    if (reservedSlugs.includes(parsed.data.slug)) {
+      return { success: false, error: 'This slug is reserved' }
+    }
+
+    // Check slug uniqueness (excluding current org)
+    const [existing] = await db
+      .select({ id: organizations.id })
+      .from(organizations)
+      .where(
+        and(
+          eq(organizations.slug, parsed.data.slug),
+          sql`${organizations.id} != ${parsed.data.id}`
+        )
+      )
+      .limit(1)
+
+    if (existing) {
+      return { success: false, error: 'Slug already in use' }
+    }
+
+    // Get old values for audit
+    const [oldOrg] = await db
+      .select()
+      .from(organizations)
+      .where(eq(organizations.id, parsed.data.id))
+      .limit(1)
+
+    if (!oldOrg) {
+      return { success: false, error: 'Organization not found' }
+    }
+
+    await db
+      .update(organizations)
+      .set({
+        name: parsed.data.name,
+        slug: parsed.data.slug,
+        subscriptionTier: parsed.data.subscriptionTier,
+        subscriptionStatus: parsed.data.subscriptionStatus,
+        defaultLocale: parsed.data.defaultLocale,
+        maxMembers: parsed.data.maxMembers,
+        maxAnalysesPerMonth: parsed.data.maxAnalysesPerMonth,
+        internalNotes: parsed.data.internalNotes,
+        updatedAt: new Date(),
+      })
+      .where(eq(organizations.id, parsed.data.id))
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'org.updated',
+      entityType: 'organization',
+      entityId: parsed.data.id,
+      metadata: {
+        changes: {
+          ...(oldOrg.name !== parsed.data.name && { name: { from: oldOrg.name, to: parsed.data.name } }),
+          ...(oldOrg.slug !== parsed.data.slug && { slug: { from: oldOrg.slug, to: parsed.data.slug } }),
+          ...(oldOrg.subscriptionTier !== parsed.data.subscriptionTier && {
+            subscriptionTier: { from: oldOrg.subscriptionTier, to: parsed.data.subscriptionTier },
+          }),
+          ...(oldOrg.subscriptionStatus !== parsed.data.subscriptionStatus && {
+            subscriptionStatus: { from: oldOrg.subscriptionStatus, to: parsed.data.subscriptionStatus },
+          }),
+        },
+      },
+    })
+
+    revalidatePath('/admin/organizations')
+    revalidatePath(`/admin/organizations/${parsed.data.id}`)
+    return { success: true }
+  } catch {
+    return { success: false, error: 'Failed to update organization' }
+  }
+}
+
+export async function checkSlugAvailability(
+  slug: string,
+  excludeOrgId?: string
+): Promise<{ available: boolean; reserved?: boolean }> {
+  await requirePlatformRole('staff')
+
+  // Check reserved slugs
+  const reservedSlugs = await getSetting('org.reserved_slugs')
+  if (reservedSlugs.includes(slug)) {
+    return { available: false, reserved: true }
+  }
+
+  // Check uniqueness
+  const conditions = [eq(organizations.slug, slug)]
+  if (excludeOrgId) {
+    conditions.push(sql`${organizations.id} != ${excludeOrgId}`)
+  }
+
+  const [existing] = await db
+    .select({ id: organizations.id })
+    .from(organizations)
+    .where(and(...conditions))
+    .limit(1)
+
+  return { available: !existing }
 }
 
 export async function createOrganizationWithAdmin(formData: FormData) {

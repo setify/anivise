@@ -265,6 +265,33 @@
         "deleteConfirm": "Sind Sie sicher, dass Sie diese Organisation loeschen moechten?",
         "notFound": "Organisation nicht gefunden"
       },
+      "edit": {
+        "title": "Organisation bearbeiten",
+        "basicData": "Grunddaten",
+        "basicDataDescription": "Name und Subdomain der Organisation",
+        "subdomainPreview": "Subdomain-Vorschau",
+        "slugTaken": "Dieser Slug wird bereits von einer anderen Organisation verwendet.",
+        "slugReserved": "Dieser Slug ist reserviert und kann nicht verwendet werden.",
+        "slugInvalid": "Slug muss aus Kleinbuchstaben, Ziffern und Bindestrichen bestehen, mindestens 2 Zeichen.",
+        "slugUnavailable": "Der gewaehlte Slug ist nicht verfuegbar. Bitte waehlen Sie einen anderen.",
+        "subscription": "Abonnement",
+        "subscriptionDescription": "Abo-Stufe und Status",
+        "tierChangeWarning": "Die Aenderung der Abo-Stufe kann sich auf verfuegbare Funktionen und Limits dieser Organisation auswirken.",
+        "statusChangeWarning": "Das Setzen des Status auf gekuendigt oder abgelaufen schraenkt den Zugang fuer Organisationsmitglieder ein.",
+        "limitsAndSettings": "Limits & Einstellungen",
+        "limitsDescription": "Organisationsspezifische Limits und Standardwerte konfigurieren",
+        "defaultLanguage": "Standardsprache",
+        "inheritPlatform": "Von Plattform uebernehmen",
+        "maxMembers": "Maximale Mitglieder",
+        "maxMembersHelp": "Leer lassen fuer unbegrenzte Mitglieder.",
+        "maxAnalysesPerMonth": "Maximale Analysen pro Monat",
+        "maxAnalysesHelp": "Leer lassen fuer unbegrenzte Analysen.",
+        "unlimited": "Unbegrenzt",
+        "internalNotes": "Interne Notizen",
+        "internalNotesDescription": "Interne Notizen zu dieser Organisation (nur fuer Superadmins sichtbar)",
+        "internalNotesPlaceholder": "Interne Notizen zu dieser Organisation hinzufuegen...",
+        "saved": "Organisation erfolgreich aktualisiert"
+      },
       "error": "Ein Fehler ist aufgetreten"
     },
     "platformSettings": {

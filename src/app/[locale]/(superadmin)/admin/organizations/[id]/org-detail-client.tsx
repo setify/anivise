@@ -45,7 +45,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { ArrowLeft, Trash2, RefreshCw, X, Copy, Check, Eye } from 'lucide-react'
+import { ArrowLeft, Trash2, RefreshCw, X, Copy, Check, Eye, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -56,6 +56,10 @@ interface Organization {
   settings: unknown
   subscriptionTier: 'individual' | 'team' | 'enterprise'
   subscriptionStatus: 'trial' | 'active' | 'cancelled' | 'expired'
+  defaultLocale: 'de' | 'en' | null
+  maxMembers: number | null
+  maxAnalysesPerMonth: number | null
+  internalNotes: string | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -164,6 +168,14 @@ export function OrgDetailClient({
               {organization.slug}
             </p>
           </div>
+          {isSuperadmin && (
+            <Button variant="outline" asChild>
+              <Link href={`/${locale}/admin/organizations/${organization.id}/edit`}>
+                <Pencil className="mr-2 size-4" />
+                {tCommon('edit')}
+              </Link>
+            </Button>
+          )}
           {isSuperadmin && (
             <AlertDialog>
               <AlertDialogTrigger asChild>

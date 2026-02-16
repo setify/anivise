@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.14.0] - 2026-02-16
+### Added
+- Organization edit page (`/admin/organizations/[id]/edit`) with form sections:
+  - Basic data (name, slug with live subdomain preview and availability check)
+  - Subscription (tier and status selection with change warnings)
+  - Limits & Settings (default language, max members, max analyses per month)
+  - Internal notes (textarea with character count, superadmin-only)
+- Extended organizations schema with `default_locale`, `max_members`, `max_analyses_per_month`, `internal_notes` columns
+- `updateOrganization` server action with slug uniqueness/reserved word validation and audit logging
+- `checkSlugAvailability` server action for real-time slug validation
+- `updateOrganizationSchema` Zod validation schema
+- "Edit" button on organization detail page (superadmin only)
+- Breadcrumb label for `edit` segment
+- i18n translations for `admin.orgs.edit` namespace (de + en, 23 keys)
+
 ## [0.13.2] - 2026-02-16
 ### Added
 - "Send test email to me" button in email template editor (tests unsaved changes with [TEST] prefix)

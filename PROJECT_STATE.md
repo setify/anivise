@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.13.2
+**Version:** 0.14.0
 **Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): enhance email template testing with layout preview and test send
+**Last Commit:** feat(admin): add organization edit page with extended schema
 
 ## What's Implemented
 
@@ -20,7 +20,7 @@
 - [x] Drizzle ORM configured with PostgreSQL (postgres.js driver)
 - [x] drizzle.config.ts with schema path and migrations output
 - [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type)
-- [x] Schema: organizations (name, slug, settings, subscription tier/status, soft-delete)
+- [x] Schema: organizations (name, slug, settings, subscription tier/status, default_locale, max_members, max_analyses_per_month, internal_notes, soft-delete)
 - [x] Schema: users (Supabase Auth ID, email, first/last/display name, phone, timezone, avatar, platform_role, locale)
 - [x] Schema: organization_members (junction table, role enum, unique constraint)
 - [x] Schema: analysis_subjects (full_name, email, role_title, organization_id)
@@ -71,7 +71,7 @@
 - [x] useRole - client-side user role in current org + platform role (UX only, not security)
 
 ### Validations
-- [x] Zod schemas for admin forms (profile update, team invite/update/remove, org create/delete)
+- [x] Zod schemas for admin forms (profile update, team invite/update/remove, org create/delete/update)
 
 ### UI / Pages
 - [x] Root layout with fonts, metadata, and ThemeProvider
@@ -92,7 +92,8 @@
 - [x] Superadmin Team management page (members table, invite dialog, role change, remove, invitations tab)
 - [x] Superadmin Organizations list page with table
 - [x] Superadmin Create Organization page with form
-- [x] Superadmin Organization detail page with danger zone (soft-delete) and invitations tab
+- [x] Superadmin Organization detail page with danger zone (soft-delete), invitations tab, and edit button
+- [x] Superadmin Organization edit page with basic data, subscription, limits & settings, internal notes
 - [x] Org creation form with "First Org-Admin" section and auto-invitation
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination
 - [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)
@@ -123,6 +124,8 @@
 - [x] getOrganizationById - get single organization details
 - [x] createOrganization - create new organization with slug uniqueness check
 - [x] deleteOrganization - soft-delete an organization
+- [x] updateOrganization - update org details with slug validation and audit logging
+- [x] checkSlugAvailability - real-time slug uniqueness and reserved word check
 - [x] getPlatformStats - get platform-wide stats (org count, user count)
 - [x] validateInviteToken - validate invitation token and return invitation info
 - [x] acceptInvitation - accept invitation for logged-in users (platform role or org membership)
@@ -215,6 +218,8 @@
 - `src/app/[locale]/(superadmin)/admin/organizations/new/create-org-form.tsx` - Create org form (client)
 - `src/app/[locale]/(superadmin)/admin/organizations/[id]/page.tsx` - Org detail (server)
 - `src/app/[locale]/(superadmin)/admin/organizations/[id]/org-detail-client.tsx` - Org detail (client)
+- `src/app/[locale]/(superadmin)/admin/organizations/[id]/edit/page.tsx` - Org edit (server)
+- `src/app/[locale]/(superadmin)/admin/organizations/[id]/edit/org-edit-client.tsx` - Org edit form (client)
 - `src/components/admin/stat-card.tsx` - Reusable stat card component with icon, value, trend
 - `src/app/[locale]/(auth)/invite/[token]/page.tsx` - Invitation acceptance page (server)
 - `src/app/[locale]/(auth)/invite/[token]/invite-client.tsx` - Invitation acceptance UI (client)

@@ -17,6 +17,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   settings: 'platformSettings.title',
   emails: 'emailTemplates.title',
   'email-layout': 'emailLayout.title',
+  edit: 'orgs.edit.title',
   new: 'orgs.createOrg',
 }
 

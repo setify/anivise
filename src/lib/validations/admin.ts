@@ -50,3 +50,23 @@ export const deleteOrganizationSchema = z.object({
 })
 
 export type DeleteOrganizationInput = z.infer<typeof deleteOrganizationSchema>
+
+export const updateOrganizationSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(2).max(255),
+  slug: z
+    .string()
+    .min(2)
+    .max(63)
+    .regex(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/, {
+      message: 'Slug must be lowercase alphanumeric with hyphens only',
+    }),
+  subscriptionTier: z.enum(['individual', 'team', 'enterprise']),
+  subscriptionStatus: z.enum(['trial', 'active', 'cancelled', 'expired']),
+  defaultLocale: z.enum(['de', 'en']).nullable(),
+  maxMembers: z.number().int().min(1).nullable(),
+  maxAnalysesPerMonth: z.number().int().min(1).nullable(),
+  internalNotes: z.string().max(5000).nullable(),
+})
+
+export type UpdateOrganizationInput = z.infer<typeof updateOrganizationSchema>
