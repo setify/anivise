@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.17.0
+**Version:** 0.18.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(forms): add visual drag-and-drop form builder with dnd-kit
+**Last Commit:** feat(forms): add form renderer, submission handling and CSV/XLSX export
 
 ## What's Implemented
 
@@ -93,8 +93,18 @@
 - [x] Form editor page with full builder
 - [x] "Formulare" nav item in admin sidebar
 - [x] 12 form server actions (CRUD, versioning, publishing)
-- [ ] Form Renderer (public-facing)
-- [ ] Form submission handling
+- [x] Form Renderer with progress_bar (Typeform-style) and tabs (classic) display modes
+- [x] 11 interactive field render components (text, textarea, number, email, phone, date, radio, checkbox, csat, rating, hidden)
+- [x] Radio/checkbox button variant, CSAT color gradient, rating with star/heart/thumb icons
+- [x] Conditional logic evaluation hook (useConditionalFields)
+- [x] Step-level and field-level validation with inline errors
+- [x] Form completion component (thank_you with animation, redirect)
+- [x] Dashboard forms page with card layout and submission status
+- [x] Dashboard form fill page with access checks and already-submitted detection
+- [x] Form submission server action with org access check and metadata tracking
+- [x] Admin submissions page with stats, dynamic table, filters, detail dialog, delete
+- [x] CSV and XLSX export via API route with filter support
+- [x] "Forms" nav item in dashboard sidebar
 - [ ] Organization assignment UI
 
 ### UI / Pages
@@ -110,6 +120,7 @@
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
 - [x] Superadmin layout with admin sidebar (10 nav items incl. Forms, with collapsible Settings sub-menu: General, Email Layout, Email Templates)
+- [x] Dashboard sidebar with 5 nav items (Dashboard, Analyses, Forms, Team, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
@@ -187,6 +198,15 @@
 - [x] sendTestEmail - send test email via Resend
 - [x] rotateN8nSecret - generate and store new random secret
 - [x] loadFromEnv - import ENV values into encrypted DB storage
+- [x] getAvailableForms - list published forms accessible to current org
+- [x] getFormBySlugForRendering - load form by slug with access check and version
+- [x] submitForm - submit form with org access check, validation, and metadata
+- [x] getFormWithSchema - get form with current version schema (admin)
+- [x] getSubmissionStats - total, this week, avg duration (admin)
+- [x] getSubmissions - paginated submissions with org/date/version filters (admin)
+- [x] getSubmissionOrganizations - organizations with submissions for filter dropdown (admin)
+- [x] getFormVersionNumbers - version numbers for filter dropdown (admin)
+- [x] deleteSubmission - permanently delete a submission (admin)
 
 ### Integrations
 - [x] Integration secrets encryption (AES-256-GCM, `src/lib/crypto/secrets.ts`)
@@ -294,6 +314,17 @@
 - `src/types/form-schema.ts` - Complete TypeScript types for form JSON schema (11 field types, conditions, validation)
 - `src/lib/validations/forms.ts` - Zod validators for form schema, fields, metadata, and dynamic submissions
 - `src/lib/forms/index.ts` - Form helper functions (get, access check, version, publish)
+- `src/components/forms/form-renderer.tsx` - Multi-step form renderer (progress_bar + tabs modes)
+- `src/components/forms/form-completion.tsx` - Post-submit completion (thank you / redirect)
+- `src/components/forms/fields/*.tsx` - 11 field render components + field-wrapper
+- `src/hooks/use-conditional-fields.ts` - Conditional logic evaluation for form fields
+- `src/app/[locale]/(dashboard)/forms/page.tsx` - Dashboard forms list (cards)
+- `src/app/[locale]/(dashboard)/forms/[slug]/page.tsx` - Form fill page
+- `src/app/[locale]/(dashboard)/forms/actions.ts` - Dashboard form server actions
+- `src/app/[locale]/(superadmin)/admin/forms/[formId]/submissions/page.tsx` - Admin submissions page
+- `src/app/[locale]/(superadmin)/admin/forms/[formId]/submissions/actions.ts` - Submissions server actions
+- `src/lib/forms/export.ts` - CSV and XLSX export functions
+- `src/app/api/admin/forms/[formId]/submissions/export/route.ts` - Export API route
 - `src/lib/db/schema/forms.ts` - Drizzle schema for forms, form_versions, form_organization_assignments, form_submissions
 - `src/lib/db/schema/enums.ts` - All PostgreSQL enums (incl. platform_role, invitation_status, form_status, form_visibility)
 - `src/lib/db/schema/organizations.ts` - Organizations table

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Eye, Copy, Archive, Trash2, Globe } from 'lucide-react'
+import { Plus, Pencil, Eye, Copy, Archive, Trash2, Globe, Inbox } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -181,6 +181,12 @@ export function FormListTable({ forms }: FormListTableProps) {
                         <Link href={`/${locale}/admin/forms/${form.id}/edit`}>
                           <Pencil className="mr-2 size-4" />
                           {t('edit')}
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/${locale}/admin/forms/${form.id}/submissions`}>
+                          <Inbox className="mr-2 size-4" />
+                          {t('viewSubmissionsAction')}
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDuplicate(form.id)}>

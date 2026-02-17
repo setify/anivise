@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.18.0] - 2026-02-17
+### Added
+- Form Renderer component with two display modes: progress_bar (Typeform-style) and tabs (classic)
+- 11 interactive field components: text, textarea, number, email, phone, date, radio, checkbox, CSAT (1-10 scale), rating (stars/hearts/thumbs), hidden
+- Field wrapper component with label, description, required indicator, and animated error display
+- Radio and checkbox fields support both default (list) and button (pill) display variants
+- CSAT field with color gradient (red -> yellow -> green), hover effects, and configurable min/max labels
+- Rating field with star/heart/thumb icons, hover fill preview, and bounce animation
+- Conditional logic hook (`useConditionalFields`) evaluating show/hide rules in real-time
+- Step-level validation with inline errors, scroll to first error, and per-field type checks
+- Form completion component with animated checkmark (thank_you mode) or auto-redirect
+- Dashboard forms page (`/forms`) showing cards of available forms with submission status
+- Dashboard form fill page (`/forms/[slug]`) with access checks, submission, and already-submitted state
+- Keyboard navigation: Enter advances to next step in progress_bar mode
+- Form submission server action with org access check, server-side validation, metadata tracking (duration, user-agent)
+- Admin submissions page (`/admin/forms/[formId]/submissions`) with stat cards, dynamic table, filters, detail dialog
+- Dynamic table columns generated from form schema (field labels as headers)
+- Submission filters: organization, date range, version
+- Submission detail dialog with full field-by-field display and metadata
+- CSV and XLSX export via API route (`/api/admin/forms/[formId]/submissions/export`)
+- Export respects active filters, generates filename from form slug and date
+- "View Submissions" action in admin forms list dropdown
+- "Forms" nav item in dashboard sidebar (ClipboardList icon)
+- Breadcrumb label for `submissions` segment
+- i18n: `forms` namespace (dashboard renderer), `admin.forms.submissions` namespace (de + en)
+
+### Dependencies
+- Added xlsx for Excel export
+
 ## [0.17.0] - 2026-02-17
 ### Added
 - Visual drag-and-drop Form Builder with @dnd-kit integration

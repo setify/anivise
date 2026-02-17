@@ -35,7 +35,8 @@
     "user": "Benutzer",
     "menu": "Menue",
     "organization": "Organisation",
-    "backToDashboard": "Zurueck zum Dashboard"
+    "backToDashboard": "Zurueck zum Dashboard",
+    "forms": "Formulare"
   },
   "theme": {
     "toggle": "Erscheinungsbild wechseln",
@@ -553,6 +554,7 @@
       "duplicate": "Duplizieren",
       "publishAction": "Veroeffentlichen",
       "archiveAction": "Archivieren",
+      "viewSubmissionsAction": "Einreichungen ansehen",
       "deleteAction": "Loeschen",
       "duplicated": "Formular dupliziert",
       "published": "Formular veroeffentlicht",
@@ -730,6 +732,38 @@
           "userOrganization": "Organisation",
           "userRole": "Rolle"
         }
+      },
+      "submissions": {
+        "title": "Einreichungen",
+        "description": "Formular-Einreichungen ansehen und exportieren",
+        "export": "Exportieren",
+        "exportCsv": "Als CSV exportieren",
+        "exportXlsx": "Als Excel exportieren",
+        "totalSubmissions": "Gesamt-Einreichungen",
+        "thisWeek": "Diese Woche",
+        "avgDuration": "Durchschn. Dauer",
+        "noSubmissions": "Noch keine Einreichungen.",
+        "filterOrganization": "Organisation",
+        "allOrganizations": "Alle Organisationen",
+        "fromDate": "Von",
+        "toDate": "Bis",
+        "filterVersion": "Version",
+        "allVersions": "Alle Versionen",
+        "applyFilters": "Anwenden",
+        "columnOrg": "Organisation",
+        "columnUser": "Eingereicht von",
+        "columnDate": "Eingereicht am",
+        "columnVersion": "Version",
+        "duration": "Dauer",
+        "showingOf": "{shown} von {total} angezeigt",
+        "submissionDetail": "Einreichungs-Detail",
+        "deleteSubmission": "Einreichung loeschen",
+        "deleteConfirmTitle": "Einreichung loeschen?",
+        "deleteConfirmDescription": "Diese Einreichung wird unwiderruflich geloescht. Diese Aktion kann nicht rueckgaengig gemacht werden.",
+        "cancelDelete": "Abbrechen",
+        "confirmDelete": "Loeschen",
+        "deleted": "Einreichung geloescht",
+        "deleteError": "Fehler beim Loeschen der Einreichung"
       }
     },
     "activity": {
@@ -764,6 +798,34 @@
       "pageInfo": "{from}–{to} von {total}",
       "previous": "Zurueck",
       "nextPage": "Weiter"
+    }
+  },
+  "forms": {
+    "title": "Formulare",
+    "description": "Formulare fuer Ihre Organisation",
+    "noForms": "Noch keine Formulare verfuegbar.",
+    "submitted": "Ausgefuellt",
+    "notSubmitted": "Noch nicht ausgefuellt",
+    "submittedOn": "Ausgefuellt am {date}",
+    "viewSubmission": "Einreichung ansehen",
+    "fillOut": "Ausfuellen",
+    "alreadySubmitted": "Bereits ausgefuellt",
+    "back": "Zurueck",
+    "next": "Weiter",
+    "submit": "Absenden",
+    "submitting": "Wird gesendet...",
+    "submitError": "Fehler beim Absenden des Formulars",
+    "stepOf": "Schritt {current} von {total}",
+    "validation": {
+      "required": "Dieses Feld ist erforderlich",
+      "pattern": "Ungueltiges Format",
+      "minLength": "Mindestens {min} Zeichen erforderlich",
+      "maxLength": "Maximal {max} Zeichen erlaubt",
+      "min": "Muss mindestens {min} sein",
+      "max": "Darf maximal {max} sein",
+      "email": "Bitte geben Sie eine gueltige E-Mail-Adresse ein",
+      "minSelections": "Bitte waehlen Sie mindestens {min} Optionen",
+      "maxSelections": "Bitte waehlen Sie maximal {max} Optionen"
     }
   }
 }

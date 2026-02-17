@@ -35,7 +35,8 @@
     "user": "User",
     "menu": "Menu",
     "organization": "Organization",
-    "backToDashboard": "Back to Dashboard"
+    "backToDashboard": "Back to Dashboard",
+    "forms": "Forms"
   },
   "theme": {
     "toggle": "Toggle theme",
@@ -553,6 +554,7 @@
       "duplicate": "Duplicate",
       "publishAction": "Publish",
       "archiveAction": "Archive",
+      "viewSubmissionsAction": "View Submissions",
       "deleteAction": "Delete",
       "duplicated": "Form duplicated",
       "published": "Form published",
@@ -730,6 +732,38 @@
           "userOrganization": "Organization",
           "userRole": "Role"
         }
+      },
+      "submissions": {
+        "title": "Submissions",
+        "description": "View and export form submissions",
+        "export": "Export",
+        "exportCsv": "Export as CSV",
+        "exportXlsx": "Export as Excel",
+        "totalSubmissions": "Total Submissions",
+        "thisWeek": "This Week",
+        "avgDuration": "Avg. Duration",
+        "noSubmissions": "No submissions yet.",
+        "filterOrganization": "Organization",
+        "allOrganizations": "All Organizations",
+        "fromDate": "From",
+        "toDate": "To",
+        "filterVersion": "Version",
+        "allVersions": "All Versions",
+        "applyFilters": "Apply",
+        "columnOrg": "Organization",
+        "columnUser": "Submitted By",
+        "columnDate": "Submitted At",
+        "columnVersion": "Version",
+        "duration": "Duration",
+        "showingOf": "Showing {shown} of {total}",
+        "submissionDetail": "Submission Detail",
+        "deleteSubmission": "Delete Submission",
+        "deleteConfirmTitle": "Delete Submission?",
+        "deleteConfirmDescription": "This will permanently delete this submission. This action cannot be undone.",
+        "cancelDelete": "Cancel",
+        "confirmDelete": "Delete",
+        "deleted": "Submission deleted",
+        "deleteError": "Failed to delete submission"
       }
     },
     "activity": {
@@ -764,6 +798,34 @@
       "pageInfo": "{from}–{to} of {total}",
       "previous": "Previous",
       "nextPage": "Next"
+    }
+  },
+  "forms": {
+    "title": "Forms",
+    "description": "Forms available to your organization",
+    "noForms": "No forms available yet.",
+    "submitted": "Submitted",
+    "notSubmitted": "Not submitted",
+    "submittedOn": "Submitted on {date}",
+    "viewSubmission": "View Submission",
+    "fillOut": "Fill Out",
+    "alreadySubmitted": "Already Submitted",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "submitError": "Failed to submit form",
+    "stepOf": "Step {current} of {total}",
+    "validation": {
+      "required": "This field is required",
+      "pattern": "Invalid format",
+      "minLength": "Must be at least {min} characters",
+      "maxLength": "Must be at most {max} characters",
+      "min": "Must be at least {min}",
+      "max": "Must be at most {max}",
+      "email": "Please enter a valid email address",
+      "minSelections": "Please select at least {min} options",
+      "maxSelections": "Please select at most {max} options"
     }
   }
 }

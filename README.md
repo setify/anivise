@@ -257,6 +257,23 @@ const validator = createSubmissionValidator(version.schema as FormSchema)
 const result = validator.safeParse(submissionData)
 ```
 
+**Form Renderer** (`/forms/[slug]`):
+- Two display modes: `progress_bar` (Typeform-style fullscreen with slide animations) and `tabs` (classic numbered tabs)
+- 11 interactive field components with specialized UIs (CSAT color gradient, star ratings with hover, radio/checkbox button variants)
+- Real-time conditional logic evaluation — hidden fields are not rendered, validated, or submitted
+- Step-level validation with inline errors and smooth scroll to first error
+- Keyboard navigation (Enter to advance) in progress bar mode
+- Completion screen: animated checkmark (thank_you) or auto-redirect
+- Dashboard card listing shows forms available to the organization with submission status
+
+**Admin Submissions** (`/admin/forms/[formId]/submissions`):
+- Stat cards: total submissions, this week, average fill duration
+- Dynamic table columns generated from form schema field labels
+- Filters: organization, date range, form version
+- Submission detail dialog with full field display and metadata (duration, browser)
+- Export: CSV and XLSX via `GET /api/admin/forms/[formId]/submissions/export?format=csv|xlsx`
+- Export respects active filters; filename: `{slug}_submissions_{date}.csv|xlsx`
+
 ### File Storage
 Supabase Storage with tenant-isolated paths: `transcripts/{org_id}/{job_id}/` and `reports/{org_id}/{report_id}/`.
 
@@ -312,7 +329,8 @@ src/
 │   ├── ui/                    # shadcn/ui components
 │   ├── layout/                # AppShell, Sidebar, Header, AdminSidebar
 │   ├── admin/                 # Admin components (StatCard, forms/, form-builder/)
-│   ├── forms/                 # Reusable form components
+│   ├── forms/                 # Form renderer, field components, completion
+│   │   └── fields/            # 11 field render components + field-wrapper
 │   ├── analyses/              # Analysis-specific components
 │   └── shared/                # ThemeProvider, ThemeToggle
 ├── lib/

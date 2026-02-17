@@ -8,6 +8,7 @@ import {
   BarChart3,
   Users,
   Settings,
+  ClipboardList,
   LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -35,6 +36,11 @@ export function Sidebar() {
       href: `/${locale}/analyses`,
       label: t('analyses'),
       icon: BarChart3,
+    },
+    {
+      href: `/${locale}/forms`,
+      label: t('forms'),
+      icon: ClipboardList,
     },
     {
       href: `/${locale}/team`,
