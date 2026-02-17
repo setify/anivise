@@ -1,8 +1,20 @@
 import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart3, FileText, Users, Clock } from 'lucide-react'
+import { PlanWidget } from './plan-widget'
+import { getOrgPlanOverview } from '../plan/actions'
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const overview = await getOrgPlanOverview()
+
+  return <DashboardContent overview={overview} />
+}
+
+function DashboardContent({
+  overview,
+}: {
+  overview: Awaited<ReturnType<typeof getOrgPlanOverview>>
+}) {
   const t = useTranslations('dashboard')
 
   const stats = [
@@ -51,14 +63,18 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('recentActivity')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('noActivity')}</p>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-2">
+        {overview && <PlanWidget overview={overview} />}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('recentActivity')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-sm">{t('noActivity')}</p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

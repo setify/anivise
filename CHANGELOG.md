@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0] - 2026-02-17
+### Added
+- **Org-admin plan view** (`/dashboard/plan`): full plan & usage page showing current plan, seat usage bars, monthly analysis/form counts, and storage allocation
+- **Dashboard plan widget**: compact plan usage overview on the main dashboard with progress bars and link to details
+- **Plan nav item** in dashboard sidebar (CreditCard icon, between Team and Settings)
+- **Seat limit enforcement**: invitation acceptance (`acceptInvitation`, `registerAndAcceptInvitation`) checks `canAddMember()` before creating org membership
+- **Form submission limit enforcement**: `submitForm()` checks `maxFormSubmissionsPerMonth` before saving
+- User-friendly error messages for limit violations (`seat_limit_reached`, `form_submission_limit_reached`)
+- shadcn/ui Progress component for usage bars
+- i18n: `plan` namespace (30+ keys, DE + EN) and `dashboard.planWidget` namespace
+- Plan server action: `getOrgPlanOverview()` with combined limits + usage data
+
 ## [1.1.0] - 2026-02-17
 ### Added
 - **Admin Plans CRUD UI** (`/admin/plans`): list, create, edit, detail pages for managing plans

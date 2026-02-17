@@ -8,11 +8,12 @@ import {
   formSubmissions,
   organizationMembers,
 } from '@/lib/db/schema'
-import { eq, and, isNull, desc, sql } from 'drizzle-orm'
+import { eq, and, isNull, desc, sql, gte, count } from 'drizzle-orm'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { logAudit } from '@/lib/audit/log'
 import type { FormSchema } from '@/types/form-schema'
+import { getOrganizationLimits, checkLimit } from '@/lib/products/limits'
 
 async function getCurrentUserAndOrg() {
   const supabase = await createClient()
@@ -215,6 +216,28 @@ export async function submitForm(params: {
 
       if (!assignment) {
         return { success: false, error: 'Access denied' }
+      }
+    }
+
+    // Check form submission limit
+    const limits = await getOrganizationLimits(organizationId)
+    if (limits.maxFormSubmissionsPerMonth !== null) {
+      const startOfMonth = new Date()
+      startOfMonth.setDate(1)
+      startOfMonth.setHours(0, 0, 0, 0)
+
+      const [currentCount] = await db
+        .select({ value: count() })
+        .from(formSubmissions)
+        .where(
+          and(
+            eq(formSubmissions.organizationId, organizationId),
+            gte(formSubmissions.submittedAt, startOfMonth)
+          )
+        )
+
+      if (!checkLimit(limits.maxFormSubmissionsPerMonth, currentCount?.value ?? 0)) {
+        return { success: false, error: 'form_submission_limit_reached' }
       }
     }
 

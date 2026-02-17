@@ -36,7 +36,8 @@
     "menu": "Menue",
     "organization": "Organisation",
     "backToDashboard": "Zurueck zum Dashboard",
-    "forms": "Formulare"
+    "forms": "Formulare",
+    "plan": "Tarif"
   },
   "theme": {
     "toggle": "Erscheinungsbild wechseln",
@@ -80,6 +81,7 @@
       "accepting": "Wird angenommen...",
       "accepted": "Einladung erfolgreich angenommen",
       "acceptError": "Einladung konnte nicht angenommen werden",
+      "seatLimitReached": "Die Organisation hat das Platz-Limit fuer diese Rolle erreicht. Kontaktieren Sie den Organisations-Administrator.",
       "createAccount": "Konto erstellen",
       "alreadyHaveAccount": "Ich habe bereits ein Konto",
       "fullName": "Vollstaendiger Name",
@@ -125,7 +127,40 @@
       "activeJobs": "Aktive Auftraege",
       "reports": "Berichte",
       "teamMembers": "Teammitglieder"
+    },
+    "planWidget": {
+      "title": "Tarif-Nutzung",
+      "noPlan": "Kein Tarif",
+      "seats": "Plaetze",
+      "analyses": "Analysen / Monat",
+      "forms": "Formulare",
+      "viewDetails": "Details anzeigen"
     }
+  },
+  "plan": {
+    "title": "Tarif & Nutzung",
+    "description": "Ihr aktueller Tarif und die Ressourcennutzung",
+    "noPlan": "Ihrer Organisation ist kein Tarif zugewiesen. Kontaktieren Sie Ihren Administrator.",
+    "noPlanAssigned": "Kein Tarif",
+    "active": "Aktiv",
+    "unlimited": "Unbegrenzt",
+    "limitReached": "Limit erreicht",
+    "limitWarning": "{percent}% genutzt",
+    "seats": "Plaetze",
+    "seatsDescription": "Teammitglieder-Plaetze nach Rolle",
+    "orgAdmins": "Org-Admins",
+    "managers": "Manager",
+    "members": "Mitglieder",
+    "analyses": "Analysen",
+    "analysesDescription": "Monatliches Analyse-Kontingent",
+    "analysesThisMonth": "Analysen diesen Monat",
+    "forms": "Formulare",
+    "formsDescription": "Formular-Erstellungs- und Einreichungs-Limits",
+    "activeForms": "Aktive Formulare",
+    "submissionsThisMonth": "Einreichungen diesen Monat",
+    "storage": "Speicher",
+    "storageDescription": "Speicherplatz-Zuweisung",
+    "storageNotTracked": "Speicher-Tracking noch nicht aktiv."
   },
   "analyses": {
     "title": "Analysen",
@@ -929,6 +964,7 @@
     "submit": "Absenden",
     "submitting": "Wird gesendet...",
     "submitError": "Fehler beim Absenden des Formulars",
+    "submissionLimitReached": "Ihre Organisation hat das monatliche Einreichungs-Limit erreicht.",
     "stepOf": "Schritt {current} von {total}",
     "validation": {
       "required": "Dieses Feld ist erforderlich",

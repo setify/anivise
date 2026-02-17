@@ -10,6 +10,7 @@ import {
 import { eq, and } from 'drizzle-orm'
 import { createClient } from '@/lib/supabase/server'
 import { createNotification } from '@/lib/notifications/create'
+import { canAddMember } from '@/lib/products/limits'
 
 export type InvitationInfo = {
   id: string
@@ -188,6 +189,15 @@ export async function acceptInvitation(
     invitation.organizationId &&
     invitation.targetOrgRole
   ) {
+    // Check plan seat limits before adding member
+    const allowed = await canAddMember(
+      invitation.organizationId,
+      invitation.targetOrgRole
+    )
+    if (!allowed) {
+      return { success: false, error: 'seat_limit_reached' }
+    }
+
     // Create organization membership
     await db.insert(organizationMembers).values({
       organizationId: invitation.organizationId,
@@ -303,6 +313,15 @@ export async function registerAndAcceptInvitation(
     invitation.organizationId &&
     invitation.targetOrgRole
   ) {
+    // Check plan seat limits before adding member
+    const allowed = await canAddMember(
+      invitation.organizationId,
+      invitation.targetOrgRole
+    )
+    if (!allowed) {
+      return { success: false, error: 'seat_limit_reached' }
+    }
+
     await db.insert(organizationMembers).values({
       organizationId: invitation.organizationId,
       userId: authData.user.id,

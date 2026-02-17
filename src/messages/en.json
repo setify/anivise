@@ -36,7 +36,8 @@
     "menu": "Menu",
     "organization": "Organization",
     "backToDashboard": "Back to Dashboard",
-    "forms": "Forms"
+    "forms": "Forms",
+    "plan": "Plan"
   },
   "theme": {
     "toggle": "Toggle theme",
@@ -80,6 +81,7 @@
       "accepting": "Accepting...",
       "accepted": "Invitation accepted successfully",
       "acceptError": "Could not accept invitation",
+      "seatLimitReached": "The organization has reached its seat limit for this role. Contact the organization administrator.",
       "createAccount": "Create Account",
       "alreadyHaveAccount": "I already have an account",
       "fullName": "Full Name",
@@ -125,7 +127,40 @@
       "activeJobs": "Active Jobs",
       "reports": "Reports",
       "teamMembers": "Team Members"
+    },
+    "planWidget": {
+      "title": "Plan Usage",
+      "noPlan": "No plan",
+      "seats": "Seats",
+      "analyses": "Analyses / Month",
+      "forms": "Forms",
+      "viewDetails": "View details"
     }
+  },
+  "plan": {
+    "title": "Plan & Usage",
+    "description": "Your current plan and resource usage",
+    "noPlan": "No plan assigned to your organization. Contact your administrator.",
+    "noPlanAssigned": "No Plan",
+    "active": "Active",
+    "unlimited": "Unlimited",
+    "limitReached": "Limit reached",
+    "limitWarning": "{percent}% used",
+    "seats": "Seats",
+    "seatsDescription": "Team member slots by role",
+    "orgAdmins": "Org Admins",
+    "managers": "Managers",
+    "members": "Members",
+    "analyses": "Analyses",
+    "analysesDescription": "Monthly analysis quota",
+    "analysesThisMonth": "Analyses this month",
+    "forms": "Forms",
+    "formsDescription": "Form creation and submission limits",
+    "activeForms": "Active forms",
+    "submissionsThisMonth": "Submissions this month",
+    "storage": "Storage",
+    "storageDescription": "File storage allocation",
+    "storageNotTracked": "Storage tracking not yet active."
   },
   "analyses": {
     "title": "Analyses",
@@ -929,6 +964,7 @@
     "submit": "Submit",
     "submitting": "Submitting...",
     "submitError": "Failed to submit form",
+    "submissionLimitReached": "Your organization has reached its monthly form submission limit.",
     "stepOf": "Step {current} of {total}",
     "validation": {
       "required": "This field is required",

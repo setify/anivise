@@ -116,7 +116,10 @@ function AcceptInvitation({
       toast.success(t('accepted'))
       router.push(`/${locale}${result.redirectTo}`)
     } else {
-      toast.error(t('acceptError'))
+      const errorMsg = result.error === 'seat_limit_reached'
+        ? t('seatLimitReached')
+        : t('acceptError')
+      toast.error(errorMsg)
       setIsPending(false)
     }
   }
@@ -195,7 +198,10 @@ function RegisterOrLogin({
       toast.success(t('accepted'))
       router.push(`/${locale}${result.redirectTo}`)
     } else {
-      toast.error(result.error || t('acceptError'))
+      const errorMsg = result.error === 'seat_limit_reached'
+        ? t('seatLimitReached')
+        : (result.error || t('acceptError'))
+      toast.error(errorMsg)
       setIsPending(false)
     }
   }

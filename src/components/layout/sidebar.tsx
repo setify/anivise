@@ -9,6 +9,7 @@ import {
   Users,
   Settings,
   ClipboardList,
+  CreditCard,
   LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -46,6 +47,11 @@ export function Sidebar() {
       href: `/${locale}/team`,
       label: t('team'),
       icon: Users,
+    },
+    {
+      href: `/${locale}/plan`,
+      label: t('plan'),
+      icon: CreditCard,
     },
     {
       href: `/${locale}/settings`,

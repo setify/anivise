@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(plans): add admin plan management UI with CRUD and org assignment
+**Last Commit:** feat(plans): add org plan view, dashboard widget, and limit enforcement
 
 ## What's Implemented
 
@@ -128,9 +128,14 @@
 - [x] Admin Plans CRUD UI (`/admin/plans`): list, detail, create, edit pages with full server actions
 - [x] Plans nav item in admin sidebar (CreditCard, superadmin-only)
 - [x] i18n for admin.plans namespace (DE: "Tarife", EN: "Plans")
-- [ ] Org-admin plan view (`/dashboard/plan`) — Prompt 3
-- [ ] Limit enforcement in analysis/form/member flows — Prompt 3
-- [ ] Limit notification system — Prompt 3
+- [x] Org-admin plan view (`/dashboard/plan`): plan details + usage bars for seats, analyses, forms, storage
+- [x] Dashboard plan widget: compact usage overview with progress bars
+- [x] Plan nav item in dashboard sidebar (CreditCard, between Team and Settings)
+- [x] Seat limit enforcement: `canAddMember()` check in invitation acceptance flows
+- [x] Form submission limit enforcement: `checkLimit()` in `submitForm()` action
+- [x] User-facing limit error messages (seat_limit_reached, form_submission_limit_reached)
+- [ ] Analysis job limit enforcement (analysis upload flow not yet built)
+- [ ] Storage usage tracking (storage not yet implemented)
 
 ### UI / Pages
 - [x] Root layout with fonts, metadata, and ThemeProvider
@@ -145,7 +150,7 @@
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
 - [x] Superadmin layout with admin sidebar (10 nav items: Dashboard, Profile, Team, Organizations, Jobs, Forms, Integrations, Activity, Notifications, Settings; with collapsible Settings sub-menu: General, Email Layout, Email Templates)
-- [x] Dashboard sidebar with 5 nav items (Dashboard, Analyses, Forms, Team, Settings)
+- [x] Dashboard sidebar with 6 nav items (Dashboard, Analyses, Forms, Team, Plan, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form
@@ -250,6 +255,7 @@
 - [x] reactivateProduct - reactivate archived plan (admin)
 - [x] assignOrganizationPlan - assign plan to org (delete + insert) (admin)
 - [x] removeOrganizationPlan - remove org's plan assignment (admin)
+- [x] getOrgPlanOverview - get org's plan name, limits, and usage for dashboard (org)
 
 ### Integrations
 - [x] Integration secrets encryption (AES-256-GCM, `src/lib/crypto/secrets.ts`)
@@ -350,6 +356,10 @@
 - `src/lib/crypto/secrets.ts` - AES-256-GCM encryption for integration secrets
 - `src/lib/crypto/secrets-cache.ts` - In-memory secret cache with 5-minute TTL
 - `src/lib/db/schema/integration-secrets.ts` - Integration secrets table schema
+- `src/app/[locale]/(dashboard)/plan/page.tsx` - Org plan view (server)
+- `src/app/[locale]/(dashboard)/plan/plan-page-client.tsx` - Plan usage bars and limits (client)
+- `src/app/[locale]/(dashboard)/plan/actions.ts` - Plan overview server action
+- `src/app/[locale]/(dashboard)/dashboard/plan-widget.tsx` - Dashboard plan widget (client)
 - `src/app/[locale]/(superadmin)/admin/plans/page.tsx` - Plans list page (server)
 - `src/app/[locale]/(superadmin)/admin/plans/plans-page-client.tsx` - Plans list table (client)
 - `src/app/[locale]/(superadmin)/admin/plans/plan-form.tsx` - Shared plan create/edit form (client)

@@ -40,7 +40,10 @@ export function FormPageClient({
     })
 
     if (!result.success) {
-      toast.error(result.error ?? t('submitError'), { className: 'rounded-full' })
+      const errorMsg = result.error === 'form_submission_limit_reached'
+        ? t('submissionLimitReached')
+        : (result.error ?? t('submitError'))
+      toast.error(errorMsg, { className: 'rounded-full' })
       throw new Error(result.error)
     }
 
