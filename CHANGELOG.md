@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.16.0] - 2026-02-17
+### Added
+- Form Builder data model with 4 new database tables:
+  - `forms`: multi-step form definitions with slug, visibility, completion config, versioning
+  - `form_versions`: versioned JSON schema storage with publish tracking
+  - `form_organization_assignments`: form-to-organization access control
+  - `form_submissions`: submission data with form version reference and metadata
+- 4 new PostgreSQL enums: `form_status`, `form_visibility`, `form_completion_type`, `form_step_display_mode`
+- Complete TypeScript type system for JSON form schemas (`src/types/form-schema.ts`):
+  - 11 field types (text, textarea, number, email, phone, date, radio, checkbox, csat, rating, hidden)
+  - Type-specific config interfaces with discriminated union
+  - Conditional logic (show/hide with 7 operators)
+  - Field validation with pattern support
+  - Multi-step form structure (FormSchema > FormStep > FormField)
+- Zod validation schemas (`src/lib/validations/forms.ts`):
+  - `formSchemaValidator` for complete form schema validation
+  - `formFieldValidator` for individual field validation
+  - `formMetaValidator` for form metadata (title, slug, visibility, completion config)
+  - `createSubmissionValidator` dynamic validator generator from FormSchema
+- Form helper functions (`src/lib/forms/index.ts`):
+  - `getForm`, `getFormBySlug` for form retrieval
+  - `getFormVersion` for version retrieval (specific or latest)
+  - `canOrganizationAccessForm` for access control checks
+  - `createFormVersion` for version creation with auto-increment
+  - `publishForm` for publishing a form version
+- Database types: Form, FormVersion, FormOrganizationAssignment, FormSubmission (Select + Insert)
+- All new types exported from `src/types/index.ts`
+
 ## [0.15.0] - 2026-02-16
 ### Added
 - Collapsible settings sub-navigation in admin sidebar (General, Email Layout, Email Templates)

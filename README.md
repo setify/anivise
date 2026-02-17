@@ -126,6 +126,10 @@ The database is managed via **Drizzle ORM** with schemas defined in `src/lib/db/
 | `analysis_jobs` | Analysis job lifecycle (pending -> completed/failed) | Yes |
 | `reports` | Analysis results (jsonb report_data, 1:1 with job) | Yes |
 | `team_invitations` | Platform + org invitations with token-based acceptance | No (global) |
+| `forms` | Form definitions with slug, visibility, completion config, versioning | Optional (platform or org-scoped) |
+| `form_versions` | Versioned JSON schema for each form | No (linked to form) |
+| `form_organization_assignments` | Which orgs can access which forms | Yes |
+| `form_submissions` | Submitted form data with version reference | Yes |
 
 #### Enums
 
@@ -141,6 +145,10 @@ The database is managed via **Drizzle ORM** with schemas defined in `src/lib/db/
 | `platform_role` | superadmin, staff |
 | `invitation_status` | pending, accepted, expired, cancelled |
 | `invitation_type` | platform, organization |
+| `form_status` | draft, published, archived |
+| `form_visibility` | all_organizations, assigned |
+| `form_completion_type` | thank_you, redirect |
+| `form_step_display_mode` | progress_bar, tabs |
 
 #### Supabase Clients
 
@@ -202,6 +210,41 @@ Emails use configurable templates stored in the database with a customizable bas
 - **Tenant Isolation:** Every query for tenant data filters by `organization_id`. Supabase RLS policies provide an additional safety net.
 - **RBAC:** Server-side role checks via `requirePlatformRole()`. Client-side checks are UX-only.
 - **Audit Logging:** All sensitive operations are logged to the `audit_logs` table with actor, action, entity, and metadata.
+
+### Form Builder
+
+The platform includes a visual form builder for creating multi-step questionnaires (similar to Typeform/Fluentforms). Forms are versioned and rendered dynamically from a JSON schema.
+
+**Architecture:**
+- Form definitions stored in `forms` table with metadata (title, slug, visibility, completion config)
+- Each form has versioned schemas stored as JSONB in `form_versions`
+- Forms can be scoped to the platform or a specific organization
+- Access control via `form_organization_assignments` (or `all_organizations` visibility)
+- Submissions stored with reference to the exact form version used
+
+**JSON Schema Structure:** `FormSchema > FormStep[] > FormField[]`
+
+**11 Field Types:** text, textarea, number, email, phone, date, radio, checkbox, csat (1-10), rating (1-5 stars), hidden
+
+**Features:**
+- Conditional logic (show/hide fields based on other field values)
+- Field validation (pattern, min/max, required)
+- Multi-step forms with progress bar or tabs display
+- Completion config (thank you page or redirect URL)
+- Dynamic Zod validator generation from form schema for type-safe submission validation
+
+```typescript
+import { createSubmissionValidator } from '@/lib/validations/forms'
+import { getFormVersion, canOrganizationAccessForm } from '@/lib/forms'
+
+// Check access
+const canAccess = await canOrganizationAccessForm(formId, orgId)
+
+// Get form version and validate submission
+const version = await getFormVersion(formId)
+const validator = createSubmissionValidator(version.schema as FormSchema)
+const result = validator.safeParse(submissionData)
+```
 
 ### File Storage
 Supabase Storage with tenant-isolated paths: `transcripts/{org_id}/{job_id}/` and `reports/{org_id}/{report_id}/`.

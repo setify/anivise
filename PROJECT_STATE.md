@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.15.0
-**Last Updated:** 2026-02-16
-**Last Commit:** feat(admin): add integrations, email layout config, org editing and secret encryption
+**Version:** 0.16.0
+**Last Updated:** 2026-02-17
+**Last Commit:** feat(forms): add form builder data model with JSON schema types and versioning
 
 ## What's Implemented
 
@@ -19,7 +19,7 @@
 ### Database
 - [x] Drizzle ORM configured with PostgreSQL (postgres.js driver)
 - [x] drizzle.config.ts with schema path and migrations output
-- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type)
+- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode)
 - [x] Schema: organizations (name, slug, settings, subscription tier/status, default_locale, max_members, max_analyses_per_month, internal_notes, soft-delete)
 - [x] Schema: users (Supabase Auth ID, email, first/last/display name, phone, timezone, avatar, platform_role, locale)
 - [x] Schema: organization_members (junction table, role enum, unique constraint)
@@ -33,8 +33,12 @@
 - [x] Schema: email_templates (slug, de/en subject+body, variables, system flag)
 - [x] Schema: notifications (recipientId, type, title, body, link, isRead, metadata, indexed)
 - [x] Schema: integration_secrets (service, key, encrypted_value, iv, is_sensitive, AES-256-GCM encryption)
+- [x] Schema: forms (title, slug, status, visibility, step display mode, completion config, versioning, soft-delete)
+- [x] Schema: form_versions (formId, versionNumber, jsonb schema, publishedAt/By, unique constraint)
+- [x] Schema: form_organization_assignments (formId, organizationId, assignedBy, unique constraint)
+- [x] Schema: form_submissions (formId, formVersionId, organizationId, submittedBy, jsonb data/metadata)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -72,6 +76,15 @@
 
 ### Validations
 - [x] Zod schemas for admin forms (profile update, team invite/update/remove, org create/delete/update)
+- [x] Zod schemas for form builder (formSchemaValidator, formFieldValidator, formMetaValidator, createSubmissionValidator)
+
+### Form Builder
+- [x] Complete TypeScript type system for JSON form schemas (11 field types, conditional logic, validation, multi-step)
+- [x] Zod validation: form schema, field, metadata, and dynamic submission validators
+- [x] Helper functions: getForm, getFormBySlug, getFormVersion, canOrganizationAccessForm, createFormVersion, publishForm
+- [ ] Form Builder UI (admin pages)
+- [ ] Form Renderer (public-facing)
+- [ ] Form submission handling
 
 ### UI / Pages
 - [x] Root layout with fonts, metadata, and ThemeProvider
@@ -267,7 +280,11 @@
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration
-- `src/lib/db/schema/enums.ts` - All PostgreSQL enums (incl. platform_role, invitation_status)
+- `src/types/form-schema.ts` - Complete TypeScript types for form JSON schema (11 field types, conditions, validation)
+- `src/lib/validations/forms.ts` - Zod validators for form schema, fields, metadata, and dynamic submissions
+- `src/lib/forms/index.ts` - Form helper functions (get, access check, version, publish)
+- `src/lib/db/schema/forms.ts` - Drizzle schema for forms, form_versions, form_organization_assignments, form_submissions
+- `src/lib/db/schema/enums.ts` - All PostgreSQL enums (incl. platform_role, invitation_status, form_status, form_visibility)
 - `src/lib/db/schema/organizations.ts` - Organizations table
 - `src/lib/db/schema/users.ts` - Users table (with platform_role, extended profile fields)
 - `src/lib/db/schema/organization-members.ts` - Org members junction table

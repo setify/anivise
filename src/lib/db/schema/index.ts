@@ -10,6 +10,10 @@ export {
   platformRoleEnum,
   invitationStatusEnum,
   invitationTypeEnum,
+  formStatusEnum,
+  formVisibilityEnum,
+  formCompletionTypeEnum,
+  formStepDisplayModeEnum,
 } from './enums'
 
 // Tables
@@ -26,3 +30,9 @@ export { platformSettings } from './platform-settings'
 export { emailTemplates } from './email-templates'
 export { notifications } from './notifications'
 export { integrationSecrets } from './integration-secrets'
+export {
+  forms,
+  formVersions,
+  formOrganizationAssignments,
+  formSubmissions,
+} from './forms'

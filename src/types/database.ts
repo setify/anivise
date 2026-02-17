@@ -13,6 +13,10 @@ import type {
   emailTemplates,
   notifications,
   integrationSecrets,
+  forms,
+  formVersions,
+  formOrganizationAssignments,
+  formSubmissions,
 } from '@/lib/db/schema'
 
 // Organization
@@ -66,6 +70,22 @@ export type NewNotification = InferInsertModel<typeof notifications>
 // Integration Secret
 export type IntegrationSecret = InferSelectModel<typeof integrationSecrets>
 export type NewIntegrationSecret = InferInsertModel<typeof integrationSecrets>
+
+// Form
+export type Form = InferSelectModel<typeof forms>
+export type NewForm = InferInsertModel<typeof forms>
+
+// Form Version
+export type FormVersion = InferSelectModel<typeof formVersions>
+export type NewFormVersion = InferInsertModel<typeof formVersions>
+
+// Form Organization Assignment
+export type FormOrganizationAssignment = InferSelectModel<typeof formOrganizationAssignments>
+export type NewFormOrganizationAssignment = InferInsertModel<typeof formOrganizationAssignments>
+
+// Form Submission
+export type FormSubmission = InferSelectModel<typeof formSubmissions>
+export type NewFormSubmission = InferInsertModel<typeof formSubmissions>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

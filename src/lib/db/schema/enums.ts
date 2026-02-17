@@ -56,3 +56,24 @@ export const invitationTypeEnum = pgEnum('invitation_type', [
   'platform',
   'organization',
 ])
+
+export const formStatusEnum = pgEnum('form_status', [
+  'draft',
+  'published',
+  'archived',
+])
+
+export const formVisibilityEnum = pgEnum('form_visibility', [
+  'all_organizations',
+  'assigned',
+])
+
+export const formCompletionTypeEnum = pgEnum('form_completion_type', [
+  'thank_you',
+  'redirect',
+])
+
+export const formStepDisplayModeEnum = pgEnum('form_step_display_mode', [
+  'progress_bar',
+  'tabs',
+])
