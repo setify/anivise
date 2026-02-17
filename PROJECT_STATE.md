@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.16.0
+**Version:** 0.17.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(forms): add form builder data model with JSON schema types and versioning
+**Last Commit:** feat(forms): add visual drag-and-drop form builder with dnd-kit
 
 ## What's Implemented
 
@@ -82,9 +82,20 @@
 - [x] Complete TypeScript type system for JSON form schemas (11 field types, conditional logic, validation, multi-step)
 - [x] Zod validation: form schema, field, metadata, and dynamic submission validators
 - [x] Helper functions: getForm, getFormBySlug, getFormVersion, canOrganizationAccessForm, createFormVersion, publishForm
-- [ ] Form Builder UI (admin pages)
+- [x] Visual drag-and-drop builder with @dnd-kit (palette, canvas, settings panel)
+- [x] 3-column layout: field palette (240px), canvas (flex), settings (320px)
+- [x] Multi-step support with step tabs (add/remove/rename)
+- [x] Field settings: general, options (radio/checkbox), validation, conditional logic, hidden
+- [x] Auto-save with 3-second debounce + explicit save (new version) + publish
+- [x] Form preview modal
+- [x] Forms list page with data table and CRUD actions
+- [x] New form page with metadata entry and slug generation
+- [x] Form editor page with full builder
+- [x] "Formulare" nav item in admin sidebar
+- [x] 12 form server actions (CRUD, versioning, publishing)
 - [ ] Form Renderer (public-facing)
 - [ ] Form submission handling
+- [ ] Organization assignment UI
 
 ### UI / Pages
 - [x] Root layout with fonts, metadata, and ThemeProvider
@@ -98,7 +109,7 @@
 - [x] Analyses page with empty state
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (9 nav items with collapsible Settings sub-menu: General, Email Layout, Email Templates)
+- [x] Superadmin layout with admin sidebar (10 nav items incl. Forms, with collapsible Settings sub-menu: General, Email Layout, Email Templates)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
 - [x] Superadmin Profile page with editable form

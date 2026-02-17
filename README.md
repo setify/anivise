@@ -233,6 +233,17 @@ The platform includes a visual form builder for creating multi-step questionnair
 - Completion config (thank you page or redirect URL)
 - Dynamic Zod validator generation from form schema for type-safe submission validation
 
+**Visual Builder UI** (`/admin/forms`):
+- 3-column drag-and-drop editor: field palette (left), sortable canvas (center), settings panel (right)
+- @dnd-kit integration: drag field types from palette onto canvas, reorder fields via drag handle
+- Multi-step management: add/remove/rename steps via tab bar, drag fields between steps
+- Field settings tabs: General, Options (radio/checkbox), Validation, Conditional Logic, Hidden
+- Auto-save with 3-second debounce (saves in-place, no version bump)
+- Explicit save creates a new version; publish action available from toolbar
+- Preview modal renders all field types in read-only mode
+- State managed via `useReducer` with 12 action types (`BuilderAction` union)
+- Forms list page with data table, status badges, duplicate/archive/delete actions
+
 ```typescript
 import { createSubmissionValidator } from '@/lib/validations/forms'
 import { getFormVersion, canOrganizationAccessForm } from '@/lib/forms'
@@ -300,7 +311,7 @@ src/
 ├── components/
 │   ├── ui/                    # shadcn/ui components
 │   ├── layout/                # AppShell, Sidebar, Header, AdminSidebar
-│   ├── admin/                 # Admin components (StatCard)
+│   ├── admin/                 # Admin components (StatCard, forms/, form-builder/)
 │   ├── forms/                 # Reusable form components
 │   ├── analyses/              # Analysis-specific components
 │   └── shared/                # ThemeProvider, ThemeToggle

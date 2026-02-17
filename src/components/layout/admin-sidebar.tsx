@@ -9,6 +9,7 @@ import {
   Bell,
   Building2,
   ChevronRight,
+  ClipboardList,
   FlaskConical,
   LayoutDashboard,
   Link2,
@@ -79,6 +80,11 @@ export function AdminSidebar({ platformRole }: { platformRole?: string | null })
       href: `/${locale}/admin/organizations`,
       label: tAdmin('orgs.title'),
       icon: Building2,
+    },
+    {
+      href: `/${locale}/admin/forms`,
+      label: tAdmin('forms.title'),
+      icon: ClipboardList,
     },
     {
       href: `/${locale}/admin/jobs`,

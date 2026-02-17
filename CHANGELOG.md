@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.17.0] - 2026-02-17
+### Added
+- Visual drag-and-drop Form Builder with @dnd-kit integration
+- Form Builder three-column layout: field palette (left), canvas (center), settings (right)
+- Field palette with 11 draggable field types in 4 categories (Text, Selection, Rating, Other)
+- Builder canvas with sortable fields, dot-grid background, and multi-step navigation
+- Step tabs with add/remove/rename and double-click editing
+- Field settings panel with 5 tabs: General, Options (radio/checkbox), Validation, Logic, Hidden
+- Conditional logic editor (show/hide with 7 operators, AND/OR logic)
+- Builder toolbar with inline title editing, save status indicator, preview, and publish
+- Form preview modal rendering all field types in read-only mode
+- Auto-save with 3-second debounce (saves schema in-place, no version bump)
+- Explicit "Save" creates new version; "Publish" sets form to published status
+- Builder state management with useReducer (12 action types)
+- Forms list page (`/admin/forms`) with data table: title, status badges, visibility, version, submissions, actions
+- Form list actions: edit, duplicate, publish, archive, delete (draft only, with confirmation)
+- New form page (`/admin/forms/new`) with metadata form: title, description, slug (auto-generated with availability check), display mode, visibility
+- Form editor page (`/admin/forms/[formId]/edit`) loading form and current version schema
+- "Formulare" nav item in admin sidebar (ClipboardList icon, after Organizations)
+- Breadcrumb label for `forms` segment
+- Form server actions: getForms, getFormById, getCurrentFormVersion, createForm, saveFormSchema, saveFormVersion, updateFormMeta, publishForm, archiveForm, duplicateForm, deleteForm, checkFormSlugAvailability
+- Comprehensive i18n translations for `admin.forms` and `admin.forms.builder` namespaces (de + en, ~150 keys)
+
+### Dependencies
+- Added @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities
+
 ## [0.16.0] - 2026-02-17
 ### Added
 - Form Builder data model with 4 new database tables:
