@@ -1,10 +1,11 @@
 import { useTranslations } from 'next-intl'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Users, UserPlus } from 'lucide-react'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export default function TeamPage() {
   const t = useTranslations('team')
+  const tEmpty = useTranslations('ui.empty.team')
 
   return (
     <div className="space-y-6">
@@ -19,13 +20,15 @@ export default function TeamPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <Users className="text-muted-foreground mb-4 size-12" />
-          <h3 className="mb-1 text-lg font-medium">{t('emptyTitle')}</h3>
-          <p className="text-muted-foreground text-sm">{t('empty')}</p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={Users}
+        title={tEmpty('title')}
+        description={tEmpty('description')}
+        action={{
+          label: tEmpty('action'),
+          icon: UserPlus,
+        }}
+      />
     </div>
   )
 }

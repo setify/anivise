@@ -312,6 +312,8 @@
         "statusAndPlan": "Status & Tarif",
         "statusAndPlanDescription": "Abonnement-Status und zugewiesener Tarif",
         "planManagedHint": "Tarif wird über Admin > Tarife verwaltet",
+        "planAssignSuccess": "Tarif erfolgreich zugewiesen",
+        "planRemoveSuccess": "Tarif erfolgreich entfernt",
         "statusChangeWarning": "Das Setzen des Status auf gekündigt oder abgelaufen schränkt den Zugang für Organisationsmitglieder ein.",
         "settings": "Einstellungen",
         "settingsDescription": "Organisationsspezifische Standardwerte konfigurieren",
@@ -976,6 +978,71 @@
       "email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
       "minSelections": "Bitte wählen Sie mindestens {min} Optionen",
       "maxSelections": "Bitte wählen Sie maximal {max} Optionen"
+    }
+  },
+  "ui": {
+    "empty": {
+      "organizations": {
+        "title": "Noch keine Organisationen",
+        "description": "Erstellen Sie die erste Organisation, um loszulegen.",
+        "action": "Organisation erstellen"
+      },
+      "plans": {
+        "title": "Keine Tarife vorhanden",
+        "description": "Definieren Sie Tarife mit Seat- und Feature-Limits.",
+        "action": "Tarif erstellen"
+      },
+      "analyses": {
+        "title": "Noch keine Analysen",
+        "description": "Analysen erscheinen hier, sobald sie gestartet werden."
+      },
+      "forms": {
+        "title": "Keine Formulare vorhanden",
+        "description": "Erstellen Sie Ihr erstes Formular mit dem Drag-and-Drop-Builder.",
+        "action": "Formular erstellen"
+      },
+      "team": {
+        "title": "Noch keine Teammitglieder",
+        "description": "Laden Sie Ihr internes Team ein.",
+        "action": "Teammitglied einladen"
+      },
+      "activity": {
+        "title": "Keine Aktivitäten",
+        "description": "Aktionen werden hier protokolliert, sobald sie stattfinden."
+      },
+      "notifications": {
+        "title": "Keine Benachrichtigungen",
+        "description": "Alles ruhig! Sie haben keine neuen Benachrichtigungen."
+      },
+      "jobs": {
+        "title": "Keine Analyse-Jobs",
+        "description": "Analyse-Jobs erscheinen hier, sobald sie erstellt werden."
+      },
+      "dashboardEmployees": {
+        "title": "Noch keine Mitarbeiter",
+        "description": "Legen Sie Ihren ersten Mitarbeiter an, um mit der Personalverwaltung zu starten.",
+        "action": "Mitarbeiter hinzufügen"
+      },
+      "dashboardUsers": {
+        "title": "Nur Sie sind hier",
+        "description": "Laden Sie weitere Benutzer ein, um gemeinsam zu arbeiten.",
+        "action": "Benutzer einladen"
+      },
+      "dashboardAnalyses": {
+        "title": "Noch keine Analysen",
+        "description": "Starten Sie Ihre erste Analyse, um Muster zu erkennen.",
+        "action": "Neue Analyse"
+      },
+      "dashboardForms": {
+        "title": "Keine Formulare verfügbar",
+        "description": "Ihr Administrator hat noch keine Formulare für Ihre Organisation freigegeben."
+      }
+    },
+    "toast": {
+      "saved": "Gespeichert",
+      "error": "Ein Fehler ist aufgetreten",
+      "undo": "Rückgängig",
+      "undone": "Aktion rückgängig gemacht"
     }
   }
 }

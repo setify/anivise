@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.2.0
+**Version:** 1.3.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(plans): add org plan view, dashboard widget, and limit enforcement
+**Last Commit:** feat(ui): add skeleton loading, page transitions, breadcrumbs, toasts, and empty states
 
 ## What's Implemented
 
@@ -137,17 +137,31 @@
 - [ ] Analysis job limit enforcement (analysis upload flow not yet built)
 - [ ] Storage usage tracking (storage not yet implemented)
 
+### UX Polish
+- [x] Skeleton loading system (5 composites: Table, Card, Form, Detail, Stats) with shimmer animation
+- [x] 21 loading.tsx files (15 admin + 6 dashboard) for Suspense-based skeleton screens
+- [x] Page transitions (fade-in + slide-up, 200ms) via PageTransition component in both layouts
+- [x] Navigation progress bar (3px top-fixed, z-100, captures link clicks)
+- [x] Dashboard breadcrumbs in header (auto-generated from URL path, matching admin breadcrumbs)
+- [x] Admin breadcrumbs in header (auto-generated from URL path)
+- [x] EmptyState reusable component with icon, title, description, actions
+- [x] Toast with undo utility (executeWithUndo, 8s undo window)
+- [x] useCountUp hook (animated number counter with rAF + ease-out)
+- [x] Micro-interactions CSS (card hover lift, sidebar active indicator, button press, list item enter)
+- [x] Reduced motion support (prefers-reduced-motion disables all animations)
+- [x] i18n: ui.empty namespace (12 empty states, DE + EN) and ui.toast namespace (4 keys)
+
 ### UI / Pages
-- [x] Root layout with fonts, metadata, and ThemeProvider
+- [x] Root layout with fonts, metadata, ThemeProvider, and NavigationProgress
 - [x] Locale layout with NextIntlClientProvider
 - [x] Auth layout + placeholder pages (login, register)
-- [x] Dashboard app shell (sidebar + header)
-- [x] Responsive sidebar (desktop fixed, mobile Sheet)
-- [x] Header with mobile menu, dark mode toggle, user dropdown
+- [x] Dashboard app shell (sidebar + header + breadcrumbs)
+- [x] Responsive sidebar (desktop fixed, mobile Sheet) with active indicator
+- [x] Header with mobile menu, breadcrumbs, dark mode toggle, user dropdown
 - [x] Dark mode toggle component (light/dark/system)
 - [x] Dashboard page with stats cards and activity section
-- [x] Analyses page with empty state
-- [x] Team page with empty state
+- [x] Analyses page with EmptyState component
+- [x] Team page with EmptyState component
 - [x] Settings page with profile/org/notifications sections
 - [x] Superadmin layout with admin sidebar (10 nav items: Dashboard, Profile, Team, Organizations, Jobs, Forms, Integrations, Activity, Notifications, Settings; with collapsible Settings sub-menu: General, Email Layout, Email Templates)
 - [x] Dashboard sidebar with 6 nav items (Dashboard, Analyses, Forms, Team, Plan, Settings)
@@ -370,6 +384,18 @@
 - `src/lib/db/schema/products.ts` - Products and organization_products table schemas
 - `src/lib/products/limits.ts` - Limits resolution helper (getOrganizationLimits, checkLimit, etc.)
 - `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (10 items)
+- `src/components/layout/dashboard-breadcrumbs.tsx` - Dashboard breadcrumb navigation
+- `src/components/admin/breadcrumbs.tsx` - Admin breadcrumb navigation
+- `src/components/ui/page-transition.tsx` - Route change animation wrapper
+- `src/components/ui/navigation-progress.tsx` - Top progress bar on navigation
+- `src/components/ui/empty-state.tsx` - Reusable empty state component
+- `src/components/ui/skeletons/skeleton-table.tsx` - Table skeleton loading
+- `src/components/ui/skeletons/skeleton-card.tsx` - Card skeleton loading
+- `src/components/ui/skeletons/skeleton-form.tsx` - Form skeleton loading
+- `src/components/ui/skeletons/skeleton-detail.tsx` - Detail page skeleton loading
+- `src/components/ui/skeletons/skeleton-stats.tsx` - Stats grid skeleton loading
+- `src/lib/toast-with-undo.ts` - Toast with undo utility
+- `src/hooks/use-count-up.ts` - Animated number counter hook
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration

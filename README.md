@@ -302,10 +302,28 @@ const t = useTranslations('dashboard')
 
 ### UI Layout
 The dashboard uses a responsive app shell with:
-- **Desktop:** Fixed 256px sidebar with navigation links
+- **Desktop:** Fixed 256px sidebar with navigation links and active indicator
 - **Mobile:** Collapsible sidebar via Sheet component (hamburger menu)
-- **Header:** Mobile menu toggle, dark mode toggle (light/dark/system), user avatar dropdown
+- **Header:** Mobile menu toggle, breadcrumb navigation, dark mode toggle (light/dark/system), user avatar dropdown
 - **Dark mode:** Managed by next-themes with system preference detection
+
+### UX Polish
+
+**Skeleton Loading:** Every page has a `loading.tsx` file with composite skeleton components (Table, Card, Form, Detail, Stats) that use a shimmer animation. The shimmer is theme-aware via `color-mix(in oklch)`.
+
+**Page Transitions:** Route changes trigger a 200ms fade-in + slide-up animation via the `PageTransition` component (wraps content in both dashboard and admin layouts).
+
+**Navigation Progress:** A 3px progress bar at the top of the viewport appears on link clicks and completes when the new page loads.
+
+**Breadcrumbs:** Both dashboard and admin layouts show auto-generated breadcrumb navigation derived from the URL path.
+
+**Empty States:** Pages with no data show a styled `EmptyState` component with icon, title, description, and optional action button.
+
+**Toast with Undo:** `executeWithUndo()` utility for optimistic actions — executes the action, shows a success toast with an 8-second Undo button that reverts on click.
+
+**Micro-Interactions:** CSS classes for card hover lift (`.card-interactive`), sidebar active indicator (`.nav-link-active`), button press feedback (`.btn-press`), and staggered list item enter (`.list-item-enter`).
+
+**Accessibility:** All animations respect `prefers-reduced-motion` — when enabled, animation durations and transitions are reduced to near-zero.
 
 ## Available Scripts
 

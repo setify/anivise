@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.3.0] - 2026-02-17
+### Added
+- **Skeleton loading system**: 5 composite skeleton components (SkeletonTable, SkeletonCard, SkeletonForm, SkeletonDetail, SkeletonStats) with shimmer animation
+- **21 loading.tsx files**: Suspense-based skeleton screens for all admin (15) and dashboard (6) pages
+- **Page transitions**: fade-in + slide-up animation (200ms) on route changes via `PageTransition` component
+- **Navigation progress bar**: 3px top-fixed progress indicator on link clicks with auto-completion on pathname change
+- **Dashboard breadcrumbs**: auto-generated breadcrumb navigation in dashboard header (mirroring existing admin breadcrumbs)
+- **EmptyState component**: reusable empty state with icon, title, description, primary/secondary actions, dashed border style
+- **Toast with undo utility**: `executeWithUndo()` helper for optimistic actions with 8-second undo window
+- **useCountUp hook**: animated number counter using requestAnimationFrame with cubic ease-out
+- **Micro-interactions CSS**: card hover lift (`.card-interactive`), sidebar active indicator (`.nav-link-active`), button press (`.btn-press`), list item enter (`.list-item-enter`)
+- **Shimmer CSS animation**: theme-aware shimmer effect using `color-mix(in oklch)` for skeleton loading
+- **Reduced motion support**: `prefers-reduced-motion` media query disables all animations
+- i18n: `ui.empty` namespace with 12 empty state definitions (DE + EN) and `ui.toast` namespace with 4 keys
+
+### Changed
+- Analyses page uses EmptyState component instead of inline empty state
+- Team page uses EmptyState component instead of inline empty state
+- Dashboard sidebar nav links show active indicator bar (primary color, left side)
+- Admin sidebar nav links show active indicator bar (primary color, left side)
+- Dashboard header now includes breadcrumb navigation
+- Both admin and dashboard layouts wrap children in PageTransition
+
 ## [1.2.0] - 2026-02-17
 ### Added
 - **Org-admin plan view** (`/dashboard/plan`): full plan & usage page showing current plan, seat usage bars, monthly analysis/form counts, and storage allocation

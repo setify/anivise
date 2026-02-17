@@ -5,6 +5,7 @@ import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { DashboardBreadcrumbs } from '@/components/layout/dashboard-breadcrumbs'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,7 @@ export function Header({ onMobileMenuToggle, user }: HeaderProps) {
         <span className="sr-only">{t('menu')}</span>
       </Button>
 
+      <DashboardBreadcrumbs />
       <div className="flex-1" />
 
       <ThemeToggle />

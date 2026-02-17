@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Manrope, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+import { NavigationProgress } from '@/components/ui/navigation-progress'
 import './globals.css'
 
 const manrope = Manrope({
@@ -36,6 +37,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NavigationProgress />
           {children}
           <Toaster />
         </ThemeProvider>

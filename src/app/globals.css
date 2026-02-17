@@ -180,4 +180,100 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes progress-grow {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 70%; }
+  }
+
+  @keyframes progress-finish {
+    from { width: 70%; opacity: 1; }
+    to { width: 100%; opacity: 0; }
+  }
+
+  @keyframes badge-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  @keyframes count-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .skeleton-shimmer {
+    animation: shimmer 1.5s ease-in-out infinite;
+    background: linear-gradient(
+      90deg,
+      var(--color-muted) 25%,
+      color-mix(in oklch, var(--color-muted-foreground) 8%, transparent) 50%,
+      var(--color-muted) 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+/* Micro-interactions */
+@layer components {
+  /* Card hover lift */
+  .card-interactive {
+    transition: box-shadow 200ms ease, transform 200ms ease;
+  }
+  .card-interactive:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+  .card-interactive:active {
+    transform: translateY(0);
+  }
+
+  /* Sidebar active indicator */
+  .nav-link-active {
+    position: relative;
+  }
+  .nav-link-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    background: var(--color-primary);
+  }
+
+  /* Button press */
+  .btn-press:active {
+    transform: scale(0.97);
+  }
+
+  /* Fade-in for list items (staggered via inline style) */
+  .list-item-enter {
+    animation: page-enter 200ms ease-out both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

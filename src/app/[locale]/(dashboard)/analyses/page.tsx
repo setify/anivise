@@ -1,10 +1,11 @@
 import { useTranslations } from 'next-intl'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { BarChart3, Plus } from 'lucide-react'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export default function AnalysesPage() {
   const t = useTranslations('analyses')
+  const tEmpty = useTranslations('ui.empty.analyses')
 
   return (
     <div className="space-y-6">
@@ -19,17 +20,15 @@ export default function AnalysesPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <BarChart3 className="text-muted-foreground mb-4 size-12" />
-          <h3 className="mb-1 text-lg font-medium">{t('emptyTitle')}</h3>
-          <p className="text-muted-foreground mb-4 text-sm">{t('empty')}</p>
-          <Button variant="outline">
-            <Plus className="size-4" />
-            {t('newAnalysis')}
-          </Button>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={BarChart3}
+        title={tEmpty('title')}
+        description={tEmpty('description')}
+        action={{
+          label: tEmpty('action'),
+          icon: Plus,
+        }}
+      />
     </div>
   )
 }

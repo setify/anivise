@@ -312,6 +312,8 @@
         "statusAndPlan": "Status & Plan",
         "statusAndPlanDescription": "Subscription status and assigned plan",
         "planManagedHint": "Plan is managed via Admin > Plans",
+        "planAssignSuccess": "Plan assigned successfully",
+        "planRemoveSuccess": "Plan removed successfully",
         "statusChangeWarning": "Setting the status to cancelled or expired will restrict access for organization members.",
         "settings": "Settings",
         "settingsDescription": "Configure organization-specific defaults",
@@ -976,6 +978,71 @@
       "email": "Please enter a valid email address",
       "minSelections": "Please select at least {min} options",
       "maxSelections": "Please select at most {max} options"
+    }
+  },
+  "ui": {
+    "empty": {
+      "organizations": {
+        "title": "No organizations yet",
+        "description": "Create your first organization to get started.",
+        "action": "Create organization"
+      },
+      "plans": {
+        "title": "No plans available",
+        "description": "Define plans with seat and feature limits.",
+        "action": "Create plan"
+      },
+      "analyses": {
+        "title": "No analyses yet",
+        "description": "Analyses will appear here once they are started."
+      },
+      "forms": {
+        "title": "No forms available",
+        "description": "Create your first form with the drag-and-drop builder.",
+        "action": "Create form"
+      },
+      "team": {
+        "title": "No team members yet",
+        "description": "Invite your internal team to get started.",
+        "action": "Invite team member"
+      },
+      "activity": {
+        "title": "No activity",
+        "description": "Actions will be logged here once they occur."
+      },
+      "notifications": {
+        "title": "No notifications",
+        "description": "All quiet! You have no new notifications."
+      },
+      "jobs": {
+        "title": "No analysis jobs",
+        "description": "Analysis jobs will appear here once they are created."
+      },
+      "dashboardEmployees": {
+        "title": "No employees yet",
+        "description": "Add your first employee to start managing your team.",
+        "action": "Add employee"
+      },
+      "dashboardUsers": {
+        "title": "Just you here",
+        "description": "Invite more users to collaborate together.",
+        "action": "Invite user"
+      },
+      "dashboardAnalyses": {
+        "title": "No analyses yet",
+        "description": "Start your first analysis to discover patterns.",
+        "action": "New analysis"
+      },
+      "dashboardForms": {
+        "title": "No forms available",
+        "description": "Your administrator has not yet shared any forms with your organization."
+      }
+    },
+    "toast": {
+      "saved": "Saved",
+      "error": "An error occurred",
+      "undo": "Undo",
+      "undone": "Action undone"
     }
   }
 }

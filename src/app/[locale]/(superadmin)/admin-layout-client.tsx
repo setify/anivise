@@ -7,6 +7,7 @@ import { AdminSidebar } from '@/components/layout/admin-sidebar'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { NotificationBell } from '@/components/admin/notification-bell'
 import { AdminBreadcrumbs } from '@/components/admin/breadcrumbs'
+import { PageTransition } from '@/components/ui/page-transition'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 
@@ -52,7 +53,9 @@ export function AdminLayoutClient({
           <NotificationBell />
           <ThemeToggle />
         </header>
-        <main className="flex-1 p-4 lg:p-6">{children}</main>
+        <main className="flex-1 p-4 lg:p-6">
+          <PageTransition>{children}</PageTransition>
+        </main>
       </div>
     </div>
   )

@@ -9,6 +9,7 @@ import {
   SheetContent,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { PageTransition } from '@/components/ui/page-transition'
 
 interface UserInfo {
   displayName: string | null
@@ -44,7 +45,9 @@ export function AppShell({ children, user, orgName }: AppShellProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col">
         <Header onMobileMenuToggle={() => setMobileOpen(true)} user={user} />
-        <main className="flex-1 p-4 lg:p-6">{children}</main>
+        <main className="flex-1 p-4 lg:p-6">
+          <PageTransition>{children}</PageTransition>
+        </main>
       </div>
     </div>
   )
