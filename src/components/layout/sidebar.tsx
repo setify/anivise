@@ -15,6 +15,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 
 interface NavItem {
   href: string
@@ -22,7 +23,12 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  user?: { displayName: string | null; email: string; avatarUrl: string | null } | null
+  orgName?: string | null
+}
+
+export function Sidebar({ user, orgName }: SidebarProps) {
   const t = useTranslations('nav')
   const locale = useLocale()
   const pathname = usePathname()
@@ -70,7 +76,7 @@ export function Sidebar() {
 
       <div className="px-3 py-2">
         <p className="text-muted-foreground truncate px-2 text-xs font-medium uppercase tracking-wider">
-          {t('organization')}
+          {orgName || t('organization')}
         </p>
       </div>
 
@@ -101,15 +107,21 @@ export function Sidebar() {
       <div className="p-3">
         <div className="flex items-center gap-3 rounded-md px-2 py-2">
           <Avatar size="sm">
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarFallback>
+              {user?.displayName
+                ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                : 'U'}
+            </AvatarFallback>
           </Avatar>
           <div className="flex-1 truncate">
-            <p className="truncate text-sm font-medium">{t('user')}</p>
+            <p className="truncate text-sm font-medium">
+              {user?.displayName || user?.email || t('user')}
+            </p>
           </div>
-          <button className="text-muted-foreground hover:text-foreground transition-colors">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground shrink-0">
             <LogOut className="size-4" />
             <span className="sr-only">{t('logout')}</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

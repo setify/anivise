@@ -17,26 +17,27 @@ export async function saveEmailLayout(
   try {
     const currentUser = await requirePlatformRole('superadmin')
 
-    type EmailSettingKey = Extract<keyof PlatformSettings, `email.${string}`>
-
-    const mappings: { settingKey: EmailSettingKey; value: unknown }[] = []
-
-    if ('logoUrl' in data) mappings.push({ settingKey: 'email.logo_url', value: data.logoUrl })
-    if ('logoLink' in data) mappings.push({ settingKey: 'email.logo_link', value: data.logoLink })
-    if ('bgColor' in data) mappings.push({ settingKey: 'email.bg_color', value: data.bgColor })
-    if ('contentBgColor' in data) mappings.push({ settingKey: 'email.content_bg_color', value: data.contentBgColor })
-    if ('primaryColor' in data) mappings.push({ settingKey: 'email.primary_color', value: data.primaryColor })
-    if ('textColor' in data) mappings.push({ settingKey: 'email.text_color', value: data.textColor })
-    if ('linkColor' in data) mappings.push({ settingKey: 'email.link_color', value: data.linkColor })
-    if ('footerTextDe' in data) mappings.push({ settingKey: 'email.footer_text_de', value: data.footerTextDe })
-    if ('footerTextEn' in data) mappings.push({ settingKey: 'email.footer_text_en', value: data.footerTextEn })
-    if ('borderRadius' in data) mappings.push({ settingKey: 'email.border_radius', value: data.borderRadius })
-    if ('supportEmail' in data) mappings.push({ settingKey: 'email.support_email', value: data.supportEmail })
-
-    for (const { settingKey, value } of mappings) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await setSetting(settingKey, value as any, currentUser.id)
+    async function saveIfPresent<K extends keyof PlatformSettings>(
+      field: keyof EmailLayoutConfig,
+      settingKey: K,
+      value: PlatformSettings[K] | undefined
+    ) {
+      if (field in data && value !== undefined) {
+        await setSetting(settingKey, value, currentUser.id)
+      }
     }
+
+    await saveIfPresent('logoUrl', 'email.logo_url', data.logoUrl)
+    await saveIfPresent('logoLink', 'email.logo_link', data.logoLink)
+    await saveIfPresent('bgColor', 'email.bg_color', data.bgColor)
+    await saveIfPresent('contentBgColor', 'email.content_bg_color', data.contentBgColor)
+    await saveIfPresent('primaryColor', 'email.primary_color', data.primaryColor)
+    await saveIfPresent('textColor', 'email.text_color', data.textColor)
+    await saveIfPresent('linkColor', 'email.link_color', data.linkColor)
+    await saveIfPresent('footerTextDe', 'email.footer_text_de', data.footerTextDe)
+    await saveIfPresent('footerTextEn', 'email.footer_text_en', data.footerTextEn)
+    await saveIfPresent('borderRadius', 'email.border_radius', data.borderRadius)
+    await saveIfPresent('supportEmail', 'email.support_email', data.supportEmail)
 
     await logAudit({
       actorId: currentUser.id,

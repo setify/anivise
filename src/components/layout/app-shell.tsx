@@ -10,7 +10,19 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+interface UserInfo {
+  displayName: string | null
+  email: string
+  avatarUrl: string | null
+}
+
+interface AppShellProps {
+  children: React.ReactNode
+  user?: UserInfo | null
+  orgName?: string | null
+}
+
+export function AppShell({ children, user, orgName }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const t = useTranslations('nav')
 
@@ -18,20 +30,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen">
       {/* Desktop sidebar */}
       <aside className="bg-sidebar text-sidebar-foreground hidden w-64 shrink-0 border-r lg:block">
-        <Sidebar />
+        <Sidebar user={user} orgName={orgName} />
       </aside>
 
       {/* Mobile sidebar */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
           <SheetTitle className="sr-only">{t('menu')}</SheetTitle>
-          <Sidebar />
+          <Sidebar user={user} orgName={orgName} />
         </SheetContent>
       </Sheet>
 
       {/* Main content */}
       <div className="flex flex-1 flex-col">
-        <Header onMobileMenuToggle={() => setMobileOpen(true)} />
+        <Header onMobileMenuToggle={() => setMobileOpen(true)} user={user} />
         <main className="flex-1 p-4 lg:p-6">{children}</main>
       </div>
     </div>

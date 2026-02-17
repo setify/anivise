@@ -16,9 +16,10 @@ import {
 
 interface HeaderProps {
   onMobileMenuToggle: () => void
+  user?: { displayName: string | null; email: string; avatarUrl: string | null } | null
 }
 
-export function Header({ onMobileMenuToggle }: HeaderProps) {
+export function Header({ onMobileMenuToggle, user }: HeaderProps) {
   const t = useTranslations('nav')
   const tSettings = useTranslations('settings')
 
@@ -42,12 +43,16 @@ export function Header({ onMobileMenuToggle }: HeaderProps) {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
             <Avatar size="sm">
-              <AvatarFallback>U</AvatarFallback>
+              <AvatarFallback>
+                {user?.displayName
+                  ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                  : 'U'}
+              </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>{t('user')}</DropdownMenuLabel>
+          <DropdownMenuLabel>{user?.displayName || user?.email || t('user')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>{tSettings('profile')}</DropdownMenuItem>
           <DropdownMenuItem>{tSettings('title')}</DropdownMenuItem>
