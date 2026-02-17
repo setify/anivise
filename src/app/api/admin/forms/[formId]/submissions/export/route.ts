@@ -13,7 +13,8 @@ export async function GET(
   { params }: { params: Promise<{ formId: string }> }
 ) {
   try {
-    await requirePlatformRole('staff')
+    // Export is superadmin-only — staff members cannot export cross-org data
+    await requirePlatformRole('superadmin')
 
     const { formId } = await params
     const searchParams = request.nextUrl.searchParams

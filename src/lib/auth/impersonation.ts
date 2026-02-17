@@ -2,8 +2,18 @@ import crypto from 'crypto'
 import { cookies } from 'next/headers'
 
 const COOKIE_NAME = 'impersonation'
-const SECRET = process.env.IMPERSONATION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || 'fallback-secret'
 const MAX_AGE = 2 * 60 * 60 // 2 hours in seconds
+
+function getSecret(): string {
+  const secret = process.env.IMPERSONATION_SECRET
+  if (!secret) {
+    throw new Error(
+      'IMPERSONATION_SECRET environment variable is required. ' +
+      'Generate one with: openssl rand -base64 32'
+    )
+  }
+  return secret
+}
 
 interface ImpersonationData {
   orgId: string
@@ -13,7 +23,7 @@ interface ImpersonationData {
 }
 
 function sign(data: string): string {
-  const hmac = crypto.createHmac('sha256', SECRET)
+  const hmac = crypto.createHmac('sha256', getSecret())
   hmac.update(data)
   return hmac.digest('hex')
 }

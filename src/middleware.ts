@@ -61,11 +61,16 @@ export default async function middleware(request: NextRequest) {
   // 2. SUBDOMAIN RESOLUTION
   // ──────────────────────────────────────────────
   const subdomain = getSubdomain(hostname)
-  // In development, allow an x-organization-slug header or query param as fallback
-  const devOrgSlug =
-    request.headers.get('x-organization-slug') ||
-    request.nextUrl.searchParams.get('org') ||
-    null
+
+  // Dev-only fallback: allow x-organization-slug header or ?org query param
+  // BLOCKED in production to prevent tenant spoofing
+  let devOrgSlug: string | null = null
+  if (process.env.NODE_ENV !== 'production') {
+    devOrgSlug =
+      request.headers.get('x-organization-slug') ||
+      request.nextUrl.searchParams.get('org') ||
+      null
+  }
 
   const orgSlug = subdomain || devOrgSlug
 

@@ -6,6 +6,7 @@ import {
   boolean,
   timestamp,
   unique,
+  index,
 } from 'drizzle-orm/pg-core'
 import { productStatusEnum } from './enums'
 import { organizations } from './organizations'
@@ -73,5 +74,6 @@ export const organizationProducts = pgTable(
   },
   (table) => [
     unique('organization_products_org_unique').on(table.organizationId),
+    index('idx_org_products_product_id').on(table.productId),
   ]
 )

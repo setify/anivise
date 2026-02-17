@@ -7,6 +7,7 @@ import {
   integer,
   boolean,
   unique,
+  index,
 } from 'drizzle-orm/pg-core'
 import {
   formStatusEnum,
@@ -76,7 +77,10 @@ export const formVersions = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [unique().on(t.formId, t.versionNumber)]
+  (t) => [
+    unique().on(t.formId, t.versionNumber),
+    index('idx_form_versions_form_id').on(t.formId),
+  ]
 )
 
 export const formOrganizationAssignments = pgTable(
@@ -96,24 +100,36 @@ export const formOrganizationAssignments = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [unique().on(t.formId, t.organizationId)]
+  (t) => [
+    unique().on(t.formId, t.organizationId),
+    index('idx_form_org_assignments_form_id').on(t.formId),
+    index('idx_form_org_assignments_org_id').on(t.organizationId),
+  ]
 )
 
-export const formSubmissions = pgTable('form_submissions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  formId: uuid('form_id')
-    .notNull()
-    .references(() => forms.id),
-  formVersionId: uuid('form_version_id')
-    .notNull()
-    .references(() => formVersions.id),
-  organizationId: uuid('organization_id')
-    .notNull()
-    .references(() => organizations.id),
-  submittedBy: uuid('submitted_by').references(() => users.id),
-  data: jsonb('data').notNull(),
-  metadata: jsonb('metadata'),
-  submittedAt: timestamp('submitted_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-})
+export const formSubmissions = pgTable(
+  'form_submissions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    formId: uuid('form_id')
+      .notNull()
+      .references(() => forms.id),
+    formVersionId: uuid('form_version_id')
+      .notNull()
+      .references(() => formVersions.id),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id),
+    submittedBy: uuid('submitted_by').references(() => users.id),
+    data: jsonb('data').notNull(),
+    metadata: jsonb('metadata'),
+    submittedAt: timestamp('submitted_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index('idx_form_submissions_form_id').on(table.formId),
+    index('idx_form_submissions_org_id').on(table.organizationId),
+    index('idx_form_submissions_submitted_at').on(table.submittedAt),
+  ]
+)

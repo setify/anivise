@@ -3,6 +3,7 @@ import {
   uuid,
   timestamp,
   unique,
+  index,
 } from 'drizzle-orm/pg-core'
 import { orgMemberRoleEnum } from './enums'
 import { organizations } from './organizations'
@@ -33,5 +34,8 @@ export const organizationMembers = pgTable(
       table.organizationId,
       table.userId
     ),
+    index('idx_org_members_org_id').on(table.organizationId),
+    index('idx_org_members_user_id').on(table.userId),
+    index('idx_org_members_role').on(table.role),
   ]
 )
