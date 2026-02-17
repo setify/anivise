@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(plans): add plan system replacing subscription tiers with seat and feature limits
+**Last Commit:** feat(plans): add admin plan management UI with CRUD and org assignment
 
 ## What's Implemented
 
@@ -125,7 +125,9 @@
 - [x] Platform settings: default plan selector (replaces default tier)
 - [x] Audit actions for plan changes (plan.assigned, plan.changed, plan.removed)
 - [x] subscription_tier/maxMembers/maxAnalysesPerMonth deprecated on organizations table
-- [ ] Admin Plans CRUD UI (`/admin/plans`) — Prompt 2
+- [x] Admin Plans CRUD UI (`/admin/plans`): list, detail, create, edit pages with full server actions
+- [x] Plans nav item in admin sidebar (CreditCard, superadmin-only)
+- [x] i18n for admin.plans namespace (DE: "Tarife", EN: "Plans")
 - [ ] Org-admin plan view (`/dashboard/plan`) — Prompt 3
 - [ ] Limit enforcement in analysis/form/member flows — Prompt 3
 - [ ] Limit notification system — Prompt 3
@@ -238,6 +240,16 @@
 - [x] setFormStatus - status transitions draft/published/archived (admin)
 - [x] publishFormWithValidation - validate schema and publish with version management (admin)
 - [x] getEmailTemplates - list email template slugs for completion config (admin)
+- [x] getAllProducts - list all plans ordered by sortOrder (admin)
+- [x] getProductById - get single plan by ID (admin)
+- [x] getProductOrganizations - list orgs assigned to a plan (admin)
+- [x] getProductOrgCount - count of orgs assigned to a plan (admin)
+- [x] createProduct - create new plan with slug validation and default handling (admin)
+- [x] updateProduct - update plan details with slug uniqueness check (admin)
+- [x] archiveProduct - archive plan (blocked if orgs assigned) (admin)
+- [x] reactivateProduct - reactivate archived plan (admin)
+- [x] assignOrganizationPlan - assign plan to org (delete + insert) (admin)
+- [x] removeOrganizationPlan - remove org's plan assignment (admin)
 
 ### Integrations
 - [x] Integration secrets encryption (AES-256-GCM, `src/lib/crypto/secrets.ts`)
@@ -338,7 +350,16 @@
 - `src/lib/crypto/secrets.ts` - AES-256-GCM encryption for integration secrets
 - `src/lib/crypto/secrets-cache.ts` - In-memory secret cache with 5-minute TTL
 - `src/lib/db/schema/integration-secrets.ts` - Integration secrets table schema
-- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (9 items)
+- `src/app/[locale]/(superadmin)/admin/plans/page.tsx` - Plans list page (server)
+- `src/app/[locale]/(superadmin)/admin/plans/plans-page-client.tsx` - Plans list table (client)
+- `src/app/[locale]/(superadmin)/admin/plans/plan-form.tsx` - Shared plan create/edit form (client)
+- `src/app/[locale]/(superadmin)/admin/plans/new/page.tsx` - New plan page (server)
+- `src/app/[locale]/(superadmin)/admin/plans/[id]/page.tsx` - Plan detail page (server)
+- `src/app/[locale]/(superadmin)/admin/plans/[id]/plan-detail-client.tsx` - Plan detail with limits + assigned orgs (client)
+- `src/app/[locale]/(superadmin)/admin/plans/[id]/edit/page.tsx` - Plan edit page (server)
+- `src/lib/db/schema/products.ts` - Products and organization_products table schemas
+- `src/lib/products/limits.ts` - Limits resolution helper (getOrganizationLimits, checkLimit, etc.)
+- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (10 items)
 - `src/components/shared/theme-provider.tsx` - next-themes ThemeProvider wrapper
 - `src/components/shared/theme-toggle.tsx` - Dark mode toggle dropdown
 - `drizzle.config.ts` - Drizzle Kit configuration

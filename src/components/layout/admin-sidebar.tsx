@@ -10,6 +10,7 @@ import {
   Building2,
   ChevronRight,
   ClipboardList,
+  CreditCard,
   FlaskConical,
   LayoutDashboard,
   Link2,
@@ -80,6 +81,12 @@ export function AdminSidebar({ platformRole }: { platformRole?: string | null })
       href: `/${locale}/admin/organizations`,
       label: tAdmin('orgs.title'),
       icon: Building2,
+    },
+    {
+      href: `/${locale}/admin/plans`,
+      label: tAdmin('plans.title'),
+      icon: CreditCard,
+      superadminOnly: true,
     },
     {
       href: `/${locale}/admin/jobs`,

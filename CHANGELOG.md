@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.0] - 2026-02-17
+### Added
+- **Admin Plans CRUD UI** (`/admin/plans`): list, create, edit, detail pages for managing plans
+- Plans list page with table showing name, slug, status, seat/feature limits, dropdown actions (edit, archive, reactivate)
+- Plan detail page with 4 limit cards (seats, analyses, forms, storage) and assigned organizations table
+- Plan create/edit form with 4 sections: Basic Data (name, slug, description, sortOrder, isDefault), Seat Limits, Feature Limits, Storage
+- Plans nav item in admin sidebar (CreditCard icon, superadmin-only, after Organizations)
+- Server actions: `getAllProducts`, `getProductById`, `getProductOrganizations`, `getProductOrgCount`, `createProduct`, `updateProduct`, `archiveProduct`, `reactivateProduct`, `assignOrganizationPlan`, `removeOrganizationPlan`
+- i18n: `admin.plans` namespace with 60+ keys (DE: "Tarife", EN: "Plans")
+
 ## [1.0.0] - 2026-02-17
 ### Added
 - **Plan system (products/organization_products)**: New `products` table with seat limits (max_org_admins, max_managers, max_members) and feature limits (max_analyses_per_month, max_forms, max_form_submissions_per_month, max_storage_mb)
