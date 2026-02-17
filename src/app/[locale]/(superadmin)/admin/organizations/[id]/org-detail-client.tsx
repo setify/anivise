@@ -54,15 +54,13 @@ interface Organization {
   name: string
   slug: string
   settings: unknown
-  subscriptionTier: 'individual' | 'team' | 'enterprise'
   subscriptionStatus: 'trial' | 'active' | 'cancelled' | 'expired'
   defaultLocale: 'de' | 'en' | null
-  maxMembers: number | null
-  maxAnalysesPerMonth: number | null
   internalNotes: string | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
+  productName?: string | null
 }
 
 interface OrgInvitation {
@@ -240,14 +238,10 @@ export function OrgDetailClient({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground text-sm">
-                      {t('tier')}
+                      {t('plan')}
                     </span>
                     <Badge variant="secondary">
-                      {t(
-                        organization.subscriptionTier === 'team'
-                          ? 'teamTier'
-                          : organization.subscriptionTier
-                      )}
+                      {organization.productName || t('noPlan')}
                     </Badge>
                   </div>
                   <div className="flex justify-between">

@@ -17,6 +17,8 @@ import type {
   formVersions,
   formOrganizationAssignments,
   formSubmissions,
+  products,
+  organizationProducts,
 } from '@/lib/db/schema'
 
 // Organization
@@ -86,6 +88,14 @@ export type NewFormOrganizationAssignment = InferInsertModel<typeof formOrganiza
 // Form Submission
 export type FormSubmission = InferSelectModel<typeof formSubmissions>
 export type NewFormSubmission = InferInsertModel<typeof formSubmissions>
+
+// Product
+export type Product = InferSelectModel<typeof products>
+export type NewProduct = InferInsertModel<typeof products>
+
+// Organization Product (plan assignment)
+export type OrganizationProduct = InferSelectModel<typeof organizationProducts>
+export type NewOrganizationProduct = InferInsertModel<typeof organizationProducts>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

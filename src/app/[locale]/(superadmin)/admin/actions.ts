@@ -10,6 +10,8 @@ import {
   emailTemplates,
   notifications,
   analysisJobs,
+  products,
+  organizationProducts,
 } from '@/lib/db/schema'
 import { eq, and, isNull, isNotNull, count, desc, sql, like, gte, type SQL } from 'drizzle-orm'
 import { requirePlatformRole } from '@/lib/auth/require-platform-role'
@@ -312,12 +314,21 @@ export async function cancelInvitation(invitationId: string) {
 export async function getOrganizations() {
   await requirePlatformRole('staff')
 
-  const orgs = await db
-    .select()
+  const rows = await db
+    .select({
+      id: organizations.id,
+      name: organizations.name,
+      slug: organizations.slug,
+      subscriptionStatus: organizations.subscriptionStatus,
+      createdAt: organizations.createdAt,
+      productName: products.name,
+    })
     .from(organizations)
+    .leftJoin(organizationProducts, eq(organizations.id, organizationProducts.organizationId))
+    .leftJoin(products, eq(organizationProducts.productId, products.id))
     .where(isNull(organizations.deletedAt))
 
-  return orgs
+  return rows
 }
 
 export async function getOrganizationById(id: string) {
@@ -338,7 +349,7 @@ export async function createOrganization(formData: FormData) {
   const raw = {
     name: formData.get('name') as string,
     slug: formData.get('slug') as string,
-    subscriptionTier: formData.get('subscriptionTier') as string,
+    productId: (formData.get('productId') as string) || undefined,
   }
 
   const parsed = createOrganizationSchema.safeParse(raw)
@@ -368,9 +379,18 @@ export async function createOrganization(formData: FormData) {
     .values({
       name: parsed.data.name,
       slug: parsed.data.slug,
-      subscriptionTier: parsed.data.subscriptionTier,
     })
     .returning()
+
+  // Assign plan: use provided productId or default from settings
+  const productId = parsed.data.productId || (await getSetting('platform.default_product_id'))
+  if (productId) {
+    await db.insert(organizationProducts).values({
+      organizationId: newOrg.id,
+      productId,
+      assignedBy: currentUser.id,
+    })
+  }
 
   await logAudit({
     actorId: currentUser.id,
@@ -378,7 +398,7 @@ export async function createOrganization(formData: FormData) {
     action: 'org.created',
     entityType: 'organization',
     entityId: newOrg.id,
-    metadata: { name: newOrg.name, slug: newOrg.slug },
+    metadata: { name: newOrg.name, slug: newOrg.slug, productId: productId || null },
   })
 
   await createNotification({
@@ -439,11 +459,8 @@ export async function updateOrganization(
     id: string
     name: string
     slug: string
-    subscriptionTier: 'individual' | 'team' | 'enterprise'
     subscriptionStatus: 'trial' | 'active' | 'cancelled' | 'expired'
     defaultLocale: 'de' | 'en' | null
-    maxMembers: number | null
-    maxAnalysesPerMonth: number | null
     internalNotes: string | null
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -493,11 +510,8 @@ export async function updateOrganization(
       .set({
         name: parsed.data.name,
         slug: parsed.data.slug,
-        subscriptionTier: parsed.data.subscriptionTier,
         subscriptionStatus: parsed.data.subscriptionStatus,
         defaultLocale: parsed.data.defaultLocale,
-        maxMembers: parsed.data.maxMembers,
-        maxAnalysesPerMonth: parsed.data.maxAnalysesPerMonth,
         internalNotes: parsed.data.internalNotes,
         updatedAt: new Date(),
       })
@@ -513,9 +527,6 @@ export async function updateOrganization(
         changes: {
           ...(oldOrg.name !== parsed.data.name && { name: { from: oldOrg.name, to: parsed.data.name } }),
           ...(oldOrg.slug !== parsed.data.slug && { slug: { from: oldOrg.slug, to: parsed.data.slug } }),
-          ...(oldOrg.subscriptionTier !== parsed.data.subscriptionTier && {
-            subscriptionTier: { from: oldOrg.subscriptionTier, to: parsed.data.subscriptionTier },
-          }),
           ...(oldOrg.subscriptionStatus !== parsed.data.subscriptionStatus && {
             subscriptionStatus: { from: oldOrg.subscriptionStatus, to: parsed.data.subscriptionStatus },
           }),
@@ -564,7 +575,7 @@ export async function createOrganizationWithAdmin(formData: FormData) {
   const raw = {
     name: formData.get('name') as string,
     slug: formData.get('slug') as string,
-    subscriptionTier: formData.get('subscriptionTier') as string,
+    productId: (formData.get('productId') as string) || undefined,
   }
 
   const parsed = createOrganizationSchema.safeParse(raw)
@@ -600,9 +611,18 @@ export async function createOrganizationWithAdmin(formData: FormData) {
     .values({
       name: parsed.data.name,
       slug: parsed.data.slug,
-      subscriptionTier: parsed.data.subscriptionTier,
     })
     .returning()
+
+  // Assign plan: use provided productId or default from settings
+  const productId = parsed.data.productId || (await getSetting('platform.default_product_id'))
+  if (productId) {
+    await db.insert(organizationProducts).values({
+      organizationId: newOrg.id,
+      productId,
+      assignedBy: currentUser.id,
+    })
+  }
 
   // Create org-admin invitation
   const token = crypto.randomBytes(32).toString('hex')
@@ -822,11 +842,10 @@ export async function updatePlatformSettings(
     const allowedKeys: (keyof PlatformSettings)[] = [
       'platform.name',
       'platform.default_locale',
-      'platform.default_org_tier',
+      'platform.default_product_id',
       'invitation.expiry_days',
       'invitation.max_resends',
       'org.reserved_slugs',
-      'org.max_members_trial',
       'analysis.max_transcript_size_mb',
     ]
 
@@ -1429,4 +1448,34 @@ export async function getPlatformStats() {
     totalOrganizations: orgCount?.value ?? 0,
     totalUsers: userCount?.value ?? 0,
   }
+}
+
+// ─── Products (Plans) ───
+
+export async function getActiveProducts() {
+  await requirePlatformRole('staff')
+
+  return db
+    .select()
+    .from(products)
+    .where(eq(products.status, 'active'))
+    .orderBy(products.sortOrder)
+}
+
+export async function getOrganizationProductAction(organizationId: string) {
+  await requirePlatformRole('staff')
+
+  const [assignment] = await db
+    .select({
+      productId: organizationProducts.productId,
+      productName: products.name,
+      productSlug: products.slug,
+      assignedAt: organizationProducts.assignedAt,
+    })
+    .from(organizationProducts)
+    .innerJoin(products, eq(organizationProducts.productId, products.id))
+    .where(eq(organizationProducts.organizationId, organizationId))
+    .limit(1)
+
+  return assignment || null
 }

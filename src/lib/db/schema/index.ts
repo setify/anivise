@@ -14,6 +14,7 @@ export {
   formVisibilityEnum,
   formCompletionTypeEnum,
   formStepDisplayModeEnum,
+  productStatusEnum,
 } from './enums'
 
 // Tables
@@ -36,3 +37,4 @@ export {
   formOrganizationAssignments,
   formSubmissions,
 } from './forms'
+export { products, organizationProducts } from './products'

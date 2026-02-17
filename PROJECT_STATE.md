@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.19.0
+**Version:** 1.0.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(forms): add organization assignment, publish flow, and finalize form builder
+**Last Commit:** feat(plans): add plan system replacing subscription tiers with seat and feature limits
 
 ## What's Implemented
 
@@ -19,8 +19,10 @@
 ### Database
 - [x] Drizzle ORM configured with PostgreSQL (postgres.js driver)
 - [x] drizzle.config.ts with schema path and migrations output
-- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode)
-- [x] Schema: organizations (name, slug, settings, subscription tier/status, default_locale, max_members, max_analyses_per_month, internal_notes, soft-delete)
+- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode, product_status)
+- [x] Schema: organizations (name, slug, settings, subscription tier/status [deprecated], default_locale, internal_notes, soft-delete)
+- [x] Schema: products (name, slug, description, status, is_default, sort_order, seat limits [max_org_admins/managers/members], feature limits [max_analyses/forms/submissions/storage])
+- [x] Schema: organization_products (1:1 org-plan junction, override columns for custom plans, assigned_by/at, notes, unique on organization_id)
 - [x] Schema: users (Supabase Auth ID, email, first/last/display name, phone, timezone, avatar, platform_role, locale)
 - [x] Schema: organization_members (junction table, role enum, unique constraint)
 - [x] Schema: analysis_subjects (full_name, email, role_title, organization_id)
@@ -38,7 +40,7 @@
 - [x] Schema: form_organization_assignments (formId, organizationId, assignedBy, unique constraint)
 - [x] Schema: form_submissions (formId, formVersionId, organizationId, submittedBy, jsonb data/metadata)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions, products, organization_products)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -75,7 +77,7 @@
 - [x] useRole - client-side user role in current org + platform role (UX only, not security)
 
 ### Validations
-- [x] Zod schemas for admin forms (profile update, team invite/update/remove, org create/delete/update)
+- [x] Zod schemas for admin forms (profile update, team invite/update/remove, org create/delete/update — org schemas updated for plan system)
 - [x] Zod schemas for form builder (formSchemaValidator, formFieldValidator, formMetaValidator, createSubmissionValidator)
 
 ### Form Builder
@@ -111,6 +113,23 @@
 - [x] Status transitions: publish, unpublish, archive, reactivate
 - [x] Builder wired to settings dialog and publish validation dialog
 
+### Plans / Products (Tarife)
+- [x] DB schema: `products` table with seat limits and feature limits
+- [x] DB schema: `organization_products` junction table (1:1, unique on org_id) with override columns
+- [x] `productStatusEnum` (active, archived)
+- [x] Limits resolution helper (`src/lib/products/limits.ts`): resolves effective limits from product defaults + overrides
+- [x] Utility functions: `getOrganizationLimits`, `getOrganizationUsage`, `checkLimit`, `canAddMember`, `getOrganizationProduct`
+- [x] Seed script with 4 default plans: Starter, Professional, Enterprise, Custom
+- [x] Org creation assigns plan (productId from form or platform default)
+- [x] Org list, detail, and edit pages show plan name instead of subscription tier
+- [x] Platform settings: default plan selector (replaces default tier)
+- [x] Audit actions for plan changes (plan.assigned, plan.changed, plan.removed)
+- [x] subscription_tier/maxMembers/maxAnalysesPerMonth deprecated on organizations table
+- [ ] Admin Plans CRUD UI (`/admin/plans`) — Prompt 2
+- [ ] Org-admin plan view (`/dashboard/plan`) — Prompt 3
+- [ ] Limit enforcement in analysis/form/member flows — Prompt 3
+- [ ] Limit notification system — Prompt 3
+
 ### UI / Pages
 - [x] Root layout with fonts, metadata, and ThemeProvider
 - [x] Locale layout with NextIntlClientProvider
@@ -132,7 +151,7 @@
 - [x] Superadmin Organizations list page with table
 - [x] Superadmin Create Organization page with form
 - [x] Superadmin Organization detail page with danger zone (soft-delete), invitations tab, and edit button
-- [x] Superadmin Organization edit page with basic data, subscription, limits & settings, internal notes
+- [x] Superadmin Organization edit page with basic data, status & plan, settings, internal notes
 - [x] Org creation form with "First Org-Admin" section and auto-invitation
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination
 - [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)

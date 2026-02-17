@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.0.0] - 2026-02-17
+### Added
+- **Plan system (products/organization_products)**: New `products` table with seat limits (max_org_admins, max_managers, max_members) and feature limits (max_analyses_per_month, max_forms, max_form_submissions_per_month, max_storage_mb)
+- **Organization-product assignment**: `organization_products` junction table (1:1, one org = one plan) with override columns for custom plans
+- **Limits resolution helper** (`src/lib/products/limits.ts`): `getOrganizationLimits()`, `getOrganizationUsage()`, `checkLimit()`, `canAddMember()`, `getOrganizationProduct()`
+- Seed SQL script for 4 default plans: Starter, Professional, Enterprise, Custom (`drizzle/seed-plans.sql`)
+- `productStatusEnum` (active, archived) for product lifecycle management
+- Server actions: `getActiveProducts()`, `getOrganizationProductAction()` for admin UI
+- Audit actions: `plan.assigned`, `plan.changed`, `plan.removed`
+- Platform setting: `platform.default_product_id` (replaces `platform.default_org_tier`)
+- i18n (DE): "Tarif"/"Tarife" terminology for plan display
+- i18n (EN): "Plan"/"Plans" terminology for plan display
+
+### Changed
+- **BREAKING**: Organization creation/update no longer uses `subscriptionTier` — replaced with `productId` plan assignment
+- Organization list table now shows plan name (via LEFT JOIN) instead of subscription tier
+- Organization detail page now shows assigned plan name instead of tier badge
+- Organization edit page: removed subscription tier and manual limit fields, shows plan as read-only badge with hint to manage via Admin > Plans
+- Organization creation form: replaced tier select with product/plan select, loads available plans from DB
+- Platform settings: replaced "Default Org Tier" select with "Default Plan" product select, removed "Max Members Trial" field
+- Updated `createOrganization`, `createOrganizationWithAdmin`, `updateOrganization` server actions
+- Updated `createOrganizationSchema` (subscriptionTier -> productId), `updateOrganizationSchema` (removed subscriptionTier, maxMembers, maxAnalysesPerMonth)
+- Validation schemas simplified: limits now come from the plan, not manual org-level overrides
+
+### Deprecated
+- `subscription_tier` and `max_members`/`max_analyses_per_month` columns remain on `organizations` table for backward compatibility but are no longer written by application code
+
+### Removed
+- Platform settings: `platform.default_org_tier`, `org.max_members_trial`
+- UI: subscription tier select, manual maxMembers/maxAnalysesPerMonth inputs on org edit page
+- i18n: tier-related translations (individual, teamTier, enterprise) replaced by plan-based translations
+
 ## [0.19.0] - 2026-02-17
 ### Added
 - Organization assignment system: assign forms to specific organizations or make them visible to all

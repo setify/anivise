@@ -1,5 +1,5 @@
 import { requirePlatformRole } from '@/lib/auth/require-platform-role'
-import { getOrganizationById, getOrgInvitations } from '../../actions'
+import { getOrganizationById, getOrgInvitations, getOrganizationProductAction } from '../../actions'
 import { OrgDetailClient } from './org-detail-client'
 import { notFound } from 'next/navigation'
 
@@ -16,11 +16,14 @@ export default async function OrganizationDetailPage({
     notFound()
   }
 
-  const invitations = await getOrgInvitations(id)
+  const [invitations, orgProduct] = await Promise.all([
+    getOrgInvitations(id),
+    getOrganizationProductAction(id),
+  ])
 
   return (
     <OrgDetailClient
-      organization={org}
+      organization={{ ...org, productName: orgProduct?.productName ?? null }}
       invitations={invitations}
       isSuperadmin={currentUser.platformRole === 'superadmin'}
     />

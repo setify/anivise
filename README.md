@@ -118,7 +118,9 @@ The database is managed via **Drizzle ORM** with schemas defined in `src/lib/db/
 
 | Table | Description | Tenant-Isolated |
 |-------|-------------|-----------------|
-| `organizations` | Organizations with slug, subscription tier/status | No (root table) |
+| `organizations` | Organizations with slug, subscription status | No (root table) |
+| `products` | Plans/tariffs with seat + feature limits | No (global) |
+| `organization_products` | 1:1 org-to-plan assignment with override columns | Yes |
 | `users` | Users linked to Supabase Auth by ID | No (global) |
 | `organization_members` | Junction: user + org + role (unique constraint) | Yes |
 | `analysis_subjects` | People being analyzed | Yes |
@@ -135,8 +137,9 @@ The database is managed via **Drizzle ORM** with schemas defined in `src/lib/db/
 
 | Enum | Values |
 |------|--------|
-| `subscription_tier` | individual, team, enterprise |
+| `subscription_tier` | individual, team, enterprise (deprecated) |
 | `subscription_status` | trial, active, cancelled, expired |
+| `product_status` | active, archived |
 | `org_member_role` | org_admin, manager, member |
 | `consent_type` | analysis, data_retention, sharing |
 | `consent_status` | active, revoked |

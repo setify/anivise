@@ -31,6 +31,12 @@ import {
 import { toast } from 'sonner'
 import { Copy, Check } from 'lucide-react'
 
+interface Product {
+  id: string
+  name: string
+  slug: string
+}
+
 async function handleSubmit(
   _prevState: {
     success: boolean
@@ -43,7 +49,7 @@ async function handleSubmit(
   return result
 }
 
-export function CreateOrganizationForm() {
+export function CreateOrganizationForm({ products }: { products: Product[] }) {
   const t = useTranslations('admin.orgs')
   const tCreate = useTranslations('admin.orgs.create')
   const tCommon = useTranslations('common')
@@ -127,19 +133,17 @@ export function CreateOrganizationForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subscriptionTier">{t('tier')}</Label>
-                  <Select name="subscriptionTier" defaultValue="team">
+                  <Label htmlFor="productId">{t('plan')}</Label>
+                  <Select name="productId" defaultValue={products[0]?.id}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder={t('selectPlan')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="individual">
-                        {t('individual')}
-                      </SelectItem>
-                      <SelectItem value="team">{t('teamTier')}</SelectItem>
-                      <SelectItem value="enterprise">
-                        {t('enterprise')}
-                      </SelectItem>
+                      {products.map((product) => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

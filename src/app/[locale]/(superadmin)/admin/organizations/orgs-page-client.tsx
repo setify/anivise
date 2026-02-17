@@ -26,9 +26,9 @@ interface Organization {
   id: string
   name: string
   slug: string
-  subscriptionTier: 'individual' | 'team' | 'enterprise'
   subscriptionStatus: 'trial' | 'active' | 'cancelled' | 'expired'
   createdAt: Date
+  productName?: string | null
 }
 
 const statusVariant: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -79,7 +79,7 @@ export function OrganizationsPageClient({
                 <TableRow>
                   <TableHead>{t('name')}</TableHead>
                   <TableHead>{t('slug')}</TableHead>
-                  <TableHead>{t('tier')}</TableHead>
+                  <TableHead>{t('plan')}</TableHead>
                   <TableHead>{t('tierStatus')}</TableHead>
                   <TableHead>{t('created')}</TableHead>
                 </TableRow>
@@ -100,11 +100,7 @@ export function OrganizationsPageClient({
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary">
-                        {t(
-                          org.subscriptionTier === 'team'
-                            ? 'teamTier'
-                            : org.subscriptionTier
-                        )}
+                        {org.productName || t('noPlan')}
                       </Badge>
                     </TableCell>
                     <TableCell>

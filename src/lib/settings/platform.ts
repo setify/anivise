@@ -5,11 +5,10 @@ import { eq } from 'drizzle-orm'
 export interface PlatformSettings {
   'platform.name': string
   'platform.default_locale': 'de' | 'en'
-  'platform.default_org_tier': 'individual' | 'team' | 'enterprise'
+  'platform.default_product_id': string
   'invitation.expiry_days': number
   'invitation.max_resends': number
   'org.reserved_slugs': string[]
-  'org.max_members_trial': number
   'analysis.max_transcript_size_mb': number
   'email.logo_url': string
   'email.logo_link': string
@@ -43,7 +42,7 @@ export const EMAIL_LAYOUT_DEFAULTS = {
 const DEFAULTS: PlatformSettings = {
   'platform.name': 'Anivise',
   'platform.default_locale': 'de',
-  'platform.default_org_tier': 'team',
+  'platform.default_product_id': '',
   'invitation.expiry_days': 7,
   'invitation.max_resends': 3,
   'org.reserved_slugs': [
@@ -56,7 +55,6 @@ const DEFAULTS: PlatformSettings = {
     'login',
     'register',
   ],
-  'org.max_members_trial': 5,
   'analysis.max_transcript_size_mb': 10,
   ...EMAIL_LAYOUT_DEFAULTS,
 }

@@ -33,12 +33,19 @@ import type { PlatformSettings } from '@/lib/settings/platform'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
 
+interface ActiveProduct {
+  id: string
+  name: string
+  slug: string
+}
+
 interface Props {
   settings: Partial<PlatformSettings>
   currentUser: { id: string; platformRole: string | null }
+  activeProducts: ActiveProduct[]
 }
 
-export function SettingsPageClient({ settings }: Props) {
+export function SettingsPageClient({ settings, activeProducts }: Props) {
   const t = useTranslations('admin.platformSettings')
   const locale = useLocale()
 
@@ -49,8 +56,8 @@ export function SettingsPageClient({ settings }: Props) {
   const [defaultLocale, setDefaultLocale] = useState<string>(
     settings['platform.default_locale'] ?? 'de'
   )
-  const [defaultOrgTier, setDefaultOrgTier] = useState<string>(
-    settings['platform.default_org_tier'] ?? 'team'
+  const [defaultProductId, setDefaultProductId] = useState<string>(
+    (settings['platform.default_product_id'] as string) ?? ''
   )
 
   // Invitations tab state
@@ -75,10 +82,6 @@ export function SettingsPageClient({ settings }: Props) {
     ]
   )
   const [newSlug, setNewSlug] = useState('')
-  const [maxMembersTrial, setMaxMembersTrial] = useState(
-    settings['org.max_members_trial'] ?? 5
-  )
-
   // Analysis tab state
   const [maxTranscriptSize, setMaxTranscriptSize] = useState(
     settings['analysis.max_transcript_size_mb'] ?? 10
@@ -162,21 +165,19 @@ export function SettingsPageClient({ settings }: Props) {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="defaultOrgTier">
-                  {t('general.defaultOrgTier')}
+                <Label htmlFor="defaultProductId">
+                  {t('general.defaultPlan')}
                 </Label>
-                <Select value={defaultOrgTier} onValueChange={setDefaultOrgTier}>
-                  <SelectTrigger id="defaultOrgTier">
-                    <SelectValue />
+                <Select value={defaultProductId} onValueChange={setDefaultProductId}>
+                  <SelectTrigger id="defaultProductId">
+                    <SelectValue placeholder={t('general.selectDefaultPlan')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="individual">
-                      {t('general.tiers.individual')}
-                    </SelectItem>
-                    <SelectItem value="team">{t('general.tiers.team')}</SelectItem>
-                    <SelectItem value="enterprise">
-                      {t('general.tiers.enterprise')}
-                    </SelectItem>
+                    {activeProducts.map((product) => (
+                      <SelectItem key={product.id} value={product.id}>
+                        {product.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -186,7 +187,7 @@ export function SettingsPageClient({ settings }: Props) {
                   saveSection('general', {
                     'platform.name': platformName,
                     'platform.default_locale': defaultLocale,
-                    'platform.default_org_tier': defaultOrgTier,
+                    'platform.default_product_id': defaultProductId,
                   })
                 }
               >
@@ -307,25 +308,11 @@ export function SettingsPageClient({ settings }: Props) {
                   </Button>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="maxMembersTrial">
-                  {t('organizations.maxMembersTrial')}
-                </Label>
-                <Input
-                  id="maxMembersTrial"
-                  type="number"
-                  min={1}
-                  max={100}
-                  value={maxMembersTrial}
-                  onChange={(e) => setMaxMembersTrial(Number(e.target.value))}
-                />
-              </div>
               <Button
                 disabled={isPending}
                 onClick={() =>
                   saveSection('organizations', {
                     'org.reserved_slugs': reservedSlugs,
-                    'org.max_members_trial': maxMembersTrial,
                   })
                 }
               >

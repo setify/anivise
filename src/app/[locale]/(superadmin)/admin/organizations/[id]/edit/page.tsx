@@ -1,5 +1,5 @@
 import { requirePlatformRole } from '@/lib/auth/require-platform-role'
-import { getOrganizationById } from '../../../actions'
+import { getOrganizationById, getOrganizationProductAction } from '../../../actions'
 import { OrgEditClient } from './org-edit-client'
 import { notFound } from 'next/navigation'
 
@@ -16,5 +16,7 @@ export default async function OrganizationEditPage({
     notFound()
   }
 
-  return <OrgEditClient organization={org} />
+  const orgProduct = await getOrganizationProductAction(id)
+
+  return <OrgEditClient organization={{ ...org, productName: orgProduct?.productName ?? null }} />
 }

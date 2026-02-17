@@ -21,6 +21,9 @@ export type AuditAction =
   | 'impersonation.ended'
   | 'analysis_job.retried'
   | 'analysis_job.cancelled'
+  | 'plan.assigned'
+  | 'plan.changed'
+  | 'plan.removed'
 
 export async function logAudit(params: {
   actorId: string

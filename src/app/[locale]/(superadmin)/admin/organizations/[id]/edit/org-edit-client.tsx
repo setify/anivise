@@ -32,15 +32,13 @@ interface Organization {
   name: string
   slug: string
   settings: unknown
-  subscriptionTier: 'individual' | 'team' | 'enterprise'
   subscriptionStatus: 'trial' | 'active' | 'cancelled' | 'expired'
   defaultLocale: 'de' | 'en' | null
-  maxMembers: number | null
-  maxAnalysesPerMonth: number | null
   internalNotes: string | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
+  productName?: string | null
 }
 
 export function OrgEditClient({ organization }: { organization: Organization }) {
@@ -53,16 +51,9 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(organization.name)
   const [slug, setSlug] = useState(organization.slug)
-  const [subscriptionTier, setSubscriptionTier] = useState(organization.subscriptionTier)
   const [subscriptionStatus, setSubscriptionStatus] = useState(organization.subscriptionStatus)
   const [defaultLocale, setDefaultLocale] = useState<'de' | 'en' | ''>(
     organization.defaultLocale || ''
-  )
-  const [maxMembers, setMaxMembers] = useState(
-    organization.maxMembers?.toString() || ''
-  )
-  const [maxAnalysesPerMonth, setMaxAnalysesPerMonth] = useState(
-    organization.maxAnalysesPerMonth?.toString() || ''
   )
   const [internalNotes, setInternalNotes] = useState(organization.internalNotes || '')
 
@@ -112,8 +103,6 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug])
 
-  const showTierWarning =
-    subscriptionTier !== organization.subscriptionTier
   const showStatusWarning =
     subscriptionStatus !== organization.subscriptionStatus &&
     (subscriptionStatus === 'cancelled' || subscriptionStatus === 'expired')
@@ -133,11 +122,8 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
         id: organization.id,
         name,
         slug,
-        subscriptionTier,
         subscriptionStatus,
         defaultLocale: defaultLocale || null,
-        maxMembers: maxMembers ? parseInt(maxMembers, 10) : null,
-        maxAnalysesPerMonth: maxAnalysesPerMonth ? parseInt(maxAnalysesPerMonth, 10) : null,
         internalNotes: internalNotes || null,
       })
 
@@ -242,36 +228,23 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
           </CardContent>
         </Card>
 
-        {/* Subscription */}
+        {/* Status & Plan */}
         <Card>
           <CardHeader>
-            <CardTitle>{tEdit('subscription')}</CardTitle>
-            <CardDescription>{tEdit('subscriptionDescription')}</CardDescription>
+            <CardTitle>{tEdit('statusAndPlan')}</CardTitle>
+            <CardDescription>{tEdit('statusAndPlanDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>{t('tier')}</Label>
-              <Select
-                value={subscriptionTier}
-                onValueChange={(v) => setSubscriptionTier(v as typeof subscriptionTier)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="individual">{t('individual')}</SelectItem>
-                  <SelectItem value="team">{t('teamTier')}</SelectItem>
-                  <SelectItem value="enterprise">{t('enterprise')}</SelectItem>
-                </SelectContent>
-              </Select>
-              {showTierWarning && (
-                <div className="flex items-start gap-2 rounded-md bg-amber-50 p-2 dark:bg-amber-950/30">
-                  <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-amber-500" />
-                  <p className="text-xs text-amber-700 dark:text-amber-400">
-                    {tEdit('tierChangeWarning')}
-                  </p>
-                </div>
-              )}
+              <Label>{t('plan')}</Label>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">
+                  {organization.productName || t('noPlan')}
+                </Badge>
+                <p className="text-muted-foreground text-xs">
+                  {tEdit('planManagedHint')}
+                </p>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -310,11 +283,11 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
           </CardContent>
         </Card>
 
-        {/* Limits & Settings */}
+        {/* Settings */}
         <Card>
           <CardHeader>
-            <CardTitle>{tEdit('limitsAndSettings')}</CardTitle>
-            <CardDescription>{tEdit('limitsDescription')}</CardDescription>
+            <CardTitle>{tEdit('settings')}</CardTitle>
+            <CardDescription>{tEdit('settingsDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -332,36 +305,6 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
                   <SelectItem value="en">English</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="maxMembers">{tEdit('maxMembers')}</Label>
-              <Input
-                id="maxMembers"
-                type="number"
-                min="1"
-                value={maxMembers}
-                onChange={(e) => setMaxMembers(e.target.value)}
-                placeholder={tEdit('unlimited')}
-              />
-              <p className="text-muted-foreground text-xs">
-                {tEdit('maxMembersHelp')}
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="maxAnalyses">{tEdit('maxAnalysesPerMonth')}</Label>
-              <Input
-                id="maxAnalyses"
-                type="number"
-                min="1"
-                value={maxAnalysesPerMonth}
-                onChange={(e) => setMaxAnalysesPerMonth(e.target.value)}
-                placeholder={tEdit('unlimited')}
-              />
-              <p className="text-muted-foreground text-xs">
-                {tEdit('maxAnalysesHelp')}
-              </p>
             </div>
           </CardContent>
         </Card>

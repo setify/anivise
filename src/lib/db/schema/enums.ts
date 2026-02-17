@@ -77,3 +77,8 @@ export const formStepDisplayModeEnum = pgEnum('form_step_display_mode', [
   'progress_bar',
   'tabs',
 ])
+
+export const productStatusEnum = pgEnum('product_status', [
+  'active',
+  'archived',
+])
