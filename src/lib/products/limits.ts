@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { products, organizationProducts, organizationMembers } from '@/lib/db/schema'
-import { eq, and, count } from 'drizzle-orm'
+import { eq, count } from 'drizzle-orm'
 
 export interface OrganizationLimits {
   maxOrgAdmins: number | null
@@ -36,30 +36,38 @@ const BLOCKED_LIMITS: OrganizationLimits = {
 export async function getOrganizationLimits(
   organizationId: string
 ): Promise<OrganizationLimits> {
-  const [assignment] = await db
-    .select()
+  const [result] = await db
+    .select({
+      productMaxOrgAdmins: products.maxOrgAdmins,
+      productMaxManagers: products.maxManagers,
+      productMaxMembers: products.maxMembers,
+      productMaxAnalysesPerMonth: products.maxAnalysesPerMonth,
+      productMaxForms: products.maxForms,
+      productMaxFormSubmissionsPerMonth: products.maxFormSubmissionsPerMonth,
+      productMaxStorageMb: products.maxStorageMb,
+      overrideMaxOrgAdmins: organizationProducts.overrideMaxOrgAdmins,
+      overrideMaxManagers: organizationProducts.overrideMaxManagers,
+      overrideMaxMembers: organizationProducts.overrideMaxMembers,
+      overrideMaxAnalysesPerMonth: organizationProducts.overrideMaxAnalysesPerMonth,
+      overrideMaxForms: organizationProducts.overrideMaxForms,
+      overrideMaxFormSubmissionsPerMonth: organizationProducts.overrideMaxFormSubmissionsPerMonth,
+      overrideMaxStorageMb: organizationProducts.overrideMaxStorageMb,
+    })
     .from(organizationProducts)
+    .innerJoin(products, eq(organizationProducts.productId, products.id))
     .where(eq(organizationProducts.organizationId, organizationId))
     .limit(1)
 
-  if (!assignment) return BLOCKED_LIMITS
-
-  const [product] = await db
-    .select()
-    .from(products)
-    .where(eq(products.id, assignment.productId))
-    .limit(1)
-
-  if (!product) return BLOCKED_LIMITS
+  if (!result) return BLOCKED_LIMITS
 
   return {
-    maxOrgAdmins: assignment.overrideMaxOrgAdmins ?? product.maxOrgAdmins,
-    maxManagers: assignment.overrideMaxManagers ?? product.maxManagers,
-    maxMembers: assignment.overrideMaxMembers ?? product.maxMembers,
-    maxAnalysesPerMonth: assignment.overrideMaxAnalysesPerMonth ?? product.maxAnalysesPerMonth,
-    maxForms: assignment.overrideMaxForms ?? product.maxForms,
-    maxFormSubmissionsPerMonth: assignment.overrideMaxFormSubmissionsPerMonth ?? product.maxFormSubmissionsPerMonth,
-    maxStorageMb: assignment.overrideMaxStorageMb ?? product.maxStorageMb,
+    maxOrgAdmins: result.overrideMaxOrgAdmins ?? result.productMaxOrgAdmins,
+    maxManagers: result.overrideMaxManagers ?? result.productMaxManagers,
+    maxMembers: result.overrideMaxMembers ?? result.productMaxMembers,
+    maxAnalysesPerMonth: result.overrideMaxAnalysesPerMonth ?? result.productMaxAnalysesPerMonth,
+    maxForms: result.overrideMaxForms ?? result.productMaxForms,
+    maxFormSubmissionsPerMonth: result.overrideMaxFormSubmissionsPerMonth ?? result.productMaxFormSubmissionsPerMonth,
+    maxStorageMb: result.overrideMaxStorageMb ?? result.productMaxStorageMb,
   }
 }
 
@@ -69,27 +77,21 @@ export async function getOrganizationLimits(
 export async function getOrganizationUsage(
   organizationId: string
 ): Promise<OrganizationUsage> {
-  const roles = ['org_admin', 'manager', 'member'] as const
-
-  const counts = await Promise.all(
-    roles.map(async (role) => {
-      const [result] = await db
-        .select({ value: count() })
-        .from(organizationMembers)
-        .where(
-          and(
-            eq(organizationMembers.organizationId, organizationId),
-            eq(organizationMembers.role, role)
-          )
-        )
-      return result?.value ?? 0
+  const roleCounts = await db
+    .select({
+      role: organizationMembers.role,
+      value: count(),
     })
-  )
+    .from(organizationMembers)
+    .where(eq(organizationMembers.organizationId, organizationId))
+    .groupBy(organizationMembers.role)
+
+  const countByRole = new Map(roleCounts.map((r) => [r.role, r.value]))
 
   return {
-    orgAdmins: counts[0],
-    managers: counts[1],
-    members: counts[2],
+    orgAdmins: countByRole.get('org_admin') ?? 0,
+    managers: countByRole.get('manager') ?? 0,
+    members: countByRole.get('member') ?? 0,
   }
 }
 
@@ -130,21 +132,17 @@ export async function canAddMember(
 export async function getOrganizationProduct(
   organizationId: string
 ): Promise<{ product: typeof products.$inferSelect; assignment: typeof organizationProducts.$inferSelect } | null> {
-  const [assignment] = await db
-    .select()
+  const [result] = await db
+    .select({
+      product: products,
+      assignment: organizationProducts,
+    })
     .from(organizationProducts)
+    .innerJoin(products, eq(organizationProducts.productId, products.id))
     .where(eq(organizationProducts.organizationId, organizationId))
     .limit(1)
 
-  if (!assignment) return null
+  if (!result) return null
 
-  const [product] = await db
-    .select()
-    .from(products)
-    .where(eq(products.id, assignment.productId))
-    .limit(1)
-
-  if (!product) return null
-
-  return { product, assignment }
+  return { product: result.product, assignment: result.assignment }
 }

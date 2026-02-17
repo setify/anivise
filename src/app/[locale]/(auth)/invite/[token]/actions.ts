@@ -7,7 +7,7 @@ import {
   organizationMembers,
   organizations,
 } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, gt } from 'drizzle-orm'
 import { createClient } from '@/lib/supabase/server'
 import { createNotification } from '@/lib/notifications/create'
 import { canAddMember } from '@/lib/products/limits'
@@ -138,23 +138,26 @@ export async function acceptInvitation(
     return { success: false, error: 'invalid_token' }
   }
 
-  if (invitation.expiresAt < new Date()) {
-    await db
-      .update(teamInvitations)
-      .set({ status: 'expired', updatedAt: new Date() })
-      .where(eq(teamInvitations.id, invitation.id))
-    return { success: false, error: 'expired' }
-  }
-
-  // Mark invitation as accepted
-  await db
+  // Atomically mark invitation as accepted (prevents race conditions)
+  const [accepted] = await db
     .update(teamInvitations)
     .set({
       status: 'accepted',
       acceptedAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(teamInvitations.id, invitation.id))
+    .where(
+      and(
+        eq(teamInvitations.id, invitation.id),
+        eq(teamInvitations.status, 'pending'),
+        gt(teamInvitations.expiresAt, new Date())
+      )
+    )
+    .returning()
+
+  if (!accepted) {
+    return { success: false, error: 'invalid_token' }
+  }
 
   // Get acceptor info for notification
   const [acceptor] = await db
@@ -245,10 +248,6 @@ export async function registerAndAcceptInvitation(
     return { success: false, error: 'invalid_token' }
   }
 
-  if (invitation.expiresAt < new Date()) {
-    return { success: false, error: 'expired' }
-  }
-
   // Register the user via Supabase Auth
   const supabase = await createClient()
   const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -277,15 +276,26 @@ export async function registerAndAcceptInvitation(
     preferredLocale: 'de',
   })
 
-  // Mark invitation as accepted
-  await db
+  // Atomically mark invitation as accepted (prevents race conditions)
+  const [accepted] = await db
     .update(teamInvitations)
     .set({
       status: 'accepted',
       acceptedAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(teamInvitations.id, invitation.id))
+    .where(
+      and(
+        eq(teamInvitations.id, invitation.id),
+        eq(teamInvitations.status, 'pending'),
+        gt(teamInvitations.expiresAt, new Date())
+      )
+    )
+    .returning()
+
+  if (!accepted) {
+    return { success: false, error: 'invalid_token' }
+  }
 
   // Apply the invitation
   if (invitation.invitationType === 'platform' && invitation.role) {
