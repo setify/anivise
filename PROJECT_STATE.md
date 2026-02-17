@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.3.0
+**Version:** 1.5.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(ui): add skeleton loading, page transitions, breadcrumbs, toasts, and empty states
+**Last Commit:** refactor(admin): restructure sidebar with grouped navigation, collapsibles and user footer
 
 ## What's Implemented
 
@@ -19,7 +19,7 @@
 ### Database
 - [x] Drizzle ORM configured with PostgreSQL (postgres.js driver)
 - [x] drizzle.config.ts with schema path and migrations output
-- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode, product_status)
+- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode, product_status, media_context)
 - [x] Schema: organizations (name, slug, settings, subscription tier/status [deprecated], default_locale, internal_notes, soft-delete)
 - [x] Schema: products (name, slug, description, status, is_default, sort_order, seat limits [max_org_admins/managers/members], feature limits [max_analyses/forms/submissions/storage])
 - [x] Schema: organization_products (1:1 org-plan junction, override columns for custom plans, assigned_by/at, notes, unique on organization_id)
@@ -39,8 +39,9 @@
 - [x] Schema: form_versions (formId, versionNumber, jsonb schema, publishedAt/By, unique constraint)
 - [x] Schema: form_organization_assignments (formId, organizationId, assignedBy, unique constraint)
 - [x] Schema: form_submissions (formId, formVersionId, organizationId, submittedBy, jsonb data/metadata)
+- [x] Schema: media_files (bucket, path, filename, mime_type, size, context, context_entity_id, uploaded_by, alt_text)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions, products, organization_products)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions, products, organization_products, media_files)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -163,7 +164,7 @@
 - [x] Analyses page with EmptyState component
 - [x] Team page with EmptyState component
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (10 nav items: Dashboard, Profile, Team, Organizations, Jobs, Forms, Integrations, Activity, Notifications, Settings; with collapsible Settings sub-menu: General, Email Layout, Email Templates)
+- [x] Superadmin layout with grouped admin sidebar v2 (5 groups: Main, Content, Customers, Platform, System; 10 nav items + collapsible Settings with 3 children; user footer with avatar, name, role, profile link, sign-out)
 - [x] Dashboard sidebar with 6 nav items (Dashboard, Analyses, Forms, Team, Plan, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
@@ -185,6 +186,8 @@
 - [x] Analysis Jobs page (`/admin/jobs`) with n8n health check, stats, filters, retry/cancel actions
 - [x] Integrations page (`/admin/integrations`) with encrypted secret management (Supabase, Resend, n8n, Vercel, Payment placeholder)
 - [x] Breadcrumbs component in admin header (auto-generated from URL path)
+- [x] Media Library page (`/admin/media`) with grid/list views, upload dialog, preview, delete with usage check, bulk delete, sync, context filter, search
+- [x] "Mediathek" nav item in admin sidebar (Image icon, superadmin-only)
 - [x] Staff permission filtering on admin sidebar (Settings hidden for staff)
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
@@ -270,6 +273,31 @@
 - [x] assignOrganizationPlan - assign plan to org (delete + insert) (admin)
 - [x] removeOrganizationPlan - remove org's plan assignment (admin)
 - [x] getOrgPlanOverview - get org's plan name, limits, and usage for dashboard (org)
+- [x] listMedia - list media files with context/search filters (admin)
+- [x] uploadMedia - upload file to Supabase Storage and track in media_files (admin)
+- [x] deleteMedia - delete file with usage check and force option (admin)
+- [x] bulkDeleteMedia - bulk delete with usage checks (admin)
+- [x] syncMedia - sync media_files table with Supabase Storage (admin)
+- [x] getMediaPublicUrl - get public URL for a media file (admin)
+
+### Media Library
+- [x] `media_files` DB table with context enum (email_logo, email_template, form_header, org_logo, report_asset, general)
+- [x] Storage path helpers (`src/lib/media/storage-paths.ts`)
+- [x] File utility helpers (`src/lib/media/file-utils.ts`)
+- [x] Upload tracking helper (`src/lib/media/track-upload.ts`)
+- [x] Usage check helper (`src/lib/media/check-usage.ts`)
+- [x] Storage sync helper (`src/lib/media/sync-storage.ts`)
+- [x] Grid and list views with selection, filtering, search
+- [x] Upload dialog with drag-and-drop
+- [x] File preview dialog with image display
+- [x] Delete with usage check and force-delete option
+- [x] Bulk delete with usage checks
+- [x] Storage sync (adds untracked files, removes orphaned DB entries)
+- [x] Copy public URL to clipboard
+- [x] Context-based filtering (6 contexts)
+- [x] Email logo upload wired to media_files tracking
+- [x] Audit events: media.uploaded, media.deleted, media.bulk_deleted, media.synced
+- [x] i18n: admin.media namespace (DE + EN, 45+ keys)
 
 ### Integrations
 - [x] Integration secrets encryption (AES-256-GCM, `src/lib/crypto/secrets.ts`)
@@ -280,14 +308,14 @@
 - [x] n8n health check (`checkN8nHealth` - cached secrets with ENV fallback)
 - [x] Resend email (package installed, `sendTemplatedEmail` with cached DB secrets + ENV fallback)
 - [x] Platform settings and integration secrets cleanly separated (non-sensitive config vs encrypted API keys)
-- [ ] Supabase Storage upload flow
+- [x] Supabase Storage upload flow (media library + email logo)
 
 ## What's NOT Implemented Yet
 - Analysis upload + job creation flow
 - n8n integration (webhook trigger + callback)
 - Report generation + viewer
 - Resend email (magic link, notifications, team invitations)
-- Supabase Storage file upload with RLS
+- Supabase Storage RLS policies (uploads work via admin client, RLS not yet applied)
 - OAuth providers (Google, Microsoft)
 - SSO/SAML for Enterprise
 - Team management UI for organizations (functional, currently placeholder)
@@ -301,7 +329,7 @@
 - Invitation acceptance page needs email notifications when invitation is accepted
 
 ## Known Issues / Tech Debt
-- Sidebar user section shows hardcoded placeholder ("User") - needs wiring to auth session
+- Admin sidebar user footer now shows real user data (name, avatar, role) from server layout
 - Sidebar organization label is placeholder - useTenant hook available but not yet wired
 - Dashboard stats show "0" as static values until connected to database queries
 - RLS policies are defined as SQL files but not yet applied to a live Supabase instance
@@ -383,7 +411,22 @@
 - `src/app/[locale]/(superadmin)/admin/plans/[id]/edit/page.tsx` - Plan edit page (server)
 - `src/lib/db/schema/products.ts` - Products and organization_products table schemas
 - `src/lib/products/limits.ts` - Limits resolution helper (getOrganizationLimits, checkLimit, etc.)
-- `src/components/layout/admin-sidebar.tsx` - Superadmin navigation sidebar (10 items)
+- `src/app/[locale]/(superadmin)/admin/media/page.tsx` - Media library page (server)
+- `src/app/[locale]/(superadmin)/admin/media/media-page-client.tsx` - Media library UI (client)
+- `src/app/[locale]/(superadmin)/admin/media/actions.ts` - Media server actions
+- `src/lib/media/storage-paths.ts` - Storage bucket/path configuration
+- `src/lib/media/file-utils.ts` - File size formatting, type checking
+- `src/lib/media/track-upload.ts` - Insert media_files record after upload
+- `src/lib/media/check-usage.ts` - Check if media file is referenced
+- `src/lib/media/sync-storage.ts` - Sync DB with Supabase Storage
+- `src/lib/db/schema/media-files.ts` - Media files table schema
+- `src/components/admin/sidebar/admin-sidebar.tsx` - Superadmin navigation sidebar (grouped, collapsible)
+- `src/components/admin/sidebar/sidebar-config.ts` - Sidebar groups and items configuration
+- `src/components/admin/sidebar/sidebar-group.tsx` - Group renderer with section label
+- `src/components/admin/sidebar/sidebar-item.tsx` - Single nav item with active indicator
+- `src/components/admin/sidebar/sidebar-collapsible.tsx` - Collapsible parent item with children
+- `src/components/admin/sidebar/sidebar-user-footer.tsx` - User info, profile link, sign-out
+- `src/components/layout/admin-sidebar.tsx` - (legacy, replaced by admin/sidebar/)
 - `src/components/layout/dashboard-breadcrumbs.tsx` - Dashboard breadcrumb navigation
 - `src/components/admin/breadcrumbs.tsx` - Admin breadcrumb navigation
 - `src/components/ui/page-transition.tsx` - Route change animation wrapper

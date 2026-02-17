@@ -1,5 +1,46 @@
 # Changelog
 
+## [1.5.0] - 2026-02-17
+### Changed
+- **Admin sidebar restructured** with grouped navigation sections (Content, Customers, Platform, System)
+- Collapsible Settings sub-menu with smooth slide animation and localStorage persistence
+- Active state with left accent bar (3px primary), parent hint when child is active
+- Section labels (uppercase, muted, 11px) for visual grouping
+- User footer with avatar, name, role badge, profile link, and sign-out button (replaces Profile nav item)
+- Sidebar width increased from 256px to 260px
+- Profile removed from nav items (accessible only via user footer)
+- New sidebar component architecture: `sidebar-config.ts`, `sidebar-group.tsx`, `sidebar-item.tsx`, `sidebar-collapsible.tsx`, `sidebar-user-footer.tsx`, `admin-sidebar.tsx`
+- Layout passes user data (displayName, email, avatarUrl, platformRole) to sidebar
+
+### Added
+- i18n: `admin.sidebar` namespace with group labels, item labels, and userFooter keys (DE + EN)
+- Sign-out functionality via Supabase client `signOut()`
+
+## [1.4.0] - 2026-02-17
+### Added
+- **Media Library** (`/admin/media`): complete file browser for platform media assets
+  - Grid and list views with toggle
+  - Upload dialog with drag-and-drop support
+  - File preview dialog with image display
+  - Delete with usage check (warns if file is in use, force-delete option)
+  - Bulk delete with usage checks
+  - Storage sync (detects untracked files in storage, removes orphaned DB entries)
+  - Copy public URL to clipboard
+  - Context-based filtering (6 contexts: email_logo, email_template, form_header, org_logo, report_asset, general)
+  - Search by filename
+- **`media_files` DB table**: tracks all platform uploads with bucket, path, filename, mime type, size, context, and uploader
+- **`media_context` enum**: categorizes media by usage context
+- **Media utility modules**: `storage-paths.ts`, `file-utils.ts`, `track-upload.ts`, `check-usage.ts`, `sync-storage.ts`
+- **4 audit events**: media.uploaded, media.deleted, media.bulk_deleted, media.synced
+- **"Mediathek" nav item** in admin sidebar (Image icon, superadmin-only)
+- shadcn/ui Checkbox component
+- i18n: `admin.media` namespace with 45+ keys (DE + EN)
+
+### Changed
+- Email logo upload now creates `media_files` tracking entry
+- Email logo delete now removes corresponding `media_files` entry
+- Admin sidebar expanded from 10 to 11 nav items
+
 ## [1.3.0] - 2026-02-17
 ### Added
 - **Skeleton loading system**: 5 composite skeleton components (SkeletonTable, SkeletonCard, SkeletonForm, SkeletonDetail, SkeletonStats) with shimmer animation

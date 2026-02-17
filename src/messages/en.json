@@ -190,6 +190,32 @@
   "admin": {
     "title": "Administration",
     "description": "Platform administration and organization management",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "groups": {
+        "content": "CONTENT",
+        "customers": "CUSTOMERS",
+        "platform": "PLATFORM",
+        "system": "SYSTEM"
+      },
+      "analyses": "Analysis Jobs",
+      "forms": "Forms",
+      "media": "Media Library",
+      "organizations": "Organizations",
+      "plans": "Plans",
+      "team": "Team",
+      "integrations": "Integrations",
+      "settings": "Settings",
+      "settingsGeneral": "General",
+      "settingsEmailLayout": "Email Layout",
+      "settingsEmailTemplates": "Email Templates",
+      "activity": "Activity",
+      "notifications": "Notifications",
+      "userFooter": {
+        "profile": "Profile",
+        "logout": "Sign out"
+      }
+    },
     "organizations": "Organizations",
     "organizationsDescription": "Manage all organizations on the platform",
     "noOrganizations": "No organizations yet.",
@@ -401,7 +427,18 @@
         "platformName": "Platform Name",
         "defaultLocale": "Default Language",
         "defaultPlan": "Default Plan for New Organizations",
-        "selectDefaultPlan": "Select a default plan"
+        "selectDefaultPlan": "Select a default plan",
+        "logo": {
+          "title": "Platform Logo",
+          "description": "Logo displayed in the sidebar top left",
+          "upload": "Upload logo",
+          "uploadHint": "PNG, JPG, SVG or WebP (max 500 KB)",
+          "currentLogo": "Current logo",
+          "remove": "Remove logo",
+          "uploadSuccess": "Logo uploaded",
+          "uploadError": "Failed to upload logo",
+          "removeSuccess": "Logo removed"
+        }
       },
       "invitations": {
         "title": "Invitation Settings",
@@ -598,6 +635,14 @@
       "logo": {
         "title": "Logo",
         "description": "Logo image for the email header",
+        "upload": "Upload logo",
+        "uploadHint": "PNG, JPG, SVG or WebP, max 500 KB",
+        "uploadSuccess": "Logo uploaded successfully",
+        "uploadError": "Logo upload failed",
+        "remove": "Remove",
+        "removeSuccess": "Logo removed",
+        "currentLogo": "Current logo",
+        "orEnterUrl": "or enter URL manually",
         "url": "Logo URL",
         "link": "Logo Link (optional)"
       },
@@ -617,7 +662,7 @@
         "textDe": "Footer Text (German)",
         "textEn": "Footer Text (English)",
         "supportEmail": "Support Email",
-        "hint": "Available placeholders: {{platformName}}, {{currentYear}}, {{supportEmail}}"
+        "hint": "Available placeholders: '{{platformName}}', '{{currentYear}}', '{{supportEmail}}'"
       },
       "preview": {
         "title": "Preview",
@@ -726,7 +771,7 @@
         "preview": "Preview",
         "save": "Save",
         "publish": "Publish",
-        "settings": "Settings",
+        "settingsMenu": "Settings",
         "saved": "Form saved",
         "saveError": "Failed to save form",
         "published": "Form published",
@@ -917,6 +962,59 @@
         "deleteError": "Failed to delete submission"
       }
     },
+    "media": {
+      "title": "Media Library",
+      "description": "Manage platform files and media assets",
+      "upload": "Upload",
+      "uploadFile": "Upload file",
+      "uploadHint": "Drag files here or click to browse",
+      "uploadingFile": "Uploading...",
+      "context": "Context",
+      "contextLabels": {
+        "email_logo": "Email Logo",
+        "email_template": "Email Template",
+        "form_header": "Form Header",
+        "org_logo": "Org Logo",
+        "report_asset": "Report Asset",
+        "general": "General"
+      },
+      "allContexts": "All Contexts",
+      "search": "Search files...",
+      "noFiles": "No files yet",
+      "noFilesHint": "Upload your first file to start using the media library.",
+      "noSearchResults": "No files found",
+      "fileName": "Filename",
+      "fileSize": "Size",
+      "fileType": "Type",
+      "uploadedBy": "Uploaded by",
+      "uploadedAt": "Uploaded at",
+      "preview": "Preview",
+      "copyUrl": "Copy URL",
+      "urlCopied": "URL copied",
+      "deleteFile": "Delete file",
+      "deleteConfirm": "Delete \"{name}\"?",
+      "deleteConfirmDescription": "This file will be permanently removed from storage.",
+      "inUseWarning": "This file is currently used in:",
+      "forceDelete": "Delete anyway",
+      "deleted": "File deleted",
+      "deleteError": "Failed to delete file",
+      "uploaded": "File uploaded",
+      "uploadError": "Failed to upload file",
+      "bulkDelete": "Delete selected",
+      "bulkDeleteConfirm": "Delete {count} files?",
+      "bulkDeleted": "{deleted} files deleted, {skipped} skipped",
+      "selected": "{count} selected",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all",
+      "sync": "Sync",
+      "syncing": "Syncing...",
+      "syncDone": "Sync complete: {added} added, {removed} removed",
+      "syncError": "Sync failed",
+      "viewGrid": "Grid view",
+      "viewList": "List view",
+      "invalidType": "Invalid file type",
+      "fileTooLarge": "File too large (max 5 MB)"
+    },
     "activity": {
       "title": "Activity",
       "description": "Audit trail of all platform actions",
@@ -1043,6 +1141,35 @@
       "error": "An error occurred",
       "undo": "Undo",
       "undone": "Action undone"
+    },
+    "richTextEditor": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strike": "Strikethrough",
+      "link": "Insert link",
+      "linkUrl": "URL",
+      "orderedList": "Ordered list",
+      "bulletList": "Bullet list",
+      "heading": "Heading",
+      "normal": "Normal text",
+      "color": "Text color",
+      "highlight": "Highlight",
+      "codeView": "Code view",
+      "richView": "Editor view"
     }
+  },
+  "mediaPicker": {
+    "title": "Media Library",
+    "browse": "Browse",
+    "upload": "Upload",
+    "searchPlaceholder": "Search files...",
+    "select": "Select",
+    "noFiles": "No files available",
+    "noFilesHint": "Upload files to the media library first.",
+    "noSearchResults": "No results",
+    "uploadHint": "Drag file here or click to select",
+    "uploading": "Uploading...",
+    "chooseFromLibrary": "Choose from library"
   }
 }

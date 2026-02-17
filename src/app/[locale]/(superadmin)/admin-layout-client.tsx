@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Menu } from 'lucide-react'
-import { AdminSidebar } from '@/components/layout/admin-sidebar'
+import { AdminSidebar } from '@/components/admin/sidebar/admin-sidebar'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { NotificationBell } from '@/components/admin/notification-bell'
 import { AdminBreadcrumbs } from '@/components/admin/breadcrumbs'
@@ -11,28 +11,39 @@ import { PageTransition } from '@/components/ui/page-transition'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 
+interface AdminLayoutClientProps {
+  children: React.ReactNode
+  platformRole: string | null
+  logoUrl?: string
+  user: {
+    displayName: string | null
+    email: string
+    avatarUrl: string | null
+    platformRole: string | null
+  }
+}
+
 export function AdminLayoutClient({
   children,
   platformRole,
-}: {
-  children: React.ReactNode
-  platformRole: string | null
-}) {
+  logoUrl,
+  user,
+}: AdminLayoutClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const t = useTranslations('nav')
 
   return (
     <div className="flex min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="bg-sidebar text-sidebar-foreground hidden w-64 shrink-0 border-r lg:block">
-        <AdminSidebar platformRole={platformRole} />
+      <aside className="bg-sidebar text-sidebar-foreground hidden w-[260px] shrink-0 border-r lg:block">
+        <AdminSidebar platformRole={platformRole} logoUrl={logoUrl} user={user} />
       </aside>
 
       {/* Mobile sidebar */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
+        <SheetContent side="left" className="w-[260px] p-0" showCloseButton={false}>
           <SheetTitle className="sr-only">{t('menu')}</SheetTitle>
-          <AdminSidebar platformRole={platformRole} />
+          <AdminSidebar platformRole={platformRole} logoUrl={logoUrl} user={user} />
         </SheetContent>
       </Sheet>
 

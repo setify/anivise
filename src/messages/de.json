@@ -190,6 +190,32 @@
   "admin": {
     "title": "Administration",
     "description": "Plattform-Administration und Organisationsverwaltung",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "groups": {
+        "content": "INHALTE",
+        "customers": "KUNDEN",
+        "platform": "PLATTFORM",
+        "system": "SYSTEM"
+      },
+      "analyses": "Analyse-Jobs",
+      "forms": "Formulare",
+      "media": "Mediathek",
+      "organizations": "Organisationen",
+      "plans": "Tarife",
+      "team": "Team",
+      "integrations": "Integrationen",
+      "settings": "Einstellungen",
+      "settingsGeneral": "Allgemein",
+      "settingsEmailLayout": "E-Mail-Layout",
+      "settingsEmailTemplates": "E-Mail-Templates",
+      "activity": "Aktivität",
+      "notifications": "Benachrichtigungen",
+      "userFooter": {
+        "profile": "Profil",
+        "logout": "Abmelden"
+      }
+    },
     "organizations": "Organisationen",
     "organizationsDescription": "Alle Organisationen auf der Plattform verwalten",
     "noOrganizations": "Noch keine Organisationen vorhanden.",
@@ -401,7 +427,18 @@
         "platformName": "Plattformname",
         "defaultLocale": "Standardsprache",
         "defaultPlan": "Standard-Tarif für neue Organisationen",
-        "selectDefaultPlan": "Standard-Tarif auswählen"
+        "selectDefaultPlan": "Standard-Tarif auswählen",
+        "logo": {
+          "title": "Plattform-Logo",
+          "description": "Logo wird in der Sidebar oben links angezeigt",
+          "upload": "Logo hochladen",
+          "uploadHint": "PNG, JPG, SVG oder WebP (max. 500 KB)",
+          "currentLogo": "Aktuelles Logo",
+          "remove": "Logo entfernen",
+          "uploadSuccess": "Logo hochgeladen",
+          "uploadError": "Fehler beim Hochladen",
+          "removeSuccess": "Logo entfernt"
+        }
       },
       "invitations": {
         "title": "Einladungs-Einstellungen",
@@ -598,6 +635,14 @@
       "logo": {
         "title": "Logo",
         "description": "Logo-Bild für den E-Mail-Header",
+        "upload": "Logo hochladen",
+        "uploadHint": "PNG, JPG, SVG oder WebP, max. 500 KB",
+        "uploadSuccess": "Logo erfolgreich hochgeladen",
+        "uploadError": "Logo-Upload fehlgeschlagen",
+        "remove": "Entfernen",
+        "removeSuccess": "Logo entfernt",
+        "currentLogo": "Aktuelles Logo",
+        "orEnterUrl": "oder URL manuell eingeben",
         "url": "Logo-URL",
         "link": "Logo-Link (optional)"
       },
@@ -617,7 +662,7 @@
         "textDe": "Footer-Text (Deutsch)",
         "textEn": "Footer-Text (Englisch)",
         "supportEmail": "Support-E-Mail",
-        "hint": "Verfügbare Platzhalter: {{platformName}}, {{currentYear}}, {{supportEmail}}"
+        "hint": "Verfügbare Platzhalter: '{{platformName}}', '{{currentYear}}', '{{supportEmail}}'"
       },
       "preview": {
         "title": "Vorschau",
@@ -726,7 +771,7 @@
         "preview": "Vorschau",
         "save": "Speichern",
         "publish": "Veröffentlichen",
-        "settings": "Einstellungen",
+        "settingsMenu": "Einstellungen",
         "saved": "Formular gespeichert",
         "saveError": "Fehler beim Speichern",
         "published": "Formular veröffentlicht",
@@ -917,6 +962,59 @@
         "deleteError": "Fehler beim Löschen der Einreichung"
       }
     },
+    "media": {
+      "title": "Mediathek",
+      "description": "Dateien und Medien der Plattform verwalten",
+      "upload": "Hochladen",
+      "uploadFile": "Datei hochladen",
+      "uploadHint": "Dateien hierher ziehen oder klicken zum Auswählen",
+      "uploadingFile": "Wird hochgeladen...",
+      "context": "Kontext",
+      "contextLabels": {
+        "email_logo": "E-Mail-Logo",
+        "email_template": "E-Mail-Vorlage",
+        "form_header": "Formular-Header",
+        "org_logo": "Org-Logo",
+        "report_asset": "Report-Asset",
+        "general": "Allgemein"
+      },
+      "allContexts": "Alle Kontexte",
+      "search": "Dateien suchen...",
+      "noFiles": "Noch keine Dateien vorhanden",
+      "noFilesHint": "Laden Sie Ihre erste Datei hoch, um die Mediathek zu nutzen.",
+      "noSearchResults": "Keine Dateien gefunden",
+      "fileName": "Dateiname",
+      "fileSize": "Größe",
+      "fileType": "Typ",
+      "uploadedBy": "Hochgeladen von",
+      "uploadedAt": "Hochgeladen am",
+      "preview": "Vorschau",
+      "copyUrl": "URL kopieren",
+      "urlCopied": "URL kopiert",
+      "deleteFile": "Datei löschen",
+      "deleteConfirm": "Datei \"{name}\" wirklich löschen?",
+      "deleteConfirmDescription": "Diese Datei wird unwiderruflich aus dem Speicher gelöscht.",
+      "inUseWarning": "Diese Datei wird aktuell verwendet in:",
+      "forceDelete": "Trotzdem löschen",
+      "deleted": "Datei gelöscht",
+      "deleteError": "Fehler beim Löschen",
+      "uploaded": "Datei hochgeladen",
+      "uploadError": "Fehler beim Hochladen",
+      "bulkDelete": "Ausgewählte löschen",
+      "bulkDeleteConfirm": "{count} Dateien wirklich löschen?",
+      "bulkDeleted": "{deleted} Dateien gelöscht, {skipped} übersprungen",
+      "selected": "{count} ausgewählt",
+      "selectAll": "Alle auswählen",
+      "deselectAll": "Auswahl aufheben",
+      "sync": "Synchronisieren",
+      "syncing": "Synchronisiere...",
+      "syncDone": "Synchronisierung abgeschlossen: {added} hinzugefügt, {removed} entfernt",
+      "syncError": "Fehler bei der Synchronisierung",
+      "viewGrid": "Rasteransicht",
+      "viewList": "Listenansicht",
+      "invalidType": "Ungültiger Dateityp",
+      "fileTooLarge": "Datei zu groß (max. 5 MB)"
+    },
     "activity": {
       "title": "Aktivität",
       "description": "Protokoll aller Plattform-Aktionen",
@@ -1043,6 +1141,35 @@
       "error": "Ein Fehler ist aufgetreten",
       "undo": "Rückgängig",
       "undone": "Aktion rückgängig gemacht"
+    },
+    "richTextEditor": {
+      "bold": "Fett",
+      "italic": "Kursiv",
+      "underline": "Unterstrichen",
+      "strike": "Durchgestrichen",
+      "link": "Link einfügen",
+      "linkUrl": "URL",
+      "orderedList": "Nummerierte Liste",
+      "bulletList": "Aufzählung",
+      "heading": "Überschrift",
+      "normal": "Normal",
+      "color": "Textfarbe",
+      "highlight": "Hervorheben",
+      "codeView": "Code-Ansicht",
+      "richView": "Editor-Ansicht"
     }
+  },
+  "mediaPicker": {
+    "title": "Mediathek",
+    "browse": "Durchsuchen",
+    "upload": "Hochladen",
+    "searchPlaceholder": "Datei suchen...",
+    "select": "Auswählen",
+    "noFiles": "Keine Dateien vorhanden",
+    "noFilesHint": "Laden Sie zuerst Dateien in die Mediathek hoch.",
+    "noSearchResults": "Keine Ergebnisse",
+    "uploadHint": "Datei hierher ziehen oder klicken",
+    "uploading": "Wird hochgeladen...",
+    "chooseFromLibrary": "Aus Mediathek wählen"
   }
 }
