@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Eye, Copy, Archive, Trash2, Globe, Inbox } from 'lucide-react'
+import { Plus, Pencil, Copy, Archive, Trash2, Globe, Inbox, RotateCcw, Settings2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -38,6 +38,7 @@ import {
   archiveForm,
   publishForm,
   deleteForm,
+  setFormStatus,
 } from '@/app/[locale]/(superadmin)/admin/forms/actions'
 import type { Form } from '@/types/database'
 
@@ -84,6 +85,22 @@ export function FormListTable({ forms }: FormListTableProps) {
     const result = await publishForm(formId)
     if (result.success) {
       toast.success(t('published'), { className: 'rounded-full' })
+      router.refresh()
+    }
+  }
+
+  const handleUnpublish = async (formId: string) => {
+    const result = await setFormStatus(formId, 'draft')
+    if (result.success) {
+      toast.success(t('statusChanged'), { className: 'rounded-full' })
+      router.refresh()
+    }
+  }
+
+  const handleReactivate = async (formId: string) => {
+    const result = await setFormStatus(formId, 'draft')
+    if (result.success) {
+      toast.success(t('statusChanged'), { className: 'rounded-full' })
       router.refresh()
     }
   }
@@ -201,9 +218,21 @@ export function FormListTable({ forms }: FormListTableProps) {
                         </DropdownMenuItem>
                       )}
                       {form.status === 'published' && (
-                        <DropdownMenuItem onClick={() => handleArchive(form.id)}>
-                          <Archive className="mr-2 size-4" />
-                          {t('archiveAction')}
+                        <>
+                          <DropdownMenuItem onClick={() => handleUnpublish(form.id)}>
+                            <RotateCcw className="mr-2 size-4" />
+                            {t('unpublishAction')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleArchive(form.id)}>
+                            <Archive className="mr-2 size-4" />
+                            {t('archiveAction')}
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                      {form.status === 'archived' && (
+                        <DropdownMenuItem onClick={() => handleReactivate(form.id)}>
+                          <RotateCcw className="mr-2 size-4" />
+                          {t('reactivateAction')}
                         </DropdownMenuItem>
                       )}
                       {form.status === 'draft' && (

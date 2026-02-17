@@ -8,7 +8,8 @@ import {
   formOrganizationAssignments,
   formSubmissions,
 } from '@/lib/db/schema'
-import { eq, and, isNull, count, desc, sql } from 'drizzle-orm'
+import { eq, and, isNull, count, desc, sql, ne } from 'drizzle-orm'
+import { organizations, users } from '@/lib/db/schema'
 import { requirePlatformRole } from '@/lib/auth/require-platform-role'
 import { formMetaValidator } from '@/lib/validations/forms'
 import { logAudit } from '@/lib/audit/log'
@@ -532,4 +533,374 @@ export async function checkFormSlugAvailability(
     .limit(1)
 
   return { available: !existing }
+}
+
+// ─── Get Form Assignments ───
+
+export async function getFormAssignments(formId: string) {
+  await requirePlatformRole('staff')
+
+  const assignments = await db
+    .select({
+      id: formOrganizationAssignments.id,
+      orgId: formOrganizationAssignments.organizationId,
+      orgName: organizations.name,
+      orgSlug: organizations.slug,
+      assignedAt: formOrganizationAssignments.assignedAt,
+      assignedByName: users.fullName,
+      assignedByEmail: users.email,
+    })
+    .from(formOrganizationAssignments)
+    .innerJoin(organizations, eq(formOrganizationAssignments.organizationId, organizations.id))
+    .leftJoin(users, eq(formOrganizationAssignments.assignedBy, users.id))
+    .where(eq(formOrganizationAssignments.formId, formId))
+    .orderBy(desc(formOrganizationAssignments.assignedAt))
+
+  return assignments
+}
+
+// ─── Search Organizations (for assignment autocomplete) ───
+
+export async function searchOrganizations(query: string, excludeFormId?: string) {
+  await requirePlatformRole('superadmin')
+
+  const allOrgs = await db
+    .select({ id: organizations.id, name: organizations.name, slug: organizations.slug })
+    .from(organizations)
+    .where(isNull(organizations.deletedAt))
+    .orderBy(organizations.name)
+
+  // Filter by query
+  const filtered = query
+    ? allOrgs.filter(
+        (org) =>
+          org.name.toLowerCase().includes(query.toLowerCase()) ||
+          org.slug.toLowerCase().includes(query.toLowerCase())
+      )
+    : allOrgs
+
+  // Exclude already-assigned orgs
+  if (excludeFormId) {
+    const assigned = await db
+      .select({ orgId: formOrganizationAssignments.organizationId })
+      .from(formOrganizationAssignments)
+      .where(eq(formOrganizationAssignments.formId, excludeFormId))
+
+    const assignedIds = new Set(assigned.map((a) => a.orgId))
+    return filtered.filter((org) => !assignedIds.has(org.id))
+  }
+
+  return filtered
+}
+
+// ─── Assign Form to Organization ───
+
+export async function assignFormToOrganization(
+  formId: string,
+  orgId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    await db.insert(formOrganizationAssignments).values({
+      formId,
+      organizationId: orgId,
+      assignedBy: currentUser.id,
+    })
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'form',
+      entityId: formId,
+      metadata: { action: 'form.assigned', organizationId: orgId },
+    })
+
+    revalidatePath('/admin/forms')
+    return { success: true }
+  } catch {
+    return { success: false, error: 'Failed to assign organization' }
+  }
+}
+
+// ─── Remove Form Organization Assignment ───
+
+export async function removeFormOrganizationAssignment(
+  formId: string,
+  orgId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    await db
+      .delete(formOrganizationAssignments)
+      .where(
+        and(
+          eq(formOrganizationAssignments.formId, formId),
+          eq(formOrganizationAssignments.organizationId, orgId)
+        )
+      )
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'form',
+      entityId: formId,
+      metadata: { action: 'form.unassigned', organizationId: orgId },
+    })
+
+    revalidatePath('/admin/forms')
+    return { success: true }
+  } catch {
+    return { success: false, error: 'Failed to remove assignment' }
+  }
+}
+
+// ─── Set Form Visibility ───
+
+export async function setFormVisibility(
+  formId: string,
+  visibility: 'all_organizations' | 'assigned'
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    const [form] = await db
+      .select({ visibility: forms.visibility })
+      .from(forms)
+      .where(eq(forms.id, formId))
+      .limit(1)
+
+    if (!form) return { success: false, error: 'Form not found' }
+
+    await db
+      .update(forms)
+      .set({ visibility, updatedAt: new Date() })
+      .where(eq(forms.id, formId))
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'form',
+      entityId: formId,
+      metadata: {
+        action: 'form.visibility_changed',
+        from: form.visibility,
+        to: visibility,
+      },
+    })
+
+    revalidatePath('/admin/forms')
+    return { success: true }
+  } catch {
+    return { success: false, error: 'Failed to update visibility' }
+  }
+}
+
+// ─── Set Form Status (status transitions) ───
+
+export async function setFormStatus(
+  formId: string,
+  status: 'draft' | 'published' | 'archived'
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    const [form] = await db
+      .select({ status: forms.status })
+      .from(forms)
+      .where(and(eq(forms.id, formId), isNull(forms.deletedAt)))
+      .limit(1)
+
+    if (!form) return { success: false, error: 'Form not found' }
+
+    // Validate transitions
+    const validTransitions: Record<string, string[]> = {
+      draft: ['published', 'archived'],
+      published: ['draft', 'archived'],
+      archived: ['draft'],
+    }
+
+    if (!validTransitions[form.status]?.includes(status)) {
+      return { success: false, error: `Cannot transition from ${form.status} to ${status}` }
+    }
+
+    await db
+      .update(forms)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(forms.id, formId))
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'form',
+      entityId: formId,
+      metadata: { action: `form.status_changed`, from: form.status, to: status },
+    })
+
+    revalidatePath('/admin/forms')
+    return { success: true }
+  } catch {
+    return { success: false, error: 'Failed to update form status' }
+  }
+}
+
+// ─── Publish Form with Validation ───
+
+export async function publishFormWithValidation(
+  formId: string
+): Promise<{
+  success: boolean
+  error?: string
+  validationErrors?: string[]
+  submissionCount?: number
+}> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    const [form] = await db
+      .select()
+      .from(forms)
+      .where(and(eq(forms.id, formId), isNull(forms.deletedAt)))
+      .limit(1)
+
+    if (!form) return { success: false, error: 'Form not found' }
+
+    // Load current version schema
+    const [version] = await db
+      .select()
+      .from(formVersions)
+      .where(
+        and(
+          eq(formVersions.formId, formId),
+          eq(formVersions.versionNumber, form.currentVersion)
+        )
+      )
+      .limit(1)
+
+    if (!version) return { success: false, error: 'No version found' }
+
+    const schema = version.schema as unknown as FormSchema
+
+    // Validate schema
+    const errors: string[] = []
+
+    if (!schema.steps || schema.steps.length === 0) {
+      errors.push('Form must have at least 1 step')
+    }
+
+    const allFieldIds = new Set<string>()
+    for (const step of schema.steps) {
+      if (!step.fields || step.fields.length === 0) {
+        errors.push(`Step "${step.title}" has no fields`)
+      }
+      for (const field of step.fields) {
+        allFieldIds.add(field.id)
+        if (field.required && !field.label) {
+          errors.push(`Required field in step "${step.title}" has no label`)
+        }
+        if (
+          (field.type === 'radio' || field.type === 'checkbox') &&
+          field.config.type === field.type
+        ) {
+          if (!field.config.options || field.config.options.length === 0) {
+            errors.push(
+              `Field "${field.label || '(no label)'}" in step "${step.title}" has no options`
+            )
+          }
+        }
+        // Check conditional logic references
+        if (field.conditionalLogic?.conditions) {
+          for (const cond of field.conditionalLogic.conditions) {
+            if (!allFieldIds.has(cond.fieldId)) {
+              errors.push(
+                `Field "${field.label || '(no label)'}" references non-existent field in its conditions`
+              )
+            }
+          }
+        }
+      }
+    }
+
+    if (errors.length > 0) {
+      return { success: false, validationErrors: errors }
+    }
+
+    // Check if already published with submissions
+    const [subCount] = await db
+      .select({ count: count() })
+      .from(formSubmissions)
+      .where(eq(formSubmissions.formId, formId))
+
+    const submissionCount = subCount?.count ?? 0
+    const wasPublished = form.status === 'published'
+
+    // If already published, create new version
+    if (wasPublished) {
+      const nextVersion = form.currentVersion + 1
+      await db.insert(formVersions).values({
+        formId,
+        versionNumber: nextVersion,
+        schema: schema as unknown as Record<string, unknown>,
+        publishedAt: new Date(),
+        publishedBy: currentUser.id,
+      })
+      await db
+        .update(forms)
+        .set({ currentVersion: nextVersion, updatedAt: new Date() })
+        .where(eq(forms.id, formId))
+    } else {
+      // First publish: mark current version as published
+      const now = new Date()
+      await db
+        .update(formVersions)
+        .set({ publishedAt: now, publishedBy: currentUser.id })
+        .where(
+          and(
+            eq(formVersions.formId, formId),
+            eq(formVersions.versionNumber, form.currentVersion)
+          )
+        )
+      await db
+        .update(forms)
+        .set({ status: 'published', updatedAt: now })
+        .where(eq(forms.id, formId))
+    }
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'form',
+      entityId: formId,
+      metadata: {
+        action: 'form.published',
+        version: wasPublished ? form.currentVersion + 1 : form.currentVersion,
+        existingSubmissions: submissionCount,
+      },
+    })
+
+    revalidatePath('/admin/forms')
+    return { success: true, submissionCount: wasPublished ? submissionCount : 0 }
+  } catch {
+    return { success: false, error: 'Failed to publish form' }
+  }
+}
+
+// ─── Get Email Templates (for completion config) ───
+
+export async function getEmailTemplates() {
+  await requirePlatformRole('staff')
+
+  const { emailTemplates: emailTemplatesTable } = await import('@/lib/db/schema')
+  const templates = await db
+    .select({ id: emailTemplatesTable.id, slug: emailTemplatesTable.slug })
+    .from(emailTemplatesTable)
+    .orderBy(emailTemplatesTable.slug)
+
+  return templates
 }

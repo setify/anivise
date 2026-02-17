@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 0.18.0
+**Version:** 0.19.0
 **Last Updated:** 2026-02-17
-**Last Commit:** feat(forms): add form renderer, submission handling and CSV/XLSX export
+**Last Commit:** feat(forms): add organization assignment, publish flow, and finalize form builder
 
 ## What's Implemented
 
@@ -105,7 +105,11 @@
 - [x] Admin submissions page with stats, dynamic table, filters, detail dialog, delete
 - [x] CSV and XLSX export via API route with filter support
 - [x] "Forms" nav item in dashboard sidebar
-- [ ] Organization assignment UI
+- [x] Organization assignment panel (two modes: all_organizations / assigned, search, list, remove)
+- [x] Form settings dialog (3 tabs: General, Completion, Organizations)
+- [x] Publish validation dialog (schema validation before publish, version management)
+- [x] Status transitions: publish, unpublish, archive, reactivate
+- [x] Builder wired to settings dialog and publish validation dialog
 
 ### UI / Pages
 - [x] Root layout with fonts, metadata, and ThemeProvider
@@ -119,7 +123,7 @@
 - [x] Analyses page with empty state
 - [x] Team page with empty state
 - [x] Settings page with profile/org/notifications sections
-- [x] Superadmin layout with admin sidebar (10 nav items incl. Forms, with collapsible Settings sub-menu: General, Email Layout, Email Templates)
+- [x] Superadmin layout with admin sidebar (10 nav items: Dashboard, Profile, Team, Organizations, Jobs, Forms, Integrations, Activity, Notifications, Settings; with collapsible Settings sub-menu: General, Email Layout, Email Templates)
 - [x] Dashboard sidebar with 5 nav items (Dashboard, Analyses, Forms, Team, Settings)
 - [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
@@ -207,6 +211,14 @@
 - [x] getSubmissionOrganizations - organizations with submissions for filter dropdown (admin)
 - [x] getFormVersionNumbers - version numbers for filter dropdown (admin)
 - [x] deleteSubmission - permanently delete a submission (admin)
+- [x] getFormAssignments - get organizations assigned to a form (admin)
+- [x] searchOrganizations - autocomplete search excluding already-assigned orgs (admin)
+- [x] assignFormToOrganization - assign form to org with audit log (admin)
+- [x] removeFormOrganizationAssignment - remove org assignment with audit log (admin)
+- [x] setFormVisibility - toggle all_organizations/assigned visibility (admin)
+- [x] setFormStatus - status transitions draft/published/archived (admin)
+- [x] publishFormWithValidation - validate schema and publish with version management (admin)
+- [x] getEmailTemplates - list email template slugs for completion config (admin)
 
 ### Integrations
 - [x] Integration secrets encryption (AES-256-GCM, `src/lib/crypto/secrets.ts`)
@@ -325,6 +337,9 @@
 - `src/app/[locale]/(superadmin)/admin/forms/[formId]/submissions/actions.ts` - Submissions server actions
 - `src/lib/forms/export.ts` - CSV and XLSX export functions
 - `src/app/api/admin/forms/[formId]/submissions/export/route.ts` - Export API route
+- `src/components/admin/forms/form-builder/form-settings-dialog.tsx` - Form settings dialog (3 tabs)
+- `src/components/admin/forms/form-builder/org-assignment-panel.tsx` - Organization assignment UI
+- `src/components/admin/forms/form-builder/publish-validation-dialog.tsx` - Publish validation dialog
 - `src/lib/db/schema/forms.ts` - Drizzle schema for forms, form_versions, form_organization_assignments, form_submissions
 - `src/lib/db/schema/enums.ts` - All PostgreSQL enums (incl. platform_role, invitation_status, form_status, form_visibility)
 - `src/lib/db/schema/organizations.ts` - Organizations table

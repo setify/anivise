@@ -26,10 +26,11 @@ import { BuilderCanvas } from './builder-canvas'
 import { FieldSettings } from './field-settings'
 import { BuilderToolbar } from './builder-toolbar'
 import { BuilderPreview } from './builder-preview'
+import { FormSettingsDialog } from './form-settings-dialog'
+import { PublishValidationDialog } from './publish-validation-dialog'
 import {
   saveFormSchema,
   saveFormVersion,
-  publishForm,
   updateFormMeta,
 } from '@/app/[locale]/(superadmin)/admin/forms/actions'
 
@@ -45,7 +46,10 @@ export function BuilderLayout({ form, initialSchema }: BuilderLayoutProps) {
     useBuilderState(initialSchema)
 
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [publishOpen, setPublishOpen] = useState(false)
   const [title, setTitle] = useState(form.title)
+  const [currentForm, setCurrentForm] = useState(form)
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved')
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
 
@@ -134,15 +138,10 @@ export function BuilderLayout({ form, initialSchema }: BuilderLayoutProps) {
   }, [form.id, state.schema, markSaved, t])
 
   const handlePublish = useCallback(async () => {
-    // Save first
+    // Save first, then open the publish validation dialog
     await saveFormSchema(form.id, state.schema)
-    const result = await publishForm(form.id)
-    if (result.success) {
-      toast.success(t('published'), { className: 'rounded-full' })
-    } else {
-      toast.error(result.error ?? t('publishError'), { className: 'rounded-full' })
-    }
-  }, [form.id, state.schema, t])
+    setPublishOpen(true)
+  }, [form.id, state.schema])
 
   const handleTitleChange = useCallback(
     (newTitle: string) => {
@@ -153,9 +152,13 @@ export function BuilderLayout({ form, initialSchema }: BuilderLayoutProps) {
   )
 
   const handleSettings = useCallback(() => {
-    // For now, just show a toast. Settings modal will be added later.
-    toast.info(t('settingsHint'), { className: 'rounded-full' })
-  }, [t])
+    setSettingsOpen(true)
+  }, [])
+
+  const handleFormUpdated = useCallback(() => {
+    // Refresh form data after settings change
+    setCurrentForm((prev) => ({ ...prev, title }))
+  }, [title])
 
   return (
     <div className="flex h-screen flex-col">
@@ -218,6 +221,22 @@ export function BuilderLayout({ form, initialSchema }: BuilderLayoutProps) {
         onOpenChange={setPreviewOpen}
         schema={state.schema}
         formTitle={title}
+      />
+
+      <FormSettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        form={currentForm}
+        onFormUpdated={handleFormUpdated}
+      />
+
+      <PublishValidationDialog
+        open={publishOpen}
+        onOpenChange={setPublishOpen}
+        formId={form.id}
+        onPublished={() => {
+          setCurrentForm((prev) => ({ ...prev, status: 'published' }))
+        }}
       />
     </div>
   )

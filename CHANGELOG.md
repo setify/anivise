@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.19.0] - 2026-02-17
+### Added
+- Organization assignment system: assign forms to specific organizations or make them visible to all
+- OrgAssignmentPanel component with two modes: all_organizations (toggle) and assigned (search, list, remove)
+- Organization search with 300ms debounce autocomplete, excluding already-assigned orgs
+- FormSettingsDialog with 3 tabs: General (title, description, slug, display mode, status), Completion (type, title, message, redirect URL, confirmation email), Organizations (embeds OrgAssignmentPanel)
+- Slug availability check with 500ms debounce in settings dialog
+- PublishValidationDialog with schema validation: checks steps have fields, required fields have labels, radio/checkbox have options, conditional logic references exist
+- Publish flow: validates schema before publishing, creates new version if form was already published
+- Status transitions in form list: unpublish (published -> draft), reactivate (archived -> draft)
+- Form visibility management: toggle between all_organizations and assigned modes
+- Server actions: getFormAssignments, searchOrganizations, assignFormToOrganization, removeFormOrganizationAssignment, setFormVisibility, setFormStatus, publishFormWithValidation, getEmailTemplates
+- Builder layout now wires up FormSettingsDialog (settings menu) and PublishValidationDialog (publish menu)
+- Admin form list table: unpublish and reactivate actions for published/archived forms
+- Admin sidebar reordered: Dashboard, Profile, Team, Organizations, Jobs, Forms, Integrations, Activity, Notifications, Settings
+- i18n: `admin.forms.settingsDialog`, `admin.forms.assignment`, `admin.forms.publish` namespaces (de + en)
+
 ## [0.18.0] - 2026-02-17
 ### Added
 - Form Renderer component with two display modes: progress_bar (Typeform-style) and tabs (classic)

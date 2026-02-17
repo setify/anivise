@@ -274,6 +274,14 @@ const result = validator.safeParse(submissionData)
 - Export: CSV and XLSX via `GET /api/admin/forms/[formId]/submissions/export?format=csv|xlsx`
 - Export respects active filters; filename: `{slug}_submissions_{date}.csv|xlsx`
 
+**Organization Assignment & Publishing:**
+- Forms can be visible to all organizations or assigned to specific ones
+- OrgAssignmentPanel: toggle visibility mode, search and assign organizations, remove assignments
+- FormSettingsDialog (3 tabs): General (title, description, slug, display mode, status), Completion (type, message, redirect, confirmation email), Organizations
+- PublishValidationDialog: validates schema before publishing (steps have fields, labels present, options configured, conditional references valid)
+- Publishing a previously-published form auto-creates a new version
+- Status transitions: draft -> published, published -> draft (unpublish), published -> archived, archived -> draft (reactivate)
+
 ### File Storage
 Supabase Storage with tenant-isolated paths: `transcripts/{org_id}/{job_id}/` and `reports/{org_id}/{report_id}/`.
 

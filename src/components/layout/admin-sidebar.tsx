@@ -82,14 +82,14 @@ export function AdminSidebar({ platformRole }: { platformRole?: string | null })
       icon: Building2,
     },
     {
-      href: `/${locale}/admin/forms`,
-      label: tAdmin('forms.title'),
-      icon: ClipboardList,
-    },
-    {
       href: `/${locale}/admin/jobs`,
       label: tAdmin('jobs.title'),
       icon: FlaskConical,
+    },
+    {
+      href: `/${locale}/admin/forms`,
+      label: tAdmin('forms.title'),
+      icon: ClipboardList,
     },
     {
       href: `/${locale}/admin/integrations`,
