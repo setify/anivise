@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { adminSidebarConfig } from './sidebar-config'
 import { SidebarGroup } from './sidebar-group'
-import { SidebarUserFooter } from './sidebar-user-footer'
 import { getUnreadCount } from '@/app/[locale]/(superadmin)/admin/actions'
 
 const STORAGE_KEY = 'admin-sidebar-collapsed'
@@ -98,21 +97,18 @@ export function AdminSidebar({ platformRole, logoUrl, user }: AdminSidebarProps)
   return (
     <div className="flex h-full flex-col">
       {/* Header / Logo */}
-      <div className="flex h-14 items-center border-b px-4">
-        <Link href={`/${locale}/admin`} className="flex items-center gap-2">
+      <div className="flex h-14 items-center border-b border-sidebar-border px-5">
+        <Link href={`/${locale}/admin`} className="flex items-center gap-2.5">
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoUrl}
               alt="Logo"
-              className="max-h-8 max-w-[120px] object-contain"
+              className="max-h-10 max-w-[150px] object-contain"
             />
           ) : (
-            <span className="text-lg font-semibold">Anivise</span>
+            <span className="text-xl font-bold tracking-tight">Anivise</span>
           )}
-          <span className="bg-destructive text-destructive-foreground rounded px-1.5 py-0.5 text-xs font-medium">
-            {t('admin')}
-          </span>
         </Link>
       </div>
 
@@ -132,8 +128,7 @@ export function AdminSidebar({ platformRole, logoUrl, user }: AdminSidebarProps)
         ))}
       </nav>
 
-      {/* User Footer */}
-      <SidebarUserFooter user={user} />
+      {/* User info moved to header – no footer needed */}
     </div>
   )
 }
