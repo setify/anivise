@@ -29,6 +29,7 @@ async function main() {
     '0003_whole_the_call',
     '0004_cheerful_mister_fear',
     '0005_supreme_scalphunter',
+    '0006_lean_legion',
   ]
 
   console.log('Ensuring drizzle migrations schema and table exist...')

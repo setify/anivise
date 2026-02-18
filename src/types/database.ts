@@ -22,6 +22,7 @@ import type {
   products,
   organizationProducts,
   mediaFiles,
+  employees,
   organizationNotificationSettings,
 } from '@/lib/db/schema'
 
@@ -113,6 +114,13 @@ export type NewOrganizationProduct = InferInsertModel<typeof organizationProduct
 export type MediaFile = InferSelectModel<typeof mediaFiles>
 export type NewMediaFile = InferInsertModel<typeof mediaFiles>
 
+// Employee
+export type Employee = InferSelectModel<typeof employees>
+export type NewEmployee = InferInsertModel<typeof employees>
+
+// Employee Status type
+export type EmployeeStatus = 'active' | 'inactive' | 'archived'
+
 // Media Context type
 export type MediaContext =
   | 'email_logo'
@@ -121,6 +129,7 @@ export type MediaContext =
   | 'org_logo'
   | 'report_asset'
   | 'user_avatar'
+  | 'employee_avatar'
   | 'general'
 
 // Organization Notification Settings

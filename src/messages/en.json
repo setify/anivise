@@ -1185,6 +1185,9 @@
       "forms": "Forms",
       "employees": "Employees",
       "users": "Users",
+      "usersList": "Users",
+      "usersDepartments": "Departments",
+      "usersLocations": "Locations",
       "settings": "Settings",
       "settingsGeneral": "General",
       "settingsPlan": "Plan",
@@ -1206,7 +1209,138 @@
     "employees": {
       "title": "Employees",
       "description": "Manage and assign employees",
-      "comingSoon": "This section will be available soon."
+      "addEmployee": "Add Employee",
+      "search": "Search employees...",
+      "stats": {
+        "total": "Total",
+        "active": "Active",
+        "inactive": "Inactive",
+        "archived": "Archived"
+      },
+      "tabs": {
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive",
+        "archived": "Archived"
+      },
+      "filters": {
+        "allDepartments": "All Departments",
+        "allLocations": "All Locations",
+        "allManagers": "All Managers",
+        "savedFilters": "Saved Filters",
+        "saveCurrentFilters": "Save current filters",
+        "filterName": "Filter name",
+        "save": "Save"
+      },
+      "view": {
+        "card": "Cards",
+        "table": "Table"
+      },
+      "empty": {
+        "title": "No employees yet",
+        "description": "Add your first employee.",
+        "noResults": "No employees found",
+        "noActive": "No active employees",
+        "noInactive": "No inactive employees",
+        "noArchived": "No archived employees"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "archived": "Archived"
+      },
+      "table": {
+        "name": "Name",
+        "position": "Position",
+        "department": "Department",
+        "location": "Location",
+        "manager": "Manager",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View Profile",
+        "edit": "Edit",
+        "changeStatus": "Change Status",
+        "delete": "Delete"
+      },
+      "addDialog": {
+        "title": "Add Employee",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "John",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Doe",
+        "email": "Email",
+        "emailPlaceholder": "john@example.com",
+        "phone": "Phone",
+        "phonePlaceholder": "+1 ...",
+        "position": "Position",
+        "positionPlaceholder": "e.g. Team Lead",
+        "department": "Department",
+        "selectDepartment": "Select department...",
+        "location": "Location",
+        "selectLocation": "Select location...",
+        "manager": "Manager",
+        "selectManager": "Select manager...",
+        "avatar": "Profile Photo",
+        "avatarUpload": "Upload or drag image here",
+        "avatarFromLibrary": "From Library",
+        "avatarRemove": "Remove",
+        "avatarTooLarge": "Image too large (max 2 MB)",
+        "notes": "Notes",
+        "notesPlaceholder": "Optional notes...",
+        "createButton": "Create Employee",
+        "creating": "Creating...",
+        "created": "Employee created successfully",
+        "error": "Error creating employee"
+      },
+      "editDialog": {
+        "title": "Edit Employee",
+        "noDepartment": "No Department",
+        "noLocation": "No Location",
+        "noManager": "No Manager",
+        "saveButton": "Save",
+        "saving": "Saving...",
+        "saved": "Changes saved",
+        "error": "Error saving changes"
+      },
+      "statusDialog": {
+        "title": "Change Status",
+        "current": "Current Status",
+        "new": "New Status",
+        "selectStatus": "Select status...",
+        "confirmButton": "Change Status",
+        "changing": "Changing...",
+        "changed": "Status changed successfully",
+        "error": "Error changing status"
+      },
+      "deleteDialog": {
+        "title": "Delete Employee",
+        "message": "Are you sure you want to delete {name}? This action cannot be undone.",
+        "confirmButton": "Delete",
+        "cancelButton": "Cancel",
+        "deleting": "Deleting...",
+        "deleted": "Employee deleted",
+        "error": "Error deleting employee"
+      },
+      "detail": {
+        "backToList": "Back to Employees",
+        "editButton": "Edit",
+        "changeStatus": "Change Status",
+        "info": "Information",
+        "email": "Email",
+        "phone": "Phone",
+        "department": "Department",
+        "location": "Location",
+        "manager": "Manager",
+        "position": "Position",
+        "createdAt": "Created",
+        "notes": "Notes",
+        "analyses": {
+          "title": "Assigned Analyses",
+          "empty": "No analyses assigned yet."
+        }
+      }
     },
     "users": {
       "title": "Users",
@@ -1386,10 +1520,13 @@
       },
       "departments": {
         "title": "Manage Departments",
+        "pageTitle": "Departments",
+        "pageDescription": "Manage your organization's departments and assign members.",
         "name": "Name",
         "namePlaceholder": "e.g. Sales",
         "description": "Description",
         "descriptionPlaceholder": "Optional description...",
+        "addButton": "Add Department",
         "add": "Add",
         "adding": "Adding...",
         "save": "Save",
@@ -1401,10 +1538,21 @@
         "deleted": "Department deleted",
         "inUse": "This department is in use and cannot be deleted.",
         "error": "An error occurred",
-        "usedBy": "{count, plural, =0 {Not assigned} =1 {1 user} other {# users}}"
+        "usedBy": "{count, plural, =0 {Not assigned} =1 {1 user} other {# users}}",
+        "members": "Members",
+        "noMembers": "No members assigned.",
+        "editTitle": "Edit Department",
+        "addTitle": "Add Department",
+        "deleteConfirm": "Are you sure you want to delete this department?",
+        "memberCount": "{count, plural, =0 {No members} =1 {1 member} other {# members}}",
+        "position": "Position",
+        "role": "Role",
+        "email": "Email"
       },
       "locations": {
         "title": "Manage Locations",
+        "pageTitle": "Locations",
+        "pageDescription": "Manage your organization's locations and assign members.",
         "name": "Name",
         "namePlaceholder": "e.g. Berlin HQ",
         "address": "Address",
@@ -1413,6 +1561,7 @@
         "cityPlaceholder": "e.g. Berlin",
         "country": "Country",
         "countryPlaceholder": "e.g. Germany",
+        "addButton": "Add Location",
         "add": "Add",
         "adding": "Adding...",
         "save": "Save",
@@ -1424,7 +1573,16 @@
         "deleted": "Location deleted",
         "inUse": "This location is in use and cannot be deleted.",
         "error": "An error occurred",
-        "usedBy": "{count, plural, =0 {Not assigned} =1 {1 user} other {# users}}"
+        "usedBy": "{count, plural, =0 {Not assigned} =1 {1 user} other {# users}}",
+        "members": "Members",
+        "noMembers": "No members assigned.",
+        "editTitle": "Edit Location",
+        "addTitle": "Add Location",
+        "deleteConfirm": "Are you sure you want to delete this location?",
+        "memberCount": "{count, plural, =0 {No members} =1 {1 member} other {# members}}",
+        "position": "Position",
+        "role": "Role",
+        "email": "Email"
       }
     },
     "settingsMedia": {

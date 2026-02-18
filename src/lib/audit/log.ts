@@ -39,6 +39,10 @@ export type AuditAction =
   | 'location.updated'
   | 'location.deleted'
   | 'invitation.revoked'
+  | 'employee.created'
+  | 'employee.updated'
+  | 'employee.deleted'
+  | 'employee.status_changed'
 
 export async function logAudit(params: {
   actorId: string

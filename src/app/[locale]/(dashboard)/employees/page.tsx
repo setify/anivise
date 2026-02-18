@@ -1,17 +1,27 @@
-import { useTranslations } from 'next-intl'
-import { UsersRound } from 'lucide-react'
-import { PagePlaceholder } from '@/components/ui/page-placeholder'
+import {
+  getEmployees,
+  getEmployeeStats,
+  getManagerOptions,
+} from './actions'
+import { getOrgDepartments, getOrgLocations } from '../users/actions'
+import { EmployeesPageClient } from './employees-page-client'
 
-export default function EmployeesPage() {
-  const t = useTranslations('org.employees')
+export default async function EmployeesPage() {
+  const [employees, stats, departments, locations, managers] = await Promise.all([
+    getEmployees(),
+    getEmployeeStats(),
+    getOrgDepartments(),
+    getOrgLocations(),
+    getManagerOptions(),
+  ])
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-muted-foreground">{t('description')}</p>
-      </div>
-      <PagePlaceholder message={t('comingSoon')} icon={UsersRound} />
-    </div>
+    <EmployeesPageClient
+      employees={employees}
+      stats={stats}
+      departments={departments}
+      locations={locations}
+      managers={managers}
+    />
   )
 }

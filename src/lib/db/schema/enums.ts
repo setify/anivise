@@ -83,6 +83,12 @@ export const productStatusEnum = pgEnum('product_status', [
   'archived',
 ])
 
+export const employeeStatusEnum = pgEnum('employee_status', [
+  'active',
+  'inactive',
+  'archived',
+])
+
 export const mediaContextEnum = pgEnum('media_context', [
   'email_logo',
   'email_template',
@@ -90,5 +96,6 @@ export const mediaContextEnum = pgEnum('media_context', [
   'org_logo',
   'report_asset',
   'user_avatar',
+  'employee_avatar',
   'general',
 ])

@@ -43,6 +43,13 @@
       "when": 1771427501199,
       "tag": "0005_supreme_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771433499410,
+      "tag": "0006_lean_legion",
+      "breakpoints": true
     }
   ]
 }

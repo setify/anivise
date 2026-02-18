@@ -15,6 +15,7 @@ export {
   formCompletionTypeEnum,
   formStepDisplayModeEnum,
   productStatusEnum,
+  employeeStatusEnum,
   mediaContextEnum,
 } from './enums'
 
@@ -42,4 +43,5 @@ export {
 } from './forms'
 export { products, organizationProducts } from './products'
 export { mediaFiles } from './media-files'
+export { employees } from './employees'
 export { organizationNotificationSettings } from './organization-notification-settings'

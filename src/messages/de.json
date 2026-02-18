@@ -1185,6 +1185,9 @@
       "forms": "Formulare",
       "employees": "Mitarbeiter",
       "users": "Benutzer",
+      "usersList": "Benutzer",
+      "usersDepartments": "Abteilungen",
+      "usersLocations": "Standorte",
       "settings": "Einstellungen",
       "settingsGeneral": "Allgemein",
       "settingsPlan": "Tarif",
@@ -1206,7 +1209,138 @@
     "employees": {
       "title": "Mitarbeiter",
       "description": "Mitarbeiter verwalten und zuordnen",
-      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+      "addEmployee": "Mitarbeiter hinzufügen",
+      "search": "Mitarbeiter suchen...",
+      "stats": {
+        "total": "Gesamt",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "archived": "Archiviert"
+      },
+      "tabs": {
+        "all": "Alle",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "archived": "Archiviert"
+      },
+      "filters": {
+        "allDepartments": "Alle Abteilungen",
+        "allLocations": "Alle Standorte",
+        "allManagers": "Alle Vorgesetzten",
+        "savedFilters": "Gespeicherte Filter",
+        "saveCurrentFilters": "Aktuelle Filter speichern",
+        "filterName": "Filtername",
+        "save": "Speichern"
+      },
+      "view": {
+        "card": "Karten",
+        "table": "Tabelle"
+      },
+      "empty": {
+        "title": "Noch keine Mitarbeiter",
+        "description": "Fügen Sie Ihren ersten Mitarbeiter hinzu.",
+        "noResults": "Keine Mitarbeiter gefunden",
+        "noActive": "Keine aktiven Mitarbeiter",
+        "noInactive": "Keine inaktiven Mitarbeiter",
+        "noArchived": "Keine archivierten Mitarbeiter"
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "archived": "Archiviert"
+      },
+      "table": {
+        "name": "Name",
+        "position": "Position",
+        "department": "Abteilung",
+        "location": "Standort",
+        "manager": "Vorgesetzte/r",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "actions": {
+        "view": "Profil anzeigen",
+        "edit": "Bearbeiten",
+        "changeStatus": "Status ändern",
+        "delete": "Löschen"
+      },
+      "addDialog": {
+        "title": "Mitarbeiter hinzufügen",
+        "firstName": "Vorname",
+        "firstNamePlaceholder": "Max",
+        "lastName": "Nachname",
+        "lastNamePlaceholder": "Mustermann",
+        "email": "E-Mail",
+        "emailPlaceholder": "max@beispiel.de",
+        "phone": "Telefon",
+        "phonePlaceholder": "+49 ...",
+        "position": "Position",
+        "positionPlaceholder": "z.B. Teamleitung",
+        "department": "Abteilung",
+        "selectDepartment": "Abteilung wählen...",
+        "location": "Standort",
+        "selectLocation": "Standort wählen...",
+        "manager": "Vorgesetzte/r",
+        "selectManager": "Vorgesetzte/n wählen...",
+        "avatar": "Profilbild",
+        "avatarUpload": "Bild hochladen oder hierher ziehen",
+        "avatarFromLibrary": "Aus Mediathek",
+        "avatarRemove": "Entfernen",
+        "avatarTooLarge": "Bild zu groß (max. 2 MB)",
+        "notes": "Notizen",
+        "notesPlaceholder": "Optionale Notizen...",
+        "createButton": "Mitarbeiter erstellen",
+        "creating": "Wird erstellt...",
+        "created": "Mitarbeiter erfolgreich erstellt",
+        "error": "Fehler beim Erstellen"
+      },
+      "editDialog": {
+        "title": "Mitarbeiter bearbeiten",
+        "noDepartment": "Keine Abteilung",
+        "noLocation": "Kein Standort",
+        "noManager": "Kein/e Vorgesetzte/r",
+        "saveButton": "Speichern",
+        "saving": "Wird gespeichert...",
+        "saved": "Änderungen gespeichert",
+        "error": "Fehler beim Speichern"
+      },
+      "statusDialog": {
+        "title": "Status ändern",
+        "current": "Aktueller Status",
+        "new": "Neuer Status",
+        "selectStatus": "Status wählen...",
+        "confirmButton": "Status ändern",
+        "changing": "Wird geändert...",
+        "changed": "Status erfolgreich geändert",
+        "error": "Fehler beim Ändern"
+      },
+      "deleteDialog": {
+        "title": "Mitarbeiter löschen",
+        "message": "Möchten Sie {name} wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirmButton": "Löschen",
+        "cancelButton": "Abbrechen",
+        "deleting": "Wird gelöscht...",
+        "deleted": "Mitarbeiter gelöscht",
+        "error": "Fehler beim Löschen"
+      },
+      "detail": {
+        "backToList": "Zurück zu Mitarbeiter",
+        "editButton": "Bearbeiten",
+        "changeStatus": "Status ändern",
+        "info": "Informationen",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "department": "Abteilung",
+        "location": "Standort",
+        "manager": "Vorgesetzte/r",
+        "position": "Position",
+        "createdAt": "Erstellt am",
+        "notes": "Notizen",
+        "analyses": {
+          "title": "Zugeordnete Analysen",
+          "empty": "Noch keine Analysen zugeordnet."
+        }
+      }
     },
     "users": {
       "title": "Benutzer",
@@ -1386,10 +1520,13 @@
       },
       "departments": {
         "title": "Abteilungen verwalten",
+        "pageTitle": "Abteilungen",
+        "pageDescription": "Abteilungen Ihrer Organisation verwalten und Mitglieder zuordnen.",
         "name": "Name",
         "namePlaceholder": "z.B. Vertrieb",
         "description": "Beschreibung",
         "descriptionPlaceholder": "Optionale Beschreibung...",
+        "addButton": "Abteilung hinzufügen",
         "add": "Hinzufügen",
         "adding": "Wird hinzugefügt...",
         "save": "Speichern",
@@ -1401,10 +1538,21 @@
         "deleted": "Abteilung gelöscht",
         "inUse": "Diese Abteilung wird noch verwendet und kann nicht gelöscht werden.",
         "error": "Ein Fehler ist aufgetreten",
-        "usedBy": "{count, plural, =0 {Nicht zugewiesen} =1 {1 Benutzer} other {# Benutzer}}"
+        "usedBy": "{count, plural, =0 {Nicht zugewiesen} =1 {1 Benutzer} other {# Benutzer}}",
+        "members": "Mitglieder",
+        "noMembers": "Keine Mitglieder zugeordnet.",
+        "editTitle": "Abteilung bearbeiten",
+        "addTitle": "Abteilung hinzufügen",
+        "deleteConfirm": "Möchten Sie diese Abteilung wirklich löschen?",
+        "memberCount": "{count, plural, =0 {Keine Mitglieder} =1 {1 Mitglied} other {# Mitglieder}}",
+        "position": "Position",
+        "role": "Rolle",
+        "email": "E-Mail"
       },
       "locations": {
         "title": "Standorte verwalten",
+        "pageTitle": "Standorte",
+        "pageDescription": "Standorte Ihrer Organisation verwalten und Mitglieder zuordnen.",
         "name": "Name",
         "namePlaceholder": "z.B. Berlin HQ",
         "address": "Adresse",
@@ -1413,6 +1561,7 @@
         "cityPlaceholder": "z.B. Berlin",
         "country": "Land",
         "countryPlaceholder": "z.B. Deutschland",
+        "addButton": "Standort hinzufügen",
         "add": "Hinzufügen",
         "adding": "Wird hinzugefügt...",
         "save": "Speichern",
@@ -1424,7 +1573,16 @@
         "deleted": "Standort gelöscht",
         "inUse": "Dieser Standort wird noch verwendet und kann nicht gelöscht werden.",
         "error": "Ein Fehler ist aufgetreten",
-        "usedBy": "{count, plural, =0 {Nicht zugewiesen} =1 {1 Benutzer} other {# Benutzer}}"
+        "usedBy": "{count, plural, =0 {Nicht zugewiesen} =1 {1 Benutzer} other {# Benutzer}}",
+        "members": "Mitglieder",
+        "noMembers": "Keine Mitglieder zugeordnet.",
+        "editTitle": "Standort bearbeiten",
+        "addTitle": "Standort hinzufügen",
+        "deleteConfirm": "Möchten Sie diesen Standort wirklich löschen?",
+        "memberCount": "{count, plural, =0 {Keine Mitglieder} =1 {1 Mitglied} other {# Mitglieder}}",
+        "position": "Position",
+        "role": "Rolle",
+        "email": "E-Mail"
       }
     },
     "settingsMedia": {
