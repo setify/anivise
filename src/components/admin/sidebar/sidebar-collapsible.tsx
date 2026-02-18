@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -28,10 +29,12 @@ export function SidebarCollapsible({
     isItemActive(pathname, child.href, locale, true)
   )
 
+  const fullHref = `/${locale}${item.href}`
+
   return (
     <div>
-      <button
-        type="button"
+      <Link
+        href={fullHref}
         onClick={onToggle}
         className={cn(
           'group relative flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm font-medium transition-colors',
@@ -51,7 +54,7 @@ export function SidebarCollapsible({
             !isOpen && '-rotate-90'
           )}
         />
-      </button>
+      </Link>
 
       {/* Children with slide animation */}
       <div

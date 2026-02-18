@@ -102,7 +102,6 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
         labelKey: 'org.sidebar.settings',
         href: '/settings',
         icon: Settings,
-        minRole: 'org_admin',
         children: [
           {
             key: 'settings-general',
