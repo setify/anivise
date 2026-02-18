@@ -191,7 +191,7 @@ export function RecordingModal({
       audioContextRef.current = audioCtx
       const source = audioCtx.createMediaStreamSource(stream)
       const analyser = audioCtx.createAnalyser()
-      analyser.fftSize = WAVEFORM_BARS * 2
+      analyser.fftSize = 128
       source.connect(analyser)
       analyserRef.current = analyser
 
