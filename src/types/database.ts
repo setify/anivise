@@ -29,6 +29,7 @@ import type {
   analyses,
   analysisShares,
   analysisComments,
+  analysisRecordings,
 } from '@/lib/db/schema'
 
 // Organization
@@ -145,6 +146,10 @@ export type NewAnalysisShare = InferInsertModel<typeof analysisShares>
 // Analysis Comment
 export type AnalysisComment = InferSelectModel<typeof analysisComments>
 export type NewAnalysisComment = InferInsertModel<typeof analysisComments>
+
+// Analysis Recording
+export type AnalysisRecording = InferSelectModel<typeof analysisRecordings>
+export type NewAnalysisRecording = InferInsertModel<typeof analysisRecordings>
 
 // Analysis Status type
 export type AnalysisStatus = 'planned' | 'active' | 'completed'

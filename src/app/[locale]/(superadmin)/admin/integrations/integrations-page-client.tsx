@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import {
   Database,
   Mail,
+  Mic,
   Workflow,
   Globe,
   CreditCard,
@@ -62,6 +63,7 @@ export function IntegrationsPageClient({ vercelInfo }: { vercelInfo: VercelInfo 
       <SupabaseCard t={t} />
       <ResendCard t={t} />
       <N8nCard t={t} />
+      <DeepgramCard t={t} />
       <VercelCard t={t} vercelInfo={vercelInfo} />
       <PaymentCard t={t} />
     </div>
@@ -527,6 +529,87 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
           <Button variant="outline" size="sm" onClick={handleLoadEnv} disabled={isPending}>
             <Download className="mr-1.5 size-4" />
             {t('loadFromEnv')}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ─── Deepgram Card ───
+
+function DeepgramCard({ t }: { t: ReturnType<typeof useTranslations> }) {
+  const [apiKey, setApiKey] = useState('')
+  const [isPending, startTransition] = useTransition()
+  const [status, setStatus] = useState<ConnectionStatus>('idle')
+  const [latency, setLatency] = useState<number | null>(null)
+
+  useEffect(() => {
+    getIntegrationSecretsForUI('deepgram').then((secrets) => {
+      for (const s of secrets) {
+        if (s.key === 'api_key' && s.maskedValue) setApiKey(s.maskedValue)
+      }
+    })
+  }, [])
+
+  function handleSave() {
+    startTransition(async () => {
+      const result = await saveIntegrationSecrets('deepgram', [
+        { key: 'api_key', value: apiKey, isSensitive: true },
+      ])
+      if (result.success) {
+        toast.success(t('saved'))
+      } else {
+        toast.error(result.error ?? t('error'))
+      }
+    })
+  }
+
+  async function handleTest() {
+    setStatus('testing')
+    const start = Date.now()
+    try {
+      const res = await fetch('/api/recordings/deepgram-key', { method: 'POST' })
+      setLatency(Date.now() - start)
+      setStatus(res.ok ? 'connected' : 'error')
+    } catch {
+      setLatency(Date.now() - start)
+      setStatus('error')
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <div>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Mic className="size-4" />
+            Deepgram ({t('deepgram.subtitle')})
+          </CardTitle>
+          <CardDescription>{t('deepgram.description')}</CardDescription>
+        </div>
+        <StatusBadge status={status} latency={latency} t={t} />
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid gap-4">
+          <div>
+            <Label>API Key</Label>
+            <Input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="dg_..."
+            />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={handleSave} disabled={isPending} size="sm">
+            {isPending ? <Loader2 className="mr-2 size-3.5 animate-spin" /> : null}
+            {t('save')}
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleTest} disabled={status === 'testing'}>
+            {status === 'testing' ? <Loader2 className="mr-2 size-3.5 animate-spin" /> : <RefreshCw className="mr-2 size-3.5" />}
+            {t('testConnection')}
           </Button>
         </div>
       </CardContent>

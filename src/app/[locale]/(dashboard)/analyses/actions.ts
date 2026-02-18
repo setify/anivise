@@ -6,6 +6,7 @@ import {
   analyses,
   analysisShares,
   analysisComments,
+  analysisRecordings,
   employees,
   users,
   organizationMembers,
@@ -658,3 +659,115 @@ export async function deleteAnalysisComment(commentId: string) {
   revalidatePath(`/analyses/${comment.analysisId}`)
   return { success: true }
 }
+
+// ─── Recordings ─────────────────────────────────────────────────────
+
+export async function startRecording(analysisId: string, language: string) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false, error: 'unauthorized' }
+
+  const [analysis] = await db
+    .select()
+    .from(analyses)
+    .where(
+      and(eq(analyses.id, analysisId), eq(analyses.organizationId, ctx.organizationId))
+    )
+    .limit(1)
+  if (!analysis) return { success: false, error: 'not_found' }
+
+  const storagePath = `${ctx.organizationId}/recordings/${analysisId}/${Date.now()}`
+
+  const [recording] = await db
+    .insert(analysisRecordings)
+    .values({
+      analysisId,
+      language,
+      storagePath,
+      status: 'recording',
+      recordedBy: ctx.userId,
+    })
+    .returning()
+
+  return { success: true, recordingId: recording.id, storagePath }
+}
+
+export async function finishRecording(
+  recordingId: string,
+  durationSeconds: number,
+  liveTranscript: string
+) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false, error: 'unauthorized' }
+
+  const [recording] = await db
+    .select()
+    .from(analysisRecordings)
+    .where(eq(analysisRecordings.id, recordingId))
+    .limit(1)
+
+  if (!recording || recording.recordedBy !== ctx.userId) {
+    return { success: false, error: 'not_found' }
+  }
+
+  await db
+    .update(analysisRecordings)
+    .set({
+      status: 'processing',
+      durationSeconds,
+      liveTranscript: liveTranscript || null,
+      updatedAt: new Date(),
+    })
+    .where(eq(analysisRecordings.id, recordingId))
+
+  revalidatePath(`/analyses/${recording.analysisId}`)
+  return { success: true }
+}
+
+export async function saveRecordingTranscript(
+  recordingId: string,
+  finalTranscript: string
+) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false, error: 'unauthorized' }
+
+  await db
+    .update(analysisRecordings)
+    .set({
+      status: 'completed',
+      finalTranscript,
+      updatedAt: new Date(),
+    })
+    .where(eq(analysisRecordings.id, recordingId))
+
+  return { success: true }
+}
+
+export async function getAnalysisRecordings(analysisId: string) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return []
+
+  const rows = await db
+    .select({
+      recording: analysisRecordings,
+      recorderName: users.fullName,
+      recorderEmail: users.email,
+    })
+    .from(analysisRecordings)
+    .innerJoin(users, eq(analysisRecordings.recordedBy, users.id))
+    .where(eq(analysisRecordings.analysisId, analysisId))
+    .orderBy(desc(analysisRecordings.createdAt))
+
+  return rows.map((r) => ({
+    id: r.recording.id,
+    status: r.recording.status,
+    language: r.recording.language,
+    durationSeconds: r.recording.durationSeconds,
+    liveTranscript: r.recording.liveTranscript,
+    finalTranscript: r.recording.finalTranscript,
+    chunksUploaded: r.recording.chunksUploaded,
+    recorderName: r.recorderName ?? r.recorderEmail,
+    createdAt: r.recording.createdAt,
+  }))
+}
+
+export type RecordingRow = Awaited<ReturnType<typeof getAnalysisRecordings>>[number]

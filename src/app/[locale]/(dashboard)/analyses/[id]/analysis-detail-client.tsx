@@ -49,6 +49,8 @@ import {
 import { AvatarDisplay } from '@/components/shared/avatar-display'
 import { CommentFeed } from '../_components/comment-feed'
 import { ShareDialog } from '../_components/share-dialog'
+import { RecordingModal } from '../_components/recording-modal'
+import { RecordingsList } from '../_components/recordings-list'
 import {
   updateAnalysis,
   changeAnalysisStatus,
@@ -61,6 +63,7 @@ import type {
   AnalysisCommentRow,
   AnalysisShareRow,
   OrgManager,
+  RecordingRow,
 } from '../actions'
 import type { AnalysisStatus } from '@/types/database'
 
@@ -74,6 +77,7 @@ interface AnalysisDetailClientProps {
   analysis: AnalysisDetail
   comments: AnalysisCommentRow[]
   shares: AnalysisShareRow[]
+  recordings: RecordingRow[]
   managers: OrgManager[]
   isAdmin: boolean
   currentUserId: string
@@ -83,6 +87,7 @@ export function AnalysisDetailClient({
   analysis,
   comments,
   shares,
+  recordings,
   managers,
   isAdmin,
   currentUserId,
@@ -98,6 +103,7 @@ export function AnalysisDetailClient({
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
   const [managerOpen, setManagerOpen] = useState(false)
+  const [recordingOpen, setRecordingOpen] = useState(false)
   const [managerLoading, setManagerLoading] = useState(false)
   const [newManagerId, setNewManagerId] = useState(analysis.managerId)
 
@@ -244,6 +250,11 @@ export function AnalysisDetailClient({
       <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
         {/* Left: Content area */}
         <div className="space-y-6">
+          {/* Recordings section */}
+          {recordings.length > 0 && (
+            <RecordingsList recordings={recordings} />
+          )}
+
           {/* Recording placeholder */}
           <div className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8">
             <Mic className="text-muted-foreground size-8" />
@@ -258,7 +269,11 @@ export function AnalysisDetailClient({
                 <Upload className="mr-2 size-3.5" />
                 {t('detail.recording.upload')}
               </Button>
-              <Button variant="outline" size="sm" disabled>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setRecordingOpen(true)}
+              >
                 <Mic className="mr-2 size-3.5" />
                 {t('detail.recording.start')}
               </Button>
@@ -440,6 +455,14 @@ export function AnalysisDetailClient({
         managers={managers}
         open={shareOpen}
         onOpenChange={setShareOpen}
+      />
+
+      {/* Recording Modal */}
+      <RecordingModal
+        analysisId={analysis.id}
+        open={recordingOpen}
+        onOpenChange={setRecordingOpen}
+        onRecordingComplete={() => router.refresh()}
       />
 
       {/* Change Manager Dialog */}

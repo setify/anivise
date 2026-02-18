@@ -49,3 +49,4 @@ export { organizationNotificationSettings } from './organization-notification-se
 export { guideCategories } from './guide-categories'
 export { guides } from './guides'
 export { analyses, analysisShares, analysisComments } from './analyses'
+export { analysisRecordings } from './analysis-recordings'

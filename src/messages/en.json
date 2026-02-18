@@ -231,7 +231,34 @@
         "title": "Conversation Recording",
         "description": "Add a conversation recording or start a new one.",
         "upload": "Upload File",
-        "start": "Start Recording"
+        "start": "Start Recording",
+        "modalTitle": "Conversation Recording",
+        "modalDescription": "Select the language and start recording. Transcription happens in real-time.",
+        "language": "Conversation language",
+        "startButton": "Start Recording",
+        "stopButton": "Stop Recording",
+        "stopping": "Saving...",
+        "recordingLabel": "Recording",
+        "liveTranscript": "Live Transcription",
+        "waitingForSpeech": "Waiting for speech...",
+        "transcriptionUnavailable": "Transcription unavailable. Recording continues without live transcript.",
+        "noTranscription": "Deepgram is not configured. Recording works, but without live transcription. Configure the API key in Admin → Integrations.",
+        "confirmStopTitle": "Stop Recording?",
+        "confirmStopDescription": "The recording will be stopped and saved. This action cannot be undone.",
+        "continueRecording": "Continue Recording",
+        "stopAndSave": "Stop & Save",
+        "saved": "Recording has been saved.",
+        "errorStart": "Failed to start recording.",
+        "errorMicrophone": "Microphone access was denied.",
+        "existingRecordings": "Previous Recordings",
+        "duration": "Duration",
+        "noRecordings": "No recordings yet.",
+        "viewTranscript": "View Transcript",
+        "status": {
+          "recording": "Recording",
+          "processing": "Processing",
+          "completed": "Completed"
+        }
       },
       "forms": {
         "title": "Forms",
@@ -703,6 +730,10 @@
         "newSecretLabel": "New Secret (shown only once)",
         "newSecretHint": "Copy this secret and configure it in your n8n instance. It will not be shown again after leaving this page.",
         "hint": "Configure the same auth header in your n8n workflow: set the header name and value in both the incoming Webhook Trigger node and the outgoing HTTP Request node (callback). The health URL is optional and only used for connection testing."
+      },
+      "deepgram": {
+        "subtitle": "Speech Transcription",
+        "description": "Real-time transcription for conversation recordings (Deepgram Nova)"
       },
       "vercel": {
         "description": "Deployment information (read-only)",

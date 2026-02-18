@@ -4,6 +4,7 @@ import {
   getAnalysisById,
   getAnalysisComments,
   getAnalysisShares,
+  getAnalysisRecordings,
   getOrgManagers,
 } from '../actions'
 import { AnalysisDetailClient } from './analysis-detail-client'
@@ -17,10 +18,11 @@ export default async function AnalysisDetailPage({ params }: Props) {
   const ctx = await getCurrentOrgContext()
   if (!ctx) notFound()
 
-  const [analysis, comments, shares, managers] = await Promise.all([
+  const [analysis, comments, shares, recordings, managers] = await Promise.all([
     getAnalysisById(id),
     getAnalysisComments(id),
     getAnalysisShares(id),
+    getAnalysisRecordings(id),
     getOrgManagers(),
   ])
 
@@ -33,6 +35,7 @@ export default async function AnalysisDetailPage({ params }: Props) {
       analysis={analysis}
       comments={comments}
       shares={shares}
+      recordings={recordings}
       managers={managers}
       isAdmin={isAdmin}
       currentUserId={ctx.userId}

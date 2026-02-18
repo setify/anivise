@@ -231,7 +231,34 @@
         "title": "Gesprächsaufzeichnung",
         "description": "Fügen Sie eine Gesprächsaufzeichnung hinzu oder starten Sie eine neue.",
         "upload": "Datei hochladen",
-        "start": "Aufzeichnung starten"
+        "start": "Aufzeichnung starten",
+        "modalTitle": "Gesprächsaufzeichnung",
+        "modalDescription": "Wählen Sie die Sprache und starten Sie die Aufnahme. Die Transkription erfolgt in Echtzeit.",
+        "language": "Sprache des Gesprächs",
+        "startButton": "Aufnahme starten",
+        "stopButton": "Aufnahme beenden",
+        "stopping": "Wird gespeichert...",
+        "recordingLabel": "Aufnahme läuft",
+        "liveTranscript": "Live-Transkription",
+        "waitingForSpeech": "Warte auf Sprache...",
+        "transcriptionUnavailable": "Transkription nicht verfügbar. Aufnahme läuft ohne Live-Transkript.",
+        "noTranscription": "Deepgram ist nicht konfiguriert. Die Aufnahme funktioniert, aber ohne Live-Transkription. Konfigurieren Sie den API-Key unter Admin → Integrationen.",
+        "confirmStopTitle": "Aufnahme beenden?",
+        "confirmStopDescription": "Die Aufnahme wird gestoppt und gespeichert. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+        "continueRecording": "Weiter aufnehmen",
+        "stopAndSave": "Beenden & Speichern",
+        "saved": "Aufnahme wurde gespeichert.",
+        "errorStart": "Aufnahme konnte nicht gestartet werden.",
+        "errorMicrophone": "Zugriff auf das Mikrofon wurde verweigert.",
+        "existingRecordings": "Bisherige Aufnahmen",
+        "duration": "Dauer",
+        "noRecordings": "Noch keine Aufnahmen.",
+        "viewTranscript": "Transkript anzeigen",
+        "status": {
+          "recording": "Aufnahme läuft",
+          "processing": "Wird verarbeitet",
+          "completed": "Fertig"
+        }
       },
       "forms": {
         "title": "Formulare",
@@ -703,6 +730,10 @@
         "newSecretLabel": "Neues Secret (nur einmal sichtbar)",
         "newSecretHint": "Kopieren Sie dieses Secret und konfigurieren Sie es in Ihrer n8n-Instanz. Es wird nach dem Verlassen dieser Seite nicht mehr angezeigt.",
         "hint": "Konfigurieren Sie denselben Auth-Header in Ihrem n8n-Workflow: Setzen Sie Header-Name und -Wert sowohl im eingehenden Webhook-Trigger-Node als auch im ausgehenden HTTP-Request-Node (Callback). Die Health-URL ist optional und wird nur für den Verbindungstest verwendet."
+      },
+      "deepgram": {
+        "subtitle": "Sprach-Transkription",
+        "description": "Echtzeit-Transkription für Gesprächsaufzeichnungen (Deepgram Nova)"
       },
       "vercel": {
         "description": "Deployment-Informationen (schreibgeschützt)",
