@@ -26,7 +26,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { startRecording, finishRecording } from '../actions'
+import { startRecording, finishRecording, checkDeepgramAvailable, getDeepgramKey } from '../actions'
 
 // ─── Constants ──────────────────────────────────────────────────────
 
@@ -85,10 +85,8 @@ export function RecordingModal({
 
   useEffect(() => {
     if (!open) return
-    fetch('/api/recordings/deepgram-key', { method: 'POST' })
-      .then((r) => {
-        setDeepgramAvailable(r.ok)
-      })
+    checkDeepgramAvailable()
+      .then((available) => setDeepgramAvailable(available))
       .catch(() => setDeepgramAvailable(false))
   }, [open])
 
@@ -217,12 +215,7 @@ export function RecordingModal({
 
   async function connectDeepgram(stream: MediaStream, lang: string) {
     try {
-      const keyRes = await fetch('/api/recordings/deepgram-key', {
-        method: 'POST',
-      })
-      if (!keyRes.ok) return
-
-      const { key } = await keyRes.json()
+      const key = await getDeepgramKey()
       if (!key) return
 
       const params = new URLSearchParams({

@@ -16,6 +16,7 @@ import { eq, and, or, isNull, desc, count } from 'drizzle-orm'
 import { getCurrentOrgContext } from '@/lib/auth/org-context'
 import { logAudit } from '@/lib/audit/log'
 import { sendTemplatedEmail } from '@/lib/email/send'
+import { getIntegrationSecret } from '@/lib/crypto/secrets'
 import type { AnalysisStatus } from '@/types/database'
 
 // ─── Query Helpers ──────────────────────────────────────────────────
@@ -771,3 +772,22 @@ export async function getAnalysisRecordings(analysisId: string) {
 }
 
 export type RecordingRow = Awaited<ReturnType<typeof getAnalysisRecordings>>[number]
+
+// ─── Deepgram ───────────────────────────────────────────────────────
+
+/** Check if Deepgram is configured (platform-wide secret). */
+export async function checkDeepgramAvailable(): Promise<boolean> {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return false
+
+  const apiKey = await getIntegrationSecret('deepgram', 'api_key')
+  return !!apiKey
+}
+
+/** Get the Deepgram API key for client-side WebSocket connection. */
+export async function getDeepgramKey(): Promise<string | null> {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return null
+
+  return getIntegrationSecret('deepgram', 'api_key')
+}
