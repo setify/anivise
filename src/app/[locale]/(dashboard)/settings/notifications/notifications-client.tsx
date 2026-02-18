@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { saveOrgNotificationSettings, type NotificationSettingsData } from './actions'
 import type { NotificationSettingKey } from '@/lib/notifications/should-notify'
 
@@ -109,17 +110,19 @@ export function NotificationsClient({ data }: Props) {
         <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {GROUPS.map((group) => (
-          <div key={group.titleKey}>
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              {t(group.titleKey)}
-            </h2>
-            <div className="overflow-hidden rounded-lg border">
+          <Card key={group.titleKey}>
+            <CardHeader className="pb-2 pt-4">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                {t(group.titleKey)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pb-2">
               {group.rows.map((row, i) => (
                 <div key={row.key}>
                   {i > 0 && <Separator />}
-                  <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5 pr-4">
                       <p className="text-sm font-medium">{t(row.labelKey)}</p>
                       <p className="text-xs text-muted-foreground">{t(row.descriptionKey)}</p>
@@ -131,8 +134,8 @@ export function NotificationsClient({ data }: Props) {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
