@@ -52,7 +52,7 @@ export function GuideFormDialog({
   const tCommon = useTranslations('common')
   const isEdit = !!guide
   const [loading, setLoading] = useState(false)
-  const [icon, setIcon] = useState(guide?.icon ?? 'FileText')
+  const [icon, setIcon] = useState(guide?.icon ?? 'File')
   const [categoryId, setCategoryId] = useState(guide?.categoryId ?? '')
   const [accessManagers, setAccessManagers] = useState(guide?.accessManagers ?? true)
   const [accessEmployees, setAccessEmployees] = useState(guide?.accessEmployees ?? false)
@@ -60,7 +60,7 @@ export function GuideFormDialog({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handleReset() {
-    setIcon(guide?.icon ?? 'FileText')
+    setIcon(guide?.icon ?? 'File')
     setCategoryId(guide?.categoryId ?? '')
     setAccessManagers(guide?.accessManagers ?? true)
     setAccessEmployees(guide?.accessEmployees ?? false)

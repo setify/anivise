@@ -228,7 +228,7 @@ export async function createGuide(formData: FormData) {
 
   const name = formData.get('name') as string
   const description = (formData.get('description') as string) || null
-  const icon = (formData.get('icon') as string) || 'FileText'
+  const icon = (formData.get('icon') as string) || 'File'
   const categoryId = (formData.get('categoryId') as string) || null
   const accessManagers = formData.get('accessManagers') === 'true'
   const accessEmployees = formData.get('accessEmployees') === 'true'
@@ -309,7 +309,7 @@ export async function updateGuide(formData: FormData) {
   const id = formData.get('id') as string
   const name = formData.get('name') as string
   const description = (formData.get('description') as string) || null
-  const icon = (formData.get('icon') as string) || 'FileText'
+  const icon = (formData.get('icon') as string) || 'File'
   const categoryId = (formData.get('categoryId') as string) || null
   const accessManagers = formData.get('accessManagers') === 'true'
   const accessEmployees = formData.get('accessEmployees') === 'true'

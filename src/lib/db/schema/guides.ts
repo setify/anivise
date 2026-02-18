@@ -24,7 +24,7 @@ export const guides = pgTable(
     }),
     name: text('name').notNull(),
     description: text('description'),
-    icon: text('icon').notNull().default('FileText'),
+    icon: text('icon').notNull().default('File'),
     storagePath: text('storage_path').notNull(),
     filename: text('filename').notNull(),
     mimeType: text('mime_type').notNull(),
