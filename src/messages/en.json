@@ -253,6 +253,8 @@
         "existingRecordings": "Previous Recordings",
         "duration": "Duration",
         "noRecordings": "No recordings yet.",
+        "noTranscript": "No transcript available.",
+        "play": "Play",
         "viewTranscript": "View Transcript",
         "status": {
           "recording": "Recording",

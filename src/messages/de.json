@@ -253,6 +253,8 @@
         "existingRecordings": "Bisherige Aufnahmen",
         "duration": "Dauer",
         "noRecordings": "Noch keine Aufnahmen.",
+        "noTranscript": "Kein Transkript verfügbar.",
+        "play": "Abspielen",
         "viewTranscript": "Transkript anzeigen",
         "status": {
           "recording": "Aufnahme läuft",

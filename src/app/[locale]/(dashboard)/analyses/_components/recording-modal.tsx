@@ -1,14 +1,9 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import {
-  Mic,
-  MicOff,
-  Square,
-  AlertTriangle,
-} from 'lucide-react'
+import { Mic, Square, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -26,12 +21,18 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { startRecording, finishRecording, checkDeepgramAvailable, getDeepgramKey } from '../actions'
+import {
+  startRecording,
+  finishRecording,
+  checkDeepgramAvailable,
+  getDeepgramKey,
+  uploadRecordingChunk,
+} from '../actions'
 
 // ─── Constants ──────────────────────────────────────────────────────
 
-const CHUNK_INTERVAL_MS = 60_000 // 60 seconds
-const WAVEFORM_BARS = 64
+const CHUNK_INTERVAL_MS = 60_000
+const WAVEFORM_BARS = 48
 const DEEPGRAM_WS_URL = 'wss://api.deepgram.com/v1/listen'
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -64,9 +65,10 @@ export function RecordingModal({
     new Array(WAVEFORM_BARS).fill(0)
   )
   const [confirmStop, setConfirmStop] = useState(false)
-  const [deepgramAvailable, setDeepgramAvailable] = useState<boolean | null>(null)
+  const [deepgramAvailable, setDeepgramAvailable] = useState<boolean | null>(
+    null
+  )
 
-  // Refs for cleanup
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
@@ -74,39 +76,38 @@ export function RecordingModal({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const chunkTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const deepgramWsRef = useRef<WebSocket | null>(null)
+  const dgRecorderRef = useRef<MediaRecorder | null>(null)
   const recordingIdRef = useRef<string | null>(null)
+  const storagePathRef = useRef<string | null>(null)
   const chunkIndexRef = useRef(0)
   const chunksRef = useRef<Blob[]>([])
+  const allChunksRef = useRef<Blob[]>([])
   const transcriptScrollRef = useRef<HTMLDivElement>(null)
   const startTimeRef = useRef(0)
   const streamRef = useRef<MediaStream | null>(null)
 
-  // ─── Deepgram key check ───────────────────────────────────────────
+  // ─── Deepgram check ───────────────────────────────────────────────
 
   useEffect(() => {
     if (!open) return
     checkDeepgramAvailable()
-      .then((available) => setDeepgramAvailable(available))
+      .then((ok) => setDeepgramAvailable(ok))
       .catch(() => setDeepgramAvailable(false))
   }, [open])
 
-  // ─── beforeunload protection ──────────────────────────────────────
+  // ─── beforeunload ─────────────────────────────────────────────────
 
   useEffect(() => {
     if (state !== 'recording') return
-    const handler = (e: BeforeUnloadEvent) => {
-      e.preventDefault()
-    }
+    const handler = (e: BeforeUnloadEvent) => e.preventDefault()
     window.addEventListener('beforeunload', handler)
     return () => window.removeEventListener('beforeunload', handler)
   }, [state])
 
-  // ─── Cleanup on unmount ───────────────────────────────────────────
+  // ─── Cleanup ──────────────────────────────────────────────────────
 
   useEffect(() => {
-    return () => {
-      stopEverything()
-    }
+    return () => stopEverything()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -119,18 +120,22 @@ export function RecordingModal({
     }
   }, [transcript])
 
-  // ─── Core recording logic ─────────────────────────────────────────
+  // ─── Helpers ──────────────────────────────────────────────────────
 
   function stopEverything() {
     if (timerRef.current) clearInterval(timerRef.current)
     if (chunkTimerRef.current) clearInterval(chunkTimerRef.current)
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+    if (dgRecorderRef.current?.state !== 'inactive') {
+      try { dgRecorderRef.current?.stop() } catch {}
+    }
+    dgRecorderRef.current = null
     if (deepgramWsRef.current) {
       deepgramWsRef.current.close()
       deepgramWsRef.current = null
     }
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop()
+    if (mediaRecorderRef.current?.state !== 'inactive') {
+      try { mediaRecorderRef.current?.stop() } catch {}
     }
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop())
@@ -142,20 +147,29 @@ export function RecordingModal({
     }
   }
 
+  function formatTime(seconds: number) {
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = seconds % 60
+    if (h > 0)
+      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  }
+
+  // ─── Start recording ─────────────────────────────────────────────
+
   async function handleStart() {
     try {
-      // Request microphone
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           channelCount: 1,
-          sampleRate: 48000,
+          sampleRate: 16000,
           echoCancellation: true,
           noiseSuppression: true,
         },
       })
       streamRef.current = stream
 
-      // Create recording entry in DB
       const result = await startRecording(analysisId, language)
       if (!result.success || !result.recordingId) {
         toast.error(t('errorStart'))
@@ -163,8 +177,9 @@ export function RecordingModal({
         return
       }
       recordingIdRef.current = result.recordingId
+      storagePathRef.current = result.storagePath ?? null
 
-      // Set up Audio Context + Analyser for waveform
+      // Audio analyser for waveform
       const audioCtx = new AudioContext()
       audioContextRef.current = audioCtx
       const source = audioCtx.createMediaStreamSource(stream)
@@ -173,176 +188,183 @@ export function RecordingModal({
       source.connect(analyser)
       analyserRef.current = analyser
 
-      // Start MediaRecorder
+      // MediaRecorder for storage chunks
       const recorder = new MediaRecorder(stream, {
         mimeType: 'audio/webm;codecs=opus',
         audioBitsPerSecond: 64000,
       })
       mediaRecorderRef.current = recorder
       chunksRef.current = []
+      allChunksRef.current = []
       chunkIndexRef.current = 0
 
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
           chunksRef.current.push(e.data)
+          allChunksRef.current.push(e.data)
         }
       }
+      recorder.start(1000)
 
-      recorder.start(1000) // Get data every second for chunking
-
-      // Start Deepgram WebSocket for live transcription
+      // Deepgram live transcription
       connectDeepgram(stream, language)
 
-      // Start timer
+      // Timer
       startTimeRef.current = Date.now()
       timerRef.current = setInterval(() => {
         setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000))
       }, 1000)
 
-      // Start chunk upload timer
-      chunkTimerRef.current = setInterval(() => {
-        uploadCurrentChunks()
-      }, CHUNK_INTERVAL_MS)
+      // Chunk upload timer
+      chunkTimerRef.current = setInterval(() => uploadChunk(), CHUNK_INTERVAL_MS)
 
-      // Start waveform animation
+      // Waveform
       drawWaveform()
 
       setState('recording')
-    } catch (err) {
+    } catch {
       toast.error(t('errorMicrophone'))
     }
   }
+
+  // ─── Deepgram WebSocket ───────────────────────────────────────────
 
   async function connectDeepgram(stream: MediaStream, lang: string) {
     try {
       const key = await getDeepgramKey()
       if (!key) return
 
+      // Don't specify encoding — let Deepgram auto-detect from the WebM container
       const params = new URLSearchParams({
         model: 'nova-3',
         language: lang,
         smart_format: 'true',
         punctuate: 'true',
-        interim_results: 'true',
-        endpointing: '300',
-        encoding: 'opus',
-        sample_rate: '48000',
-        channels: '1',
+        interim_results: 'false',
+        endpointing: '500',
       })
 
       const ws = new WebSocket(`${DEEPGRAM_WS_URL}?${params}`, ['token', key])
       deepgramWsRef.current = ws
 
       ws.onopen = () => {
-        // Stream audio to Deepgram via a separate MediaRecorder
-        const dgRecorder = new MediaRecorder(stream, {
+        // Separate MediaRecorder to stream audio to Deepgram
+        const dgRec = new MediaRecorder(stream, {
           mimeType: 'audio/webm;codecs=opus',
           audioBitsPerSecond: 64000,
         })
+        dgRecorderRef.current = dgRec
 
-        dgRecorder.ondataavailable = (e) => {
+        dgRec.ondataavailable = (e) => {
           if (e.data.size > 0 && ws.readyState === WebSocket.OPEN) {
             ws.send(e.data)
           }
         }
-
-        dgRecorder.start(250) // Send audio every 250ms
-
-        // Store reference for cleanup
-        ;(ws as unknown as Record<string, unknown>).__dgRecorder = dgRecorder
+        dgRec.start(250)
       }
 
       ws.onmessage = (msg) => {
         try {
           const data = JSON.parse(msg.data)
-          if (
-            data.channel?.alternatives?.[0]?.transcript &&
-            data.is_final
-          ) {
-            const text = data.channel.alternatives[0].transcript.trim()
+          const alt = data.channel?.alternatives?.[0]
+          if (alt?.transcript) {
+            const text = alt.transcript.trim()
             if (text) {
               setTranscript((prev) => [...prev, text])
             }
           }
-        } catch {
-          // Ignore parse errors
-        }
+        } catch {}
       }
 
-      ws.onerror = () => {
-        // Silently fail — recording continues without transcription
-      }
-
+      ws.onerror = () => {}
       ws.onclose = () => {
-        // Clean up the DG recorder if it exists
-        const dgRec = (ws as unknown as Record<string, unknown>)
-          .__dgRecorder as MediaRecorder | undefined
-        if (dgRec && dgRec.state !== 'inactive') {
-          dgRec.stop()
+        if (dgRecorderRef.current?.state !== 'inactive') {
+          try { dgRecorderRef.current?.stop() } catch {}
         }
       }
-    } catch {
-      // Deepgram connection failed — recording continues without transcription
-    }
+    } catch {}
   }
+
+  // ─── Waveform ─────────────────────────────────────────────────────
 
   function drawWaveform() {
     if (!analyserRef.current) return
-
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount)
     analyserRef.current.getByteFrequencyData(dataArray)
-
-    const bars = Array.from(dataArray).slice(0, WAVEFORM_BARS)
-    const normalized = bars.map((v) => v / 255)
-    setWaveformData(normalized)
-
+    setWaveformData(
+      Array.from(dataArray)
+        .slice(0, WAVEFORM_BARS)
+        .map((v) => v / 255)
+    )
     animFrameRef.current = requestAnimationFrame(drawWaveform)
   }
 
-  async function uploadCurrentChunks() {
+  // ─── Chunk upload (via server action) ──────────────────────────────
+
+  async function blobToBase64(blob: Blob): Promise<string> {
+    const buffer = await blob.arrayBuffer()
+    const bytes = new Uint8Array(buffer)
+    let binary = ''
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i])
+    }
+    return btoa(binary)
+  }
+
+  async function uploadChunk() {
     if (chunksRef.current.length === 0 || !recordingIdRef.current) return
 
     const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
     chunksRef.current = []
-
-    const formData = new FormData()
-    formData.set('recordingId', recordingIdRef.current)
-    formData.set('chunkIndex', String(chunkIndexRef.current))
-    formData.set('chunk', blob, `chunk-${chunkIndexRef.current}.webm`)
-
+    const idx = chunkIndexRef.current
     chunkIndexRef.current++
 
     try {
-      await fetch('/api/recordings/upload-chunk', {
-        method: 'POST',
-        body: formData,
-      })
-    } catch {
-      // Will retry on next interval
-    }
+      const base64 = await blobToBase64(blob)
+      await uploadRecordingChunk(recordingIdRef.current, String(idx), base64)
+    } catch {}
   }
+
+  async function uploadFinalFile() {
+    if (allChunksRef.current.length === 0 || !recordingIdRef.current) return
+
+    const blob = new Blob(allChunksRef.current, { type: 'audio/webm' })
+
+    try {
+      const base64 = await blobToBase64(blob)
+      await uploadRecordingChunk(recordingIdRef.current, 'final', base64)
+    } catch {}
+  }
+
+  // ─── Stop recording ───────────────────────────────────────────────
 
   async function handleStop() {
     setState('stopping')
 
-    // Upload remaining chunks
-    await uploadCurrentChunks()
+    // Upload remaining safety chunks
+    await uploadChunk()
 
     // Close Deepgram
+    if (dgRecorderRef.current?.state !== 'inactive') {
+      try { dgRecorderRef.current?.stop() } catch {}
+    }
     if (deepgramWsRef.current) {
       deepgramWsRef.current.close()
       deepgramWsRef.current = null
     }
 
-    // Stop timers
+    // Stop timers + animation
     if (timerRef.current) clearInterval(timerRef.current)
     if (chunkTimerRef.current) clearInterval(chunkTimerRef.current)
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
 
     // Stop recorder
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop()
+    if (mediaRecorderRef.current?.state !== 'inactive') {
+      mediaRecorderRef.current?.stop()
     }
+
+    // Upload the complete recording as one file
+    await uploadFinalFile()
 
     // Stop stream
     if (streamRef.current) {
@@ -355,14 +377,10 @@ export function RecordingModal({
       audioContextRef.current = null
     }
 
-    // Save recording metadata
+    // Save + set status to completed
     if (recordingIdRef.current) {
       const fullTranscript = transcript.join(' ')
-      await finishRecording(
-        recordingIdRef.current,
-        elapsed,
-        fullTranscript
-      )
+      await finishRecording(recordingIdRef.current, elapsed, fullTranscript)
     }
 
     toast.success(t('saved'))
@@ -371,6 +389,7 @@ export function RecordingModal({
     setTranscript([])
     setWaveformData(new Array(WAVEFORM_BARS).fill(0))
     recordingIdRef.current = null
+    storagePathRef.current = null
     onRecordingComplete()
     onOpenChange(false)
   }
@@ -387,30 +406,13 @@ export function RecordingModal({
     }
   }
 
-  function handleConfirmStop() {
-    setConfirmStop(false)
-    handleStop()
-  }
-
-  // ─── Format time ──────────────────────────────────────────────────
-
-  function formatTime(seconds: number) {
-    const h = Math.floor(seconds / 3600)
-    const m = Math.floor((seconds % 3600) / 60)
-    const s = seconds % 60
-    if (h > 0) {
-      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-    }
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  }
-
   // ─── Render ───────────────────────────────────────────────────────
 
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
-          className="max-w-2xl"
+          className="max-w-lg overflow-hidden"
           onPointerDownOutside={(e) => {
             if (state === 'recording') e.preventDefault()
           }}
@@ -429,12 +431,9 @@ export function RecordingModal({
           </DialogHeader>
 
           {state === 'idle' ? (
-            /* ── Pre-recording: Language selection ── */
             <div className="space-y-6 py-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {t('language')}
-                </label>
+                <label className="text-sm font-medium">{t('language')}</label>
                 <Select value={language} onValueChange={setLanguage}>
                   <SelectTrigger className="w-48">
                     <SelectValue />
@@ -454,10 +453,7 @@ export function RecordingModal({
               )}
 
               <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                >
+                <Button variant="outline" onClick={() => onOpenChange(false)}>
                   {tCommon('cancel')}
                 </Button>
                 <Button onClick={handleStart} className="gap-2">
@@ -467,9 +463,8 @@ export function RecordingModal({
               </DialogFooter>
             </div>
           ) : (
-            /* ── Active recording ── */
             <div className="space-y-4 py-2">
-              {/* Recording indicator + timer */}
+              {/* Status + timer */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="relative flex size-3">
@@ -486,14 +481,12 @@ export function RecordingModal({
               </div>
 
               {/* Waveform */}
-              <div className="bg-muted/50 flex h-20 items-end justify-center gap-[2px] rounded-lg px-2">
+              <div className="bg-muted/50 flex h-16 items-end justify-center gap-px overflow-hidden rounded-lg px-1">
                 {waveformData.map((val, i) => (
                   <div
                     key={i}
-                    className="bg-primary/80 w-1.5 rounded-t-sm transition-all duration-75"
-                    style={{
-                      height: `${Math.max(4, val * 100)}%`,
-                    }}
+                    className="bg-primary/80 min-w-[3px] flex-1 rounded-t-sm transition-all duration-75"
+                    style={{ height: `${Math.max(4, val * 100)}%` }}
                   />
                 ))}
               </div>
@@ -505,7 +498,7 @@ export function RecordingModal({
                 </p>
                 <div
                   ref={transcriptScrollRef}
-                  className="bg-muted/30 h-40 overflow-y-auto rounded-lg border p-3"
+                  className="bg-muted/30 h-36 overflow-y-auto rounded-lg border p-3"
                 >
                   {transcript.length === 0 ? (
                     <p className="text-muted-foreground text-sm italic">
@@ -532,7 +525,7 @@ export function RecordingModal({
                 </div>
               </div>
 
-              {/* Stop button */}
+              {/* Stop */}
               <div className="flex justify-center pt-2">
                 <Button
                   variant="destructive"
@@ -542,9 +535,7 @@ export function RecordingModal({
                   className="gap-2 px-8"
                 >
                   <Square className="size-4" />
-                  {state === 'stopping'
-                    ? t('stopping')
-                    : t('stopButton')}
+                  {state === 'stopping' ? t('stopping') : t('stopButton')}
                 </Button>
               </div>
             </div>
@@ -552,20 +543,24 @@ export function RecordingModal({
         </DialogContent>
       </Dialog>
 
-      {/* Confirm stop dialog */}
+      {/* Confirm stop */}
       <Dialog open={confirmStop} onOpenChange={setConfirmStop}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>{t('confirmStopTitle')}</DialogTitle>
-            <DialogDescription>
-              {t('confirmStopDescription')}
-            </DialogDescription>
+            <DialogDescription>{t('confirmStopDescription')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmStop(false)}>
               {t('continueRecording')}
             </Button>
-            <Button variant="destructive" onClick={handleConfirmStop}>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setConfirmStop(false)
+                handleStop()
+              }}
+            >
               <Square className="mr-2 size-3.5" />
               {t('stopAndSave')}
             </Button>

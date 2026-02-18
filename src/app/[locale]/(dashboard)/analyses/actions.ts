@@ -713,9 +713,10 @@ export async function finishRecording(
   await db
     .update(analysisRecordings)
     .set({
-      status: 'processing',
+      status: 'completed',
       durationSeconds,
       liveTranscript: liveTranscript || null,
+      finalTranscript: liveTranscript || null,
       updatedAt: new Date(),
     })
     .where(eq(analysisRecordings.id, recordingId))
@@ -774,6 +775,72 @@ export async function getAnalysisRecordings(analysisId: string) {
 export type RecordingRow = Awaited<ReturnType<typeof getAnalysisRecordings>>[number]
 
 // ─── Deepgram ───────────────────────────────────────────────────────
+
+/** Upload an audio chunk to storage. */
+export async function uploadRecordingChunk(
+  recordingId: string,
+  chunkIndex: string,
+  chunkBase64: string
+) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false }
+
+  const [recording] = await db
+    .select()
+    .from(analysisRecordings)
+    .where(eq(analysisRecordings.id, recordingId))
+    .limit(1)
+
+  if (!recording || recording.recordedBy !== ctx.userId) {
+    return { success: false }
+  }
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const adminSupabase = createAdminClient()
+
+  const bytes = Buffer.from(chunkBase64, 'base64')
+  const chunkPath =
+    chunkIndex === 'final'
+      ? `${recording.storagePath}/recording.webm`
+      : `${recording.storagePath}/chunk-${String(chunkIndex).padStart(4, '0')}.webm`
+
+  const { error } = await adminSupabase.storage
+    .from('org-assets')
+    .upload(chunkPath, bytes, { contentType: 'audio/webm', upsert: true })
+
+  if (error) return { success: false }
+
+  if (chunkIndex !== 'final') {
+    await db
+      .update(analysisRecordings)
+      .set({ chunksUploaded: parseInt(chunkIndex, 10) + 1, updatedAt: new Date() })
+      .where(eq(analysisRecordings.id, recordingId))
+  }
+
+  return { success: true }
+}
+
+/** Get a playable URL for a recording's final audio file. */
+export async function getRecordingAudioUrl(recordingId: string): Promise<string | null> {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return null
+
+  const [recording] = await db
+    .select()
+    .from(analysisRecordings)
+    .where(eq(analysisRecordings.id, recordingId))
+    .limit(1)
+
+  if (!recording || !recording.storagePath) return null
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const adminSupabase = createAdminClient()
+  const { data } = adminSupabase.storage
+    .from('org-assets')
+    .getPublicUrl(`${recording.storagePath}/recording.webm`)
+
+  return data.publicUrl
+}
 
 /** Check if Deepgram is configured (platform-wide secret). */
 export async function checkDeepgramAvailable(): Promise<boolean> {

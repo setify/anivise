@@ -1,10 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
-import { Mic, Clock, ChevronDown, ChevronRight } from 'lucide-react'
+import {
+  Mic,
+  Clock,
+  ChevronDown,
+  ChevronRight,
+  Play,
+  Pause,
+  Square,
+} from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { getRecordingAudioUrl } from '../actions'
 import type { RecordingRow } from '../actions'
 
 interface RecordingsListProps {
@@ -22,15 +32,17 @@ const STATUS_COLORS: Record<string, string> = {
 export function RecordingsList({ recordings }: RecordingsListProps) {
   const t = useTranslations('analyses.detail.recording')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [playingId, setPlayingId] = useState<string | null>(null)
+  const [loadingAudio, setLoadingAudio] = useState<string | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   function formatDuration(seconds: number | null) {
     if (!seconds) return '--:--'
     const h = Math.floor(seconds / 3600)
     const m = Math.floor((seconds % 3600) / 60)
     const s = seconds % 60
-    if (h > 0) {
+    if (h > 0)
       return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-    }
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   }
 
@@ -44,6 +56,47 @@ export function RecordingsList({ recordings }: RecordingsListProps) {
     })
   }
 
+  async function handlePlay(recordingId: string) {
+    // Stop current playback
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current = null
+    }
+
+    if (playingId === recordingId) {
+      setPlayingId(null)
+      return
+    }
+
+    setLoadingAudio(recordingId)
+    const url = await getRecordingAudioUrl(recordingId)
+    setLoadingAudio(null)
+
+    if (!url) return
+
+    const audio = new Audio(url)
+    audioRef.current = audio
+    setPlayingId(recordingId)
+
+    audio.play()
+    audio.onended = () => {
+      setPlayingId(null)
+      audioRef.current = null
+    }
+    audio.onerror = () => {
+      setPlayingId(null)
+      audioRef.current = null
+    }
+  }
+
+  function handleStopPlayback() {
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current = null
+    }
+    setPlayingId(null)
+  }
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -55,20 +108,35 @@ export function RecordingsList({ recordings }: RecordingsListProps) {
       <CardContent className="space-y-2">
         {recordings.map((rec) => (
           <div key={rec.id} className="rounded-md border">
-            <div
-              className="flex cursor-pointer items-center gap-3 p-3"
-              onClick={() =>
-                setExpandedId(expandedId === rec.id ? null : rec.id)
-              }
-            >
-              <div className="text-muted-foreground shrink-0">
-                {expandedId === rec.id ? (
-                  <ChevronDown className="size-4" />
+            <div className="flex items-center gap-3 p-3">
+              {/* Play button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8 shrink-0"
+                disabled={rec.status !== 'completed' || loadingAudio === rec.id}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (playingId === rec.id) handleStopPlayback()
+                  else handlePlay(rec.id)
+                }}
+              >
+                {loadingAudio === rec.id ? (
+                  <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                ) : playingId === rec.id ? (
+                  <Square className="size-3.5" />
                 ) : (
-                  <ChevronRight className="size-4" />
+                  <Play className="size-3.5" />
                 )}
-              </div>
-              <div className="min-w-0 flex-1">
+              </Button>
+
+              {/* Info */}
+              <div
+                className="min-w-0 flex-1 cursor-pointer"
+                onClick={() =>
+                  setExpandedId(expandedId === rec.id ? null : rec.id)
+                }
+              >
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">
                     {formatDate(rec.createdAt)}
@@ -89,9 +157,23 @@ export function RecordingsList({ recordings }: RecordingsListProps) {
                   <span>{rec.language === 'de' ? 'Deutsch' : 'English'}</span>
                 </div>
               </div>
+
+              {/* Expand toggle */}
+              <button
+                className="text-muted-foreground shrink-0 p-1"
+                onClick={() =>
+                  setExpandedId(expandedId === rec.id ? null : rec.id)
+                }
+              >
+                {expandedId === rec.id ? (
+                  <ChevronDown className="size-4" />
+                ) : (
+                  <ChevronRight className="size-4" />
+                )}
+              </button>
             </div>
 
-            {/* Expanded: show transcript */}
+            {/* Transcript */}
             {expandedId === rec.id && (
               <div className="border-t px-3 py-3">
                 {rec.finalTranscript || rec.liveTranscript ? (
@@ -102,7 +184,7 @@ export function RecordingsList({ recordings }: RecordingsListProps) {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-sm italic">
-                    {t('noRecordings')}
+                    {t('noTranscript')}
                   </p>
                 )}
               </div>
