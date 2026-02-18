@@ -6,45 +6,19 @@ import {
   formVersions,
   formOrganizationAssignments,
   formSubmissions,
-  organizationMembers,
 } from '@/lib/db/schema'
 import { eq, and, isNull, desc, sql, gte, count } from 'drizzle-orm'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import { logAudit } from '@/lib/audit/log'
+import { getCurrentOrgContext } from '@/lib/auth/org-context'
 import type { FormSchema } from '@/types/form-schema'
 import { getOrganizationLimits, checkLimit } from '@/lib/products/limits'
-
-async function getCurrentUserAndOrg() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect('/login')
-
-  // For now, get the user's first org membership
-  const [membership] = await db
-    .select({
-      organizationId: organizationMembers.organizationId,
-      role: organizationMembers.role,
-    })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-
-  return {
-    userId: user.id,
-    email: user.email ?? '',
-    organizationId: membership?.organizationId ?? null,
-  }
-}
 
 // ─── Get Forms Available to Organization ───
 
 export async function getAvailableForms() {
-  const { organizationId } = await getCurrentUserAndOrg()
-  if (!organizationId) return []
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return []
+  const organizationId = ctx.organizationId
 
   // Get all published forms that are either:
   // 1. visible to all organizations
@@ -101,8 +75,9 @@ export async function getAvailableForms() {
 // ─── Get Form By Slug for Rendering ───
 
 export async function getFormBySlugForRendering(slug: string) {
-  const { organizationId, userId } = await getCurrentUserAndOrg()
-  if (!organizationId) return null
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return null
+  const { organizationId, userId } = ctx
 
   const [form] = await db
     .select()
@@ -179,10 +154,11 @@ export async function submitForm(params: {
   metadata?: Record<string, unknown>
 }): Promise<{ success: boolean; error?: string }> {
   try {
-    const { userId, email, organizationId } = await getCurrentUserAndOrg()
-    if (!organizationId) {
+    const ctx = await getCurrentOrgContext()
+    if (!ctx) {
       return { success: false, error: 'No organization context' }
     }
+    const { userId, email, organizationId } = ctx
 
     // Verify form exists and is published
     const [form] = await db
