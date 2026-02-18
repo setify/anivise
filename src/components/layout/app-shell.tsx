@@ -39,7 +39,7 @@ export function AppShell({ children, user, orgName, logoUrl }: AppShellProps) {
   return (
     <div className="flex min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="bg-sidebar text-sidebar-foreground hidden w-[260px] shrink-0 border-r lg:block">
+      <aside className="bg-sidebar text-sidebar-foreground hidden w-[260px] shrink-0 border-r border-sidebar-border lg:block">
         <OrgSidebar user={sidebarUser} orgName={orgName} logoUrl={logoUrl} />
       </aside>
 

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { orgSidebarConfig } from './org-sidebar-config'
 import { OrgSidebarGroup } from './org-sidebar-group'
-import { OrgSidebarUserFooter } from './org-sidebar-user-footer'
+
 
 const STORAGE_KEY = 'org-sidebar-collapsed'
 
@@ -82,26 +82,19 @@ export function OrgSidebar({ logoUrl, orgName, user }: OrgSidebarProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Header / Logo */}
-      <div className="flex h-14 items-center border-b px-4">
-        <Link href={`/${locale}/dashboard`} className="flex items-center gap-2">
+      <div className="flex h-14 items-center border-b border-sidebar-border px-5">
+        <Link href={`/${locale}/dashboard`} className="flex items-center gap-2.5">
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoUrl}
               alt="Logo"
-              className="max-h-8 max-w-[120px] object-contain"
+              className="max-h-10 max-w-[150px] object-contain"
             />
           ) : (
-            <span className="text-lg font-semibold">Anivise</span>
+            <span className="text-xl font-bold tracking-tight">{orgName || 'Anivise'}</span>
           )}
         </Link>
-      </div>
-
-      {/* Org name */}
-      <div className="px-3 py-2">
-        <p className="text-muted-foreground truncate px-2 text-xs font-medium uppercase tracking-wider">
-          {orgName || t('organization')}
-        </p>
       </div>
 
       {/* Navigation */}
@@ -119,8 +112,7 @@ export function OrgSidebar({ logoUrl, orgName, user }: OrgSidebarProps) {
         ))}
       </nav>
 
-      {/* User Footer */}
-      <OrgSidebarUserFooter user={user} />
+      {/* User info moved to header */}
     </div>
   )
 }
