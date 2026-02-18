@@ -1,7 +1,6 @@
 'use client'
 
 import { AlertTriangle, Infinity } from 'lucide-react'
-import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 
 export interface PlanUsageBarProps {
@@ -30,14 +29,18 @@ export function PlanUsageBar({
   const isDanger = !isUnlimited && percentage >= 85
 
   const displayCurrent = formatValue ? formatValue(current) : String(current)
-  const displayLimit = formatValue && limit !== null ? formatValue(limit) : limit !== null ? String(limit) : null
+  const displayLimit =
+    formatValue && limit !== null
+      ? formatValue(limit)
+      : limit !== null
+        ? String(limit)
+        : null
 
-  const progressClass = cn(
-    '[&>div]:transition-all',
-    isDanger && '[&>div]:bg-destructive',
-    isWarning && '[&>div]:bg-orange-500',
-    !isDanger && !isWarning && '[&>div]:bg-green-500'
-  )
+  const fillColor = isDanger
+    ? 'var(--destructive)'
+    : isWarning
+      ? 'var(--attention)'
+      : 'var(--success)'
 
   return (
     <div className="space-y-2">
@@ -61,7 +64,12 @@ export function PlanUsageBar({
         </span>
       </div>
       {!isUnlimited && (
-        <Progress value={percentage} className={progressClass} />
+        <div className="bg-secondary h-2 w-full overflow-hidden rounded-full">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${percentage}%`, backgroundColor: fillColor }}
+          />
+        </div>
       )}
     </div>
   )

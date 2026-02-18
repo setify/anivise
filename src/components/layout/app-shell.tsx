@@ -54,7 +54,7 @@ export function AppShell({ children, user, orgName, logoUrl }: AppShellProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col">
         <Header onMobileMenuToggle={() => setMobileOpen(true)} user={user} />
-        <main className="flex-1 p-4 lg:p-6">
+        <main className="main-gradient flex-1 p-4 lg:p-6">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

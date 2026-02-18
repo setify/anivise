@@ -64,7 +64,7 @@ export function AdminLayoutClient({
           <NotificationBell />
           <ThemeToggle />
         </header>
-        <main className="flex-1 p-4 lg:p-6">
+        <main className="main-gradient flex-1 p-4 lg:p-6">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
