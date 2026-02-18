@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { organizations, organizationMembers } from '@/lib/db/schema'
+import { organizations, organizationMembers, users } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
@@ -33,6 +33,16 @@ export async function getCurrentOrgContext(
   const headerStore = await headers()
   const orgSlug = headerStore.get('x-organization-slug')
 
+  // Check if the user is a superadmin (platform-wide access)
+  const [dbUser] = await db
+    .select({ platformRole: users.platformRole })
+    .from(users)
+    .where(eq(users.id, user.id))
+    .limit(1)
+
+  const isSuperadmin = dbUser?.platformRole === 'superadmin'
+
+  let resolvedOrgId: string | null = null
   let membership: { organizationId: string; role: string } | undefined
 
   if (orgSlug) {
@@ -43,6 +53,8 @@ export async function getCurrentOrgContext(
       .limit(1)
 
     if (org) {
+      resolvedOrgId = org.id
+
       const [m] = await db
         .select({
           organizationId: organizationMembers.organizationId,
@@ -55,6 +67,16 @@ export async function getCurrentOrgContext(
         ))
         .limit(1)
       membership = m
+
+      // Superadmin bypass: access any org without being a member
+      if (!membership && isSuperadmin) {
+        return {
+          userId: user.id,
+          email: user.email ?? '',
+          organizationId: org.id,
+          role: 'org_admin',
+        }
+      }
     }
   }
 

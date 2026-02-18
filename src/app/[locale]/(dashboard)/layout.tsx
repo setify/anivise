@@ -9,6 +9,7 @@ import { users, organizations, organizationMembers } from '@/lib/db/schema'
 import { getSetting } from '@/lib/settings/platform'
 import { getOrgBranding } from '@/lib/branding/apply-branding'
 import { hexToHsl } from '@/lib/branding/color-utils'
+import { hasPlatformRole } from '@/lib/auth/roles'
 
 export default async function DashboardLayout({
   children,
@@ -22,6 +23,8 @@ export default async function DashboardLayout({
   const { data: { user: authUser } } = await supabase.auth.getUser()
 
   let userData: { displayName: string | null; email: string; avatarUrl: string | null; orgRole: string | null } | null = null
+  let isSuperadmin = false
+
   if (authUser) {
     const [dbUser] = await db
       .select({
@@ -29,12 +32,14 @@ export default async function DashboardLayout({
         fullName: users.fullName,
         email: users.email,
         avatarUrl: users.avatarUrl,
+        platformRole: users.platformRole,
       })
       .from(users)
       .where(eq(users.id, authUser.id))
       .limit(1)
 
     if (dbUser) {
+      isSuperadmin = hasPlatformRole(dbUser.platformRole, 'superadmin')
       userData = {
         displayName: dbUser.displayName || dbUser.fullName || null,
         email: dbUser.email,
@@ -72,7 +77,9 @@ export default async function DashboardLayout({
               )
             )
             .limit(1)
-          userData.orgRole = membership?.role ?? null
+
+          // Superadmins get full org_admin access on any subdomain
+          userData.orgRole = membership?.role ?? (isSuperadmin ? 'org_admin' : null)
         }
       }
     }
