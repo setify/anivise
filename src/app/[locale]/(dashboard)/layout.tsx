@@ -8,7 +8,6 @@ import { db } from '@/lib/db'
 import { users, organizations, organizationMembers } from '@/lib/db/schema'
 import { getSetting } from '@/lib/settings/platform'
 import { getOrgBranding } from '@/lib/branding/apply-branding'
-import { hexToHsl } from '@/lib/branding/color-utils'
 import { hasPlatformRole } from '@/lib/auth/roles'
 
 export default async function DashboardLayout({
@@ -100,18 +99,16 @@ export default async function DashboardLayout({
     faviconUrl = branding.faviconUrl
     orgLogoUrl = branding.logoUrl
 
-    // Always apply colors: use stored values or fall back to Anivise defaults
-    const primary = branding.primaryColor ?? '#6366f1'
-    const accent = branding.accentColor ?? '#f59e0b'
-    const bg = branding.backgroundColor ?? '#ffffff'
-    const fg = branding.textColor ?? '#1e293b'
-
-    brandingCssVars = {
-      '--primary': hexToHsl(primary),
-      '--accent': hexToHsl(accent),
-      '--background': hexToHsl(bg),
-      '--foreground': hexToHsl(fg),
-    } as React.CSSProperties
+    // Only apply custom colors if the org has saved branding
+    // Hex values are valid CSS colors and can be used directly in CSS variables
+    if (branding.primaryColor) {
+      brandingCssVars = {
+        '--primary': branding.primaryColor,
+        ...(branding.accentColor ? { '--accent': branding.accentColor } : {}),
+        ...(branding.backgroundColor ? { '--background': branding.backgroundColor } : {}),
+        ...(branding.textColor ? { '--foreground': branding.textColor } : {}),
+      } as React.CSSProperties
+    }
   }
 
   return (
