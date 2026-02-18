@@ -159,15 +159,22 @@ export function RecordingModal({
   // ─── Start recording ─────────────────────────────────────────────
 
   async function handleStart() {
+    // Step 1: Get microphone access
+    let stream: MediaStream
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           channelCount: 1,
-          sampleRate: 16000,
           echoCancellation: true,
           noiseSuppression: true,
         },
       })
+    } catch (err) {
+      toast.error(t('errorMicrophone'))
+      return
+    }
+
+    try {
       streamRef.current = stream
 
       const result = await startRecording(analysisId, language)
@@ -222,8 +229,10 @@ export function RecordingModal({
       drawWaveform()
 
       setState('recording')
-    } catch {
-      toast.error(t('errorMicrophone'))
+    } catch (err) {
+      // Microphone was granted but something else failed — clean up
+      stream.getTracks().forEach((t) => t.stop())
+      toast.error(t('errorStart'))
     }
   }
 
