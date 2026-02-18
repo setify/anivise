@@ -105,7 +105,7 @@ export function PlanPageClient({
               unit={t('unitSeats')}
             />
             <PlanUsageBar
-              label={t('members')}
+              label={t('employees')}
               current={overview.usage.members}
               limit={overview.limits.maxMembers}
               unit={t('unitSeats')}

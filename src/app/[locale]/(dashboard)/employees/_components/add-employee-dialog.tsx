@@ -85,6 +85,8 @@ export function AddEmployeeDialog({
       toast.success(t('created'))
       resetForm()
       onOpenChange(false)
+    } else if (result.error === 'employee_limit_reached') {
+      toast.error(t('limitReached'))
     } else {
       toast.error(t('error'))
     }

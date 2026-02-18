@@ -12,6 +12,7 @@ import {
 import { eq, and, count, desc, sql } from 'drizzle-orm'
 import { getCurrentOrgContext } from '@/lib/auth/org-context'
 import { logAudit } from '@/lib/audit/log'
+import { canAddEmployee } from '@/lib/products/limits'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { trackUpload } from '@/lib/media/track-upload'
 
@@ -244,6 +245,10 @@ async function handleAvatarUpload(
 export async function createEmployee(formData: FormData) {
   const ctx = await getCurrentOrgContext('org_admin')
   if (!ctx) return { success: false, error: 'unauthorized' }
+
+  // Check employee seat limit
+  const allowed = await canAddEmployee(ctx.organizationId)
+  if (!allowed) return { success: false, error: 'employee_limit_reached' }
 
   const firstName = formData.get('firstName') as string
   const lastName = formData.get('lastName') as string

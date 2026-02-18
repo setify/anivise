@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { products, organizationProducts, organizationMembers } from '@/lib/db/schema'
+import { products, organizationProducts, organizationMembers, employees } from '@/lib/db/schema'
 import { eq, and, count } from 'drizzle-orm'
 
 export interface OrganizationLimits {
@@ -73,25 +73,32 @@ export async function getOrganizationLimits(
 
 /**
  * Get current seat usage for an organization.
+ * "members" counts employees (from the employees table), not org_members with role "member".
  */
 export async function getOrganizationUsage(
   organizationId: string
 ): Promise<OrganizationUsage> {
-  const roleCounts = await db
-    .select({
-      role: organizationMembers.role,
-      value: count(),
-    })
-    .from(organizationMembers)
-    .where(and(eq(organizationMembers.organizationId, organizationId), eq(organizationMembers.status, 'active')))
-    .groupBy(organizationMembers.role)
+  const [roleCounts, [employeeCount]] = await Promise.all([
+    db
+      .select({
+        role: organizationMembers.role,
+        value: count(),
+      })
+      .from(organizationMembers)
+      .where(and(eq(organizationMembers.organizationId, organizationId), eq(organizationMembers.status, 'active')))
+      .groupBy(organizationMembers.role),
+    db
+      .select({ value: count() })
+      .from(employees)
+      .where(and(eq(employees.organizationId, organizationId), eq(employees.status, 'active'))),
+  ])
 
   const countByRole = new Map(roleCounts.map((r) => [r.role, r.value]))
 
   return {
     orgAdmins: countByRole.get('org_admin') ?? 0,
     managers: countByRole.get('manager') ?? 0,
-    members: countByRole.get('member') ?? 0,
+    members: employeeCount?.value ?? 0,
   }
 }
 
@@ -105,7 +112,7 @@ export function checkLimit(limit: number | null, current: number): boolean {
 }
 
 /**
- * Check if a new member with the given role can be added.
+ * Check if a new org member (user) with the given role can be added.
  */
 export async function canAddMember(
   organizationId: string,
@@ -122,8 +129,23 @@ export async function canAddMember(
     case 'manager':
       return checkLimit(limits.maxManagers, usage.managers)
     case 'member':
-      return checkLimit(limits.maxMembers, usage.members)
+      // member role has no seat limit (employees are tracked separately)
+      return true
   }
+}
+
+/**
+ * Check if a new employee can be added (checks maxMembers limit against employee count).
+ */
+export async function canAddEmployee(
+  organizationId: string
+): Promise<boolean> {
+  const [limits, usage] = await Promise.all([
+    getOrganizationLimits(organizationId),
+    getOrganizationUsage(organizationId),
+  ])
+
+  return checkLimit(limits.maxMembers, usage.members)
 }
 
 /**

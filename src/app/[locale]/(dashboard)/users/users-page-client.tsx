@@ -15,8 +15,6 @@ import { EditUserDialog } from './_components/edit-user-dialog'
 import { ChangeRoleDialog } from './_components/change-role-dialog'
 import { DeactivateDialog } from './_components/deactivate-dialog'
 import { RemoveUserDialog } from './_components/remove-user-dialog'
-import { ManageDepartmentsDialog } from './_components/manage-departments-dialog'
-import { ManageLocationsDialog } from './_components/manage-locations-dialog'
 import type { OrgUser, OrgInvitation, OrgDepartment, OrgLocation } from './actions'
 import type { OrganizationLimits, OrganizationUsage } from '@/lib/products/limits'
 
@@ -44,9 +42,6 @@ export function UsersPageClient({
   const [changeRoleUser, setChangeRoleUser] = useState<OrgUser | null>(null)
   const [deactivateUser, setDeactivateUser] = useState<OrgUser | null>(null)
   const [removeUser, setRemoveUser] = useState<OrgUser | null>(null)
-  const [deptOpen, setDeptOpen] = useState(false)
-  const [locOpen, setLocOpen] = useState(false)
-
   const filtered = useMemo(() => {
     if (!search) return members
     const q = search.toLowerCase()
@@ -194,7 +189,7 @@ export function UsersPageClient({
         <Card>
           <CardContent className="space-y-4 p-4">
             <h3 className="text-sm font-semibold">{t('seats.title')}</h3>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <PlanUsageBar
                 label={t('seats.orgAdmins')}
                 current={seats.usage.orgAdmins}
@@ -205,12 +200,6 @@ export function UsersPageClient({
                 label={t('seats.managers')}
                 current={seats.usage.managers}
                 limit={seats.limits.maxManagers}
-                unit={t('seats.seatsUsed')}
-              />
-              <PlanUsageBar
-                label={t('seats.members')}
-                current={seats.usage.members}
-                limit={seats.limits.maxMembers}
                 unit={t('seats.seatsUsed')}
               />
             </div>
@@ -225,8 +214,6 @@ export function UsersPageClient({
         departments={departments}
         locations={locations}
         seats={seats}
-        onManageDepartments={() => { setAddOpen(false); setDeptOpen(true) }}
-        onManageLocations={() => { setAddOpen(false); setLocOpen(true) }}
       />
 
       {editUser && (
@@ -264,17 +251,6 @@ export function UsersPageClient({
         />
       )}
 
-      <ManageDepartmentsDialog
-        open={deptOpen}
-        onOpenChange={setDeptOpen}
-        departments={departments}
-      />
-
-      <ManageLocationsDialog
-        open={locOpen}
-        onOpenChange={setLocOpen}
-        locations={locations}
-      />
     </div>
   )
 }

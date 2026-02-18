@@ -41,15 +41,15 @@ export function ChangeRoleDialog({
 
   function getAvailableSeats(role: string): number | null {
     if (!seats) return null
+    // member role has no seat limit (employees are tracked separately)
+    if (role === 'member') return null
     const limitMap: Record<string, number | null> = {
       org_admin: seats.limits.maxOrgAdmins,
       manager: seats.limits.maxManagers,
-      member: seats.limits.maxMembers,
     }
     const usageMap: Record<string, number> = {
       org_admin: seats.usage.orgAdmins,
       manager: seats.usage.managers,
-      member: seats.usage.members,
     }
     const limit = limitMap[role]
     if (limit === null) return null // unlimited
