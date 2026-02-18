@@ -2,11 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db'
-import { mediaFiles, organizationMembers } from '@/lib/db/schema'
+import { mediaFiles } from '@/lib/db/schema'
 import { eq, desc, and, like, SQL } from 'drizzle-orm'
-import { createClient } from '@/lib/supabase/server'
+import { getCurrentOrgContext } from '@/lib/auth/org-context'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { redirect } from 'next/navigation'
 import { logAudit } from '@/lib/audit/log'
 import { trackUpload } from '@/lib/media/track-upload'
 import { checkMediaUsage } from '@/lib/media/check-usage'
@@ -25,21 +24,9 @@ const ORG_ALLOWED_TYPES = [
 // ─── Auth helper ────────────────────────────────────────────────────────────
 
 async function requireOrgAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const [membership] = await db
-    .select({ organizationId: organizationMembers.organizationId, role: organizationMembers.role })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-
-  if (!membership || membership.role !== 'org_admin') {
-    throw new Error('Unauthorized')
-  }
-
-  return { userId: user.id, email: user.email ?? '', organizationId: membership.organizationId }
+  const ctx = await getCurrentOrgContext('org_admin')
+  if (!ctx) throw new Error('Unauthorized')
+  return ctx
 }
 
 // ─── List Org Media ──────────────────────────────────────────────────────────

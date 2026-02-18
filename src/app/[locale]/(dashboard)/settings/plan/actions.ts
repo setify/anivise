@@ -4,14 +4,12 @@ import { db } from '@/lib/db'
 import {
   products,
   organizationProducts,
-  organizationMembers,
   formSubmissions,
   analysisJobs,
   forms,
 } from '@/lib/db/schema'
 import { eq, and, count, gte, isNull } from 'drizzle-orm'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { getCurrentOrgContext } from '@/lib/auth/org-context'
 import {
   getOrganizationLimits,
   getOrganizationUsage,
@@ -20,27 +18,12 @@ import {
 } from '@/lib/products/limits'
 
 async function getCurrentUserAndOrg() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect('/login')
-
-  const [membership] = await db
-    .select({
-      organizationId: organizationMembers.organizationId,
-      role: organizationMembers.role,
-    })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-
+  const ctx = await getCurrentOrgContext()
   return {
-    userId: user.id,
-    email: user.email ?? '',
-    organizationId: membership?.organizationId ?? null,
-    role: membership?.role ?? null,
+    userId: ctx?.userId ?? '',
+    email: ctx?.email ?? '',
+    organizationId: ctx?.organizationId ?? null,
+    role: ctx?.role ?? null,
   }
 }
 

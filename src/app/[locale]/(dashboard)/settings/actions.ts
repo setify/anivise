@@ -1,43 +1,22 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { organizations, organizationMembers } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
-import { createClient } from '@/lib/supabase/server'
+import { organizations } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { logAudit } from '@/lib/audit/log'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { trackUpload } from '@/lib/media/track-upload'
+import { getCurrentOrgContext } from '@/lib/auth/org-context'
 
 // ─── Auth helper ────────────────────────────────────────────────────────────
 
 async function requireOrgAdmin() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const [membership] = await db
-    .select({
-      organizationId: organizationMembers.organizationId,
-      role: organizationMembers.role,
-    })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-
-  if (!membership || membership.role !== 'org_admin') {
-    throw new Error('Unauthorized')
-  }
-
-  return {
-    userId: user.id,
-    email: user.email ?? '',
-    organizationId: membership.organizationId,
-  }
+  const ctx = await getCurrentOrgContext('org_admin')
+  if (!ctx) throw new Error('Unauthorized')
+  return ctx
 }
 
 // ─── General Settings ───────────────────────────────────────────────────────
@@ -57,18 +36,8 @@ export interface OrgGeneralData {
 }
 
 export async function getOrgGeneralData(): Promise<OrgGeneralData | null> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return null
-
-  const [membership] = await db
-    .select({ organizationId: organizationMembers.organizationId })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-  if (!membership) return null
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return null
 
   const [org] = await db
     .select({
@@ -85,7 +54,7 @@ export async function getOrgGeneralData(): Promise<OrgGeneralData | null> {
       industry: organizations.industry,
     })
     .from(organizations)
-    .where(eq(organizations.id, membership.organizationId))
+    .where(eq(organizations.id, ctx.organizationId))
     .limit(1)
 
   return org ?? null
@@ -186,18 +155,8 @@ export interface OrgBrandingData {
 }
 
 export async function getOrgBrandingData(): Promise<OrgBrandingData | null> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return null
-
-  const [membership] = await db
-    .select({ organizationId: organizationMembers.organizationId })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-  if (!membership) return null
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return null
 
   const [org] = await db
     .select({
@@ -210,7 +169,7 @@ export async function getOrgBrandingData(): Promise<OrgBrandingData | null> {
       emailFooterText: organizations.emailFooterText,
     })
     .from(organizations)
-    .where(eq(organizations.id, membership.organizationId))
+    .where(eq(organizations.id, ctx.organizationId))
     .limit(1)
 
   if (!org) return null

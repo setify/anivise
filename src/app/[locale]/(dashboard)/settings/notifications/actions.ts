@@ -1,29 +1,18 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { organizationMembers, organizationNotificationSettings, users } from '@/lib/db/schema'
+import { organizationNotificationSettings, users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import type { OrganizationNotificationSettings } from '@/types/database'
 import { getNotificationSettings } from '@/lib/notifications/should-notify'
 import type { NotificationSettingKey } from '@/lib/notifications/should-notify'
+import { getCurrentOrgContext } from '@/lib/auth/org-context'
 
 async function requireOrgAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const [membership] = await db
-    .select({ organizationId: organizationMembers.organizationId, role: organizationMembers.role })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-
-  if (!membership || membership.role !== 'org_admin') throw new Error('Unauthorized')
-
-  return { userId: user.id, email: user.email ?? '', organizationId: membership.organizationId }
+  const ctx = await getCurrentOrgContext('org_admin')
+  if (!ctx) throw new Error('Unauthorized')
+  return ctx
 }
 
 export interface NotificationSettingsData {
@@ -32,19 +21,10 @@ export interface NotificationSettingsData {
 }
 
 export async function getOrgNotificationSettings(): Promise<NotificationSettingsData | null> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
+  const ctx = await getCurrentOrgContext('org_admin')
+  if (!ctx) return null
 
-  const [membership] = await db
-    .select({ organizationId: organizationMembers.organizationId, role: organizationMembers.role })
-    .from(organizationMembers)
-    .where(eq(organizationMembers.userId, user.id))
-    .limit(1)
-
-  if (!membership || membership.role !== 'org_admin') return null
-
-  const settings = await getNotificationSettings(membership.organizationId)
+  const settings = await getNotificationSettings(ctx.organizationId)
 
   let updatedByName: string | null = null
   if (settings.updatedBy) {
