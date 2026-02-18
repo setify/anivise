@@ -26,15 +26,17 @@ export function OrgSidebar({ logoUrl, orgName, user }: OrgSidebarProps) {
   const locale = useLocale()
   const pathname = usePathname()
 
-  const [collapsedKeys, setCollapsedKeys] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set()
+  const [collapsedKeys, setCollapsedKeys] = useState<Set<string>>(new Set())
+  const [hydrated, setHydrated] = useState(false)
+
+  // Load collapsed state from localStorage after hydration
+  useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
-      return stored ? new Set(JSON.parse(stored)) : new Set()
-    } catch {
-      return new Set()
-    }
-  })
+      if (stored) setCollapsedKeys(new Set(JSON.parse(stored)))
+    } catch {}
+    setHydrated(true)
+  }, [])
 
   // Auto-open collapsibles when a child path is active
   useEffect(() => {
