@@ -1183,7 +1183,6 @@
       "forms": "Forms",
       "employees": "Employees",
       "users": "Users",
-      "team": "Team",
       "settings": "Settings",
       "settingsGeneral": "General",
       "settingsPlan": "Plan",
@@ -1199,7 +1198,8 @@
           "manager": "Manager",
           "member": "Member"
         }
-      }
+      },
+      "guides": "Guides"
     },
     "employees": {
       "title": "Employees",
@@ -1237,6 +1237,11 @@
       "title": "Integrations",
       "description": "Connect external services",
       "comingSoon": "This section will be available soon."
+    },
+    "guides": {
+      "title": "Guides",
+      "description": "Guides and best practices for psychodynamic analyses.",
+      "comingSoon": "Guides will be available soon."
     }
   }
 }

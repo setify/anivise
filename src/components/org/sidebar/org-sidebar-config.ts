@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Bell,
+  BookOpen,
   ClipboardList,
   CreditCard,
   Image,
@@ -9,7 +10,6 @@ import {
   Palette,
   Settings,
   UserCog,
-  Users,
   UsersRound,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -66,6 +66,19 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
         icon: BarChart3,
       },
       {
+        key: 'employees',
+        labelKey: 'org.sidebar.employees',
+        href: '/employees',
+        icon: UsersRound,
+        minRole: 'manager',
+      },
+      {
+        key: 'guides',
+        labelKey: 'org.sidebar.guides',
+        href: '/guides',
+        icon: BookOpen,
+      },
+      {
         key: 'forms',
         labelKey: 'org.sidebar.forms',
         href: '/forms',
@@ -78,24 +91,11 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
     labelKey: 'org.sidebar.groups.management',
     items: [
       {
-        key: 'employees',
-        labelKey: 'org.sidebar.employees',
-        href: '/employees',
-        icon: UsersRound,
-        minRole: 'manager',
-      },
-      {
         key: 'users',
         labelKey: 'org.sidebar.users',
         href: '/users',
         icon: UserCog,
         minRole: 'org_admin',
-      },
-      {
-        key: 'team',
-        labelKey: 'org.sidebar.team',
-        href: '/team',
-        icon: Users,
       },
       {
         key: 'settings',

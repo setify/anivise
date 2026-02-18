@@ -1183,7 +1183,6 @@
       "forms": "Formulare",
       "employees": "Mitarbeiter",
       "users": "Benutzer",
-      "team": "Team",
       "settings": "Einstellungen",
       "settingsGeneral": "Allgemein",
       "settingsPlan": "Tarif",
@@ -1199,7 +1198,8 @@
           "manager": "Manager",
           "member": "Mitglied"
         }
-      }
+      },
+      "guides": "Guides"
     },
     "employees": {
       "title": "Mitarbeiter",
@@ -1237,6 +1237,11 @@
       "title": "Integrationen",
       "description": "Externe Dienste verbinden",
       "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "guides": {
+      "title": "Guides",
+      "description": "Anleitungen und Best Practices für psychodynamische Analysen.",
+      "comingSoon": "Guides werden in Kürze verfügbar sein."
     }
   }
 }
