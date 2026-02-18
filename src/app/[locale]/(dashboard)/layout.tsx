@@ -7,6 +7,8 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/db'
 import { users, organizations, organizationMembers } from '@/lib/db/schema'
 import { getSetting } from '@/lib/settings/platform'
+import { getOrgBranding } from '@/lib/branding/apply-branding'
+import { hexToHsl } from '@/lib/branding/color-utils'
 
 export default async function DashboardLayout({
   children,
@@ -42,8 +44,10 @@ export default async function DashboardLayout({
     }
   }
 
-  // Resolve organization name and user role from slug (set by middleware)
+  // Resolve organization from subdomain header
   let orgName: string | null = impersonation?.orgName ?? null
+  let orgId: string | null = null
+
   if (!orgName) {
     const headerStore = await headers()
     const orgSlug = headerStore.get('x-organization-slug')
@@ -55,8 +59,8 @@ export default async function DashboardLayout({
         .limit(1)
       if (org) {
         orgName = org.name
+        orgId = org.id
 
-        // Resolve user's role in this organization
         if (authUser && userData) {
           const [membership] = await db
             .select({ role: organizationMembers.role })
@@ -72,15 +76,53 @@ export default async function DashboardLayout({
         }
       }
     }
-  } else if (impersonation && authUser && userData) {
-    // During impersonation, use the impersonation role
-    userData.orgRole = impersonation.role ?? 'org_admin'
+  } else if (impersonation) {
+    orgId = impersonation.orgId
+    if (userData) userData.orgRole = impersonation.role ?? 'org_admin'
   }
 
   const logoUrl = await getSetting('platform.logo_url')
 
+  // Load org branding (CSS variables + favicon)
+  let brandingStyles: Record<string, string> = {}
+  let faviconUrl: string | null = null
+  let orgLogoUrl: string | null = null
+
+  if (orgId) {
+    const branding = await getOrgBranding(orgId)
+    faviconUrl = branding.faviconUrl
+    orgLogoUrl = branding.logoUrl
+
+    if (branding.primaryColor) {
+      brandingStyles = {
+        '--brand-primary': hexToHsl(branding.primaryColor),
+        ...(branding.accentColor ? { '--brand-accent': hexToHsl(branding.accentColor) } : {}),
+        ...(branding.backgroundColor ? { '--brand-background': hexToHsl(branding.backgroundColor) } : {}),
+        ...(branding.textColor ? { '--brand-foreground': hexToHsl(branding.textColor) } : {}),
+      }
+    }
+  }
+
+  const hasBranding = Object.keys(brandingStyles).length > 0
+
   return (
     <>
+      {faviconUrl && (
+        // eslint-disable-next-line @next/next/no-head-element
+        <head>
+          <link rel="icon" href={faviconUrl} />
+        </head>
+      )}
+      {hasBranding && (
+        <style>{`
+          [data-org-dashboard] {
+            --primary: ${brandingStyles['--brand-primary'] ?? 'var(--primary)'};
+            ${brandingStyles['--brand-accent'] ? `--accent: ${brandingStyles['--brand-accent']};` : ''}
+            ${brandingStyles['--brand-background'] ? `--background: ${brandingStyles['--brand-background']};` : ''}
+            ${brandingStyles['--brand-foreground'] ? `--foreground: ${brandingStyles['--brand-foreground']};` : ''}
+          }
+        `}</style>
+      )}
       {impersonation && (
         <ImpersonationBanner
           orgId={impersonation.orgId}
@@ -88,7 +130,15 @@ export default async function DashboardLayout({
           role={impersonation.role}
         />
       )}
-      <AppShell user={userData} orgName={orgName} logoUrl={logoUrl || undefined}>{children}</AppShell>
+      <div data-org-dashboard="">
+        <AppShell
+          user={userData}
+          orgName={orgName}
+          logoUrl={orgLogoUrl || logoUrl || undefined}
+        >
+          {children}
+        </AppShell>
+      </div>
     </>
   )
 }

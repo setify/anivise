@@ -1211,18 +1211,6 @@
       "description": "Benutzer und deren Berechtigungen verwalten",
       "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
     },
-    "settingsGeneral": {
-      "title": "Allgemein",
-      "description": "Allgemeine Organisationseinstellungen",
-      "orgInfo": "Organisationsinformationen",
-      "orgInfoDescription": "Name, Beschreibung und weitere Informationen zu Ihrer Organisation",
-      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
-    },
-    "settingsBranding": {
-      "title": "Branding",
-      "description": "Erscheinungsbild Ihrer Organisation anpassen",
-      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
-    },
     "settingsMedia": {
       "title": "Mediathek",
       "description": "Dateien und Medien verwalten",
@@ -1242,6 +1230,81 @@
       "title": "Guides",
       "description": "Anleitungen und Best Practices für psychodynamische Analysen.",
       "comingSoon": "Guides werden in Kürze verfügbar sein."
+    },
+    "settings": {
+      "general": {
+        "title": "Allgemein",
+        "description": "Verwalten Sie die allgemeinen Informationen Ihrer Organisation.",
+        "basicData": "Grunddaten",
+        "contactInfo": "Kontaktinformationen",
+        "businessData": "Geschäftsdaten",
+        "companyName": "Firmenname",
+        "subdomain": "Subdomain",
+        "subdomainLockedHint": "Kann nur durch einen Plattform-Administrator geändert werden.",
+        "address": "Adresse",
+        "street": "Straße & Hausnummer",
+        "zipCode": "PLZ",
+        "city": "Ort",
+        "country": "Land",
+        "phone": "Telefon",
+        "emailField": "E-Mail",
+        "website": "Website",
+        "taxId": "USt-ID / Steuernummer",
+        "industry": "Branche",
+        "industryPlaceholder": "Branche wählen oder eingeben...",
+        "notSpecified": "Nicht angegeben",
+        "saveSuccess": "Einstellungen gespeichert."
+      },
+      "plan": {
+        "title": "Mein Tarif",
+        "description": "Aktueller Tarif und Nutzungsübersicht Ihrer Organisation.",
+        "noPlan": "Kein Tarif zugewiesen.",
+        "noPlanAssigned": "Kein Tarif",
+        "active": "Aktiv",
+        "seats": "Team-Mitglieder",
+        "seatsDescription": "Belegte Seats nach Rolle.",
+        "orgAdmins": "Administratoren",
+        "managers": "Manager",
+        "members": "Mitglieder",
+        "features": "Features",
+        "featuresDescription": "Monatliche Nutzung und Limits.",
+        "analysesThisMonth": "Analysen diesen Monat",
+        "activeForms": "Aktive Formulare",
+        "submissionsThisMonth": "Formular-Einreichungen diesen Monat",
+        "storage": "Speicherplatz",
+        "unitSeats": "Seats belegt",
+        "unitUsed": "genutzt",
+        "unitActive": "aktiv",
+        "monthlyResetInfo": "Monatliche Limits werden am 1. jedes Monats zurückgesetzt.",
+        "needMoreCapacity": "Benötigen Sie mehr Kapazität?",
+        "contactUs": "Kontakt aufnehmen",
+        "contactAdmin": "Bitte kontaktieren Sie Ihren Plattform-Administrator."
+      },
+      "branding": {
+        "title": "Branding",
+        "description": "Passen Sie das Erscheinungsbild Ihrer Organisation an. Änderungen wirken sich auf Ihre Subdomain und E-Mails aus.",
+        "logo": "Logo",
+        "logoHint": "Ihr Organisationslogo für die Sidebar und E-Mails.",
+        "logoSizeHint": "Empfohlen: 200×60 px, JPG/PNG/SVG/WebP, max. 2 MB",
+        "favicon": "Favicon",
+        "faviconHint": "Icon für Browser-Tab und Lesezeichen.",
+        "faviconSizeHint": "Empfohlen: 32×32 oder 64×64 px, ICO/PNG/SVG, max. 500 KB",
+        "colors": "Farben",
+        "colorsHint": "Angepasste Farben überschreiben die Standard-Farben nur im Dashboard-Bereich.",
+        "primaryColor": "Primärfarbe",
+        "accentColor": "Akzentfarbe",
+        "backgroundColor": "Hintergrundfarbe",
+        "textColor": "Textfarbe",
+        "resetToDefault": "Auf Standard zurücksetzen",
+        "emailFooter": "E-Mail-Footer",
+        "emailFooterHint": "Eigener Footer-Text für Ihre Organisations-E-Mails.",
+        "emailFooterPlaceholder": "z.B. ACME Corp | Musterstraße 42 | 10115 Berlin",
+        "preview": "Vorschau",
+        "dropOrClick": "Datei ablegen oder klicken",
+        "remove": "Entfernen",
+        "fileTooLarge": "Datei zu groß (max. {max})",
+        "saveSuccess": "Branding-Einstellungen gespeichert."
+      }
     }
   }
 }

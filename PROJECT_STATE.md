@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.5.0
-**Last Updated:** 2026-02-17
-**Last Commit:** refactor(admin): restructure sidebar with grouped navigation, collapsibles and user footer
+**Version:** 1.7.0
+**Last Updated:** 2026-02-18
+**Last Commit:** feat(org): add organization settings for general info, plan view and branding with live preview
 
 ## What's Implemented
 
@@ -135,8 +135,22 @@
 - [x] Seat limit enforcement: `canAddMember()` check in invitation acceptance flows
 - [x] Form submission limit enforcement: `checkLimit()` in `submitForm()` action
 - [x] User-facing limit error messages (seat_limit_reached, form_submission_limit_reached)
+- [x] Org-admin plan view redesigned with `PlanUsageBar` (color-coded) + contact upgrade button
 - [ ] Analysis job limit enforcement (analysis upload flow not yet built)
 - [ ] Storage usage tracking (storage not yet implemented)
+
+### Org Settings
+- [x] Settings > Allgemein (`/settings`): view/edit org info (name, address, contact, business data, industry combobox)
+- [x] Settings > Tarif (`/settings/plan`): redesigned with `PlanUsageBar`, upgrade contact, reset info
+- [x] Settings > Branding (`/settings/branding`): logo upload, favicon upload, 4 color pickers, live preview, WCAG warnings, email footer
+- [x] Branding applied in dashboard layout: CSS variables per org, favicon, org logo in sidebar
+- [x] DB: 16 new columns on `organizations` (address, contact, business, branding, favicon, email_footer)
+- [x] `src/lib/branding/color-utils.ts`: hexToHsl, getContrastRatio, meetsWCAG_AA
+- [x] `src/lib/branding/apply-branding.ts`: getOrgBranding() helper
+- [x] `src/components/org/plan-usage-bar.tsx`: reusable usage bar component
+- [x] `src/components/org/branding-preview.tsx`: live branding preview with WCAG warnings
+- [x] `src/components/ui/combobox.tsx`: searchable combobox with freetext
+- [x] Platform setting: `contact.upgrade_email`
 
 ### UX Polish
 - [x] Skeleton loading system (5 composites: Table, Card, Form, Detail, Stats) with shimmer animation

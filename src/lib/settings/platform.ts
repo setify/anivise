@@ -11,6 +11,7 @@ export interface PlatformSettings {
   'invitation.max_resends': number
   'org.reserved_slugs': string[]
   'analysis.max_transcript_size_mb': number
+  'contact.upgrade_email': string
   'email.logo_url': string
   'email.logo_link': string
   'email.bg_color': string
@@ -58,6 +59,7 @@ const DEFAULTS: PlatformSettings = {
     'register',
   ],
   'analysis.max_transcript_size_mb': 10,
+  'contact.upgrade_email': '',
   ...EMAIL_LAYOUT_DEFAULTS,
 }
 

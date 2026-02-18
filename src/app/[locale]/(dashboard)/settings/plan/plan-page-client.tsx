@@ -9,76 +9,29 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import {
-  Users,
-  BarChart3,
-  FileText,
-  HardDrive,
   CreditCard,
-  AlertTriangle,
+  Info,
+  Mail,
 } from 'lucide-react'
+import { PlanUsageBar } from '@/components/org/plan-usage-bar'
 import type { PlanOverview } from './actions'
 
-function UsageBar({
-  label,
-  current,
-  limit,
-}: {
-  label: string
-  current: number
-  limit: number | null
-}) {
-  const t = useTranslations('plan')
-  const isUnlimited = limit === null
-  const percentage = isUnlimited ? 0 : limit === 0 ? 100 : Math.min((current / limit) * 100, 100)
-  const isWarning = !isUnlimited && percentage >= 80
-  const isExceeded = !isUnlimited && percentage >= 100
-
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between text-sm">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium">
-          {current} / {isUnlimited ? '\u221E' : limit}
-        </span>
-      </div>
-      {!isUnlimited && (
-        <Progress
-          value={percentage}
-          className={
-            isExceeded
-              ? '[&>div]:bg-destructive'
-              : isWarning
-                ? '[&>div]:bg-yellow-500'
-                : ''
-          }
-        />
-      )}
-      {isUnlimited && (
-        <p className="text-muted-foreground text-xs">{t('unlimited')}</p>
-      )}
-      {isExceeded && (
-        <div className="flex items-center gap-1 text-xs text-destructive">
-          <AlertTriangle className="size-3" />
-          {t('limitReached')}
-        </div>
-      )}
-      {isWarning && !isExceeded && (
-        <p className="text-xs text-yellow-600 dark:text-yellow-400">
-          {t('limitWarning', { percent: Math.round(percentage) })}
-        </p>
-      )}
-    </div>
-  )
+function formatMb(mb: number): string {
+  if (mb >= 1024) return `${(mb / 1024).toFixed(1)} GB`
+  return `${mb} MB`
 }
 
 export function PlanPageClient({
   overview,
+  upgradeEmail,
 }: {
   overview: PlanOverview | null
+  upgradeEmail: string | null
 }) {
-  const t = useTranslations('plan')
+  const t = useTranslations('org.settings.plan')
 
   if (!overview) {
     return (
@@ -88,7 +41,7 @@ export function PlanPageClient({
           <p className="text-muted-foreground">{t('description')}</p>
         </div>
         <Card>
-          <CardContent className="py-8 text-center">
+          <CardContent className="py-12 text-center">
             <CreditCard className="text-muted-foreground mx-auto mb-3 size-8" />
             <p className="text-muted-foreground">{t('noPlan')}</p>
           </CardContent>
@@ -104,20 +57,24 @@ export function PlanPageClient({
         <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
-      {/* Current Plan */}
-      <Card>
+      {/* Plan Header */}
+      <Card className="bg-primary/5 border-primary/20">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <CreditCard className="text-muted-foreground size-5" />
+            <div className="bg-primary/10 rounded-lg p-2">
+              <CreditCard className="text-primary size-5" />
+            </div>
             <div>
               <CardTitle className="flex items-center gap-2">
-                {overview.planName || t('noPlanAssigned')}
+                {overview.planName ?? t('noPlanAssigned')}
                 {overview.planName && (
-                  <Badge variant="secondary">{t('active')}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {t('active')}
+                  </Badge>
                 )}
               </CardTitle>
               {overview.planDescription && (
-                <CardDescription className="mt-1">
+                <CardDescription className="mt-0.5">
                   {overview.planDescription}
                 </CardDescription>
               )}
@@ -126,97 +83,91 @@ export function PlanPageClient({
         </CardHeader>
       </Card>
 
-      {/* Usage Overview */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Seats */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Users className="size-4" />
-              {t('seats')}
-            </CardTitle>
-            <CardDescription>{t('seatsDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <UsageBar
-              label={t('orgAdmins')}
-              current={overview.usage.orgAdmins}
-              limit={overview.limits.maxOrgAdmins}
-            />
-            <UsageBar
-              label={t('managers')}
-              current={overview.usage.managers}
-              limit={overview.limits.maxManagers}
-            />
-            <UsageBar
-              label={t('members')}
-              current={overview.usage.members}
-              limit={overview.limits.maxMembers}
-            />
-          </CardContent>
-        </Card>
+      {/* Team Seats */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">{t('seats')}</CardTitle>
+          <CardDescription>{t('seatsDescription')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <PlanUsageBar
+            label={t('orgAdmins')}
+            current={overview.usage.orgAdmins}
+            limit={overview.limits.maxOrgAdmins}
+            unit={t('unitSeats')}
+          />
+          <PlanUsageBar
+            label={t('managers')}
+            current={overview.usage.managers}
+            limit={overview.limits.maxManagers}
+            unit={t('unitSeats')}
+          />
+          <PlanUsageBar
+            label={t('members')}
+            current={overview.usage.members}
+            limit={overview.limits.maxMembers}
+            unit={t('unitSeats')}
+          />
+        </CardContent>
+      </Card>
 
-        {/* Analyses */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <BarChart3 className="size-4" />
-              {t('analyses')}
-            </CardTitle>
-            <CardDescription>{t('analysesDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <UsageBar
-              label={t('analysesThisMonth')}
-              current={overview.usage.analysesThisMonth}
-              limit={overview.limits.maxAnalysesPerMonth}
-            />
-          </CardContent>
-        </Card>
+      {/* Feature Limits */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">{t('features')}</CardTitle>
+          <CardDescription>{t('featuresDescription')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <PlanUsageBar
+            label={t('analysesThisMonth')}
+            current={overview.usage.analysesThisMonth}
+            limit={overview.limits.maxAnalysesPerMonth}
+            unit={t('unitUsed')}
+          />
+          <PlanUsageBar
+            label={t('activeForms')}
+            current={overview.usage.activeForms}
+            limit={overview.limits.maxForms}
+            unit={t('unitActive')}
+          />
+          <PlanUsageBar
+            label={t('submissionsThisMonth')}
+            current={overview.usage.formSubmissionsThisMonth}
+            limit={overview.limits.maxFormSubmissionsPerMonth}
+            unit={t('unitUsed')}
+          />
+          <PlanUsageBar
+            label={t('storage')}
+            current={0}
+            limit={overview.limits.maxStorageMb}
+            unit={t('unitUsed')}
+            formatValue={formatMb}
+          />
+        </CardContent>
+      </Card>
 
-        {/* Forms */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="size-4" />
-              {t('forms')}
-            </CardTitle>
-            <CardDescription>{t('formsDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <UsageBar
-              label={t('activeForms')}
-              current={overview.usage.activeForms}
-              limit={overview.limits.maxForms}
-            />
-            <UsageBar
-              label={t('submissionsThisMonth')}
-              current={overview.usage.formSubmissionsThisMonth}
-              limit={overview.limits.maxFormSubmissionsPerMonth}
-            />
-          </CardContent>
-        </Card>
+      {/* Info + Contact */}
+      <div className="rounded-lg border p-4 space-y-3">
+        <div className="flex gap-2 text-sm text-muted-foreground">
+          <Info className="mt-0.5 size-4 shrink-0" />
+          <p>{t('monthlyResetInfo')}</p>
+        </div>
 
-        {/* Storage */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <HardDrive className="size-4" />
-              {t('storage')}
-            </CardTitle>
-            <CardDescription>{t('storageDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <UsageBar
-              label="MB"
-              current={0}
-              limit={overview.limits.maxStorageMb}
-            />
-            <p className="text-muted-foreground text-xs">
-              {t('storageNotTracked')}
-            </p>
-          </CardContent>
-        </Card>
+        <Separator />
+
+        <div className="space-y-2">
+          <p className="text-sm font-medium">{t('needMoreCapacity')}</p>
+          {upgradeEmail ? (
+            <Button variant="outline" size="sm" asChild>
+              <a href={`mailto:${upgradeEmail}`}>
+                <Mail className="mr-2 size-4" />
+                {t('contactUs')}
+              </a>
+            </Button>
+          ) : (
+            <p className="text-muted-foreground text-sm">{t('contactAdmin')}</p>
+          )}
+        </div>
       </div>
     </div>
   )

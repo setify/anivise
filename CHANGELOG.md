@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.7.0] - 2026-02-18
+### Added
+- **Org Settings: General** (`/settings`): View/edit mode for org info — company name, address (street, zip, city, country with EU select), contact (phone, email, website with auto-https), business data (VAT ID, industry with Combobox + freetext). Subdomain shown as read-only with lock tooltip. Server action `updateOrgGeneralSettings` with Zod validation and audit logging.
+- **Org Settings: Plan** (`/settings/plan`): Redesigned plan page with `PlanUsageBar` component (color-coded: green 0–59%, orange 60–84%, red 85–100% + ⚠️), contact upgrade button from platform settings (`contact.upgrade_email`), monthly reset info.
+- **Org Settings: Branding** (`/settings/branding`): Logo upload (2 MB, drag & drop), Favicon upload (500 KB), 4 color pickers (hex input + native color input, live preview), email footer textarea (200 chars), real-time `BrandingPreview` component (sticky), WCAG AA contrast warnings.
+- **Branding applied in Dashboard Layout**: CSS variables (`--primary`, `--accent`, `--background`, `--foreground`) injected via `data-org-dashboard` wrapper; org favicon via `<link rel="icon">`; org logo replaces platform logo in sidebar.
+- **`src/lib/branding/color-utils.ts`**: `hexToHsl`, `getContrastRatio`, `meetsWCAG_AA`, `isValidHex`, `normalizeHex`
+- **`src/lib/branding/apply-branding.ts`**: `getOrgBranding()` helper for dashboard layout
+- **`src/components/org/plan-usage-bar.tsx`**: Reusable `PlanUsageBar` component with color logic and unlimited state
+- **`src/components/org/branding-preview.tsx`**: Live branding preview with mini-sidebar, buttons, WCAG warnings
+- **`src/components/ui/combobox.tsx`**: Combobox with search, allow-custom-value, keyboard enter
+- DB migration `0003_whole_the_call.sql`: 16 new columns on `organizations` (logo_storage_path, street, zip_code, city, country, phone, email, website, tax_id, industry, brand_primary/accent/background/text_color, favicon_storage_path, email_footer_text)
+- Platform setting: `contact.upgrade_email` for upgrade contact link
+- i18n: `org.settings.general`, `org.settings.plan`, `org.settings.branding` namespaces (DE + EN)
+
+### Changed
+- Dashboard layout now loads `OrgBranding` and injects CSS variables + favicon per org
+- Plan page redesigned (flat layout, `PlanUsageBar`, contact section)
+- `PlanPageClient` now receives `upgradeEmail` prop
+
 ## [1.5.0] - 2026-02-17
 ### Changed
 - **Admin sidebar restructured** with grouped navigation sections (Content, Customers, Platform, System)

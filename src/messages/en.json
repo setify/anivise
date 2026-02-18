@@ -1211,18 +1211,6 @@
       "description": "Manage users and their permissions",
       "comingSoon": "This section will be available soon."
     },
-    "settingsGeneral": {
-      "title": "General",
-      "description": "General organization settings",
-      "orgInfo": "Organization Information",
-      "orgInfoDescription": "Name, description and other information about your organization",
-      "comingSoon": "This section will be available soon."
-    },
-    "settingsBranding": {
-      "title": "Branding",
-      "description": "Customize the look and feel of your organization",
-      "comingSoon": "This section will be available soon."
-    },
     "settingsMedia": {
       "title": "Media Library",
       "description": "Manage files and media",
@@ -1242,6 +1230,81 @@
       "title": "Guides",
       "description": "Guides and best practices for psychodynamic analyses.",
       "comingSoon": "Guides will be available soon."
+    },
+    "settings": {
+      "general": {
+        "title": "General",
+        "description": "Manage the general information of your organization.",
+        "basicData": "Basic Data",
+        "contactInfo": "Contact Information",
+        "businessData": "Business Data",
+        "companyName": "Company Name",
+        "subdomain": "Subdomain",
+        "subdomainLockedHint": "Can only be changed by a platform administrator.",
+        "address": "Address",
+        "street": "Street & House Number",
+        "zipCode": "ZIP Code",
+        "city": "City",
+        "country": "Country",
+        "phone": "Phone",
+        "emailField": "Email",
+        "website": "Website",
+        "taxId": "VAT ID / Tax Number",
+        "industry": "Industry",
+        "industryPlaceholder": "Choose or type an industry...",
+        "notSpecified": "Not specified",
+        "saveSuccess": "Settings saved."
+      },
+      "plan": {
+        "title": "My Plan",
+        "description": "Current plan and usage overview for your organization.",
+        "noPlan": "No plan assigned.",
+        "noPlanAssigned": "No Plan",
+        "active": "Active",
+        "seats": "Team Members",
+        "seatsDescription": "Occupied seats by role.",
+        "orgAdmins": "Administrators",
+        "managers": "Managers",
+        "members": "Members",
+        "features": "Features",
+        "featuresDescription": "Monthly usage and limits.",
+        "analysesThisMonth": "Analyses this month",
+        "activeForms": "Active forms",
+        "submissionsThisMonth": "Form submissions this month",
+        "storage": "Storage",
+        "unitSeats": "seats used",
+        "unitUsed": "used",
+        "unitActive": "active",
+        "monthlyResetInfo": "Monthly limits are reset on the 1st of each month.",
+        "needMoreCapacity": "Need more capacity?",
+        "contactUs": "Contact us",
+        "contactAdmin": "Please contact your platform administrator."
+      },
+      "branding": {
+        "title": "Branding",
+        "description": "Customize the appearance of your organization. Changes affect your subdomain and emails.",
+        "logo": "Logo",
+        "logoHint": "Your organization logo for the sidebar and emails.",
+        "logoSizeHint": "Recommended: 200×60 px, JPG/PNG/SVG/WebP, max. 2 MB",
+        "favicon": "Favicon",
+        "faviconHint": "Icon for browser tab and bookmarks.",
+        "faviconSizeHint": "Recommended: 32×32 or 64×64 px, ICO/PNG/SVG, max. 500 KB",
+        "colors": "Colors",
+        "colorsHint": "Custom colors override the default colors only in the dashboard area.",
+        "primaryColor": "Primary Color",
+        "accentColor": "Accent Color",
+        "backgroundColor": "Background Color",
+        "textColor": "Text Color",
+        "resetToDefault": "Reset to default",
+        "emailFooter": "Email Footer",
+        "emailFooterHint": "Custom footer text for your organization's emails.",
+        "emailFooterPlaceholder": "e.g. ACME Corp | 42 Example Street | 10115 Berlin",
+        "preview": "Preview",
+        "dropOrClick": "Drop file or click",
+        "remove": "Remove",
+        "fileTooLarge": "File too large (max. {max})",
+        "saveSuccess": "Branding settings saved."
+      }
     }
   }
 }
