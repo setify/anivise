@@ -5,38 +5,37 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
-   ANIVISE DESIGN SYSTEM v2
-   Basis: Neutrale Grautöne + Indigo für Interaktion
-   Akzente: Earth Tones für Status und Daten
+   ANIVISE DESIGN SYSTEM v2.1
+   Flieder-Basis + Indigo Primary + Earth-Tone Akzente
    ============================================================ */
 
 :root {
   /* --- Hintergrund & Oberflächen --- */
-  --background: oklch(0.965 0.003 260);
+  --background: oklch(0.972 0.010 290);       /* Flieder-getönt */
   --foreground: oklch(0.17 0.01 260);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.17 0.01 260);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.17 0.01 260);
 
-  /* --- Primary (Indigo – nur für interaktive Elemente) --- */
+  /* --- Primary (Indigo) --- */
   --primary: oklch(0.39 0.08 280);
   --primary-foreground: oklch(0.98 0 0);
 
-  /* --- Secondary (neutral) --- */
-  --secondary: oklch(0.93 0.003 260);
+  /* --- Secondary & Hover-States (lila getönt) --- */
+  --secondary: oklch(0.93 0.015 290);
   --secondary-foreground: oklch(0.20 0.01 260);
 
-  /* --- Muted --- */
-  --muted: oklch(0.93 0.003 260);
+  /* --- Muted (lila getönt) --- */
+  --muted: oklch(0.93 0.015 290);
   --muted-foreground: oklch(0.50 0.01 260);
 
-  /* --- Accent --- */
-  --accent: oklch(0.93 0.003 260);
+  /* --- Accent (lila getönt für Hover) --- */
+  --accent: oklch(0.93 0.015 290);
   --accent-foreground: oklch(0.39 0.08 280);
 
   /* --- Borders & Inputs --- */
-  --border: oklch(0.84 0.003 260);
+  --border: oklch(0.87 0.018 290);            /* Lila-Stich, heller */
   --input: oklch(1 0 0);
   --ring: oklch(0.57 0.08 280);
 
@@ -44,18 +43,18 @@
   --destructive: oklch(0.58 0.18 30);
   --destructive-foreground: oklch(0.98 0 0);
 
-  /* --- Sidebar --- */
+  /* --- Sidebar (lila Rand & Hover) --- */
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.20 0.01 260);
   --sidebar-primary: oklch(0.39 0.08 280);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.95 0.003 260);
+  --sidebar-accent: oklch(0.94 0.020 290);    /* Lila-Hover */
   --sidebar-accent-foreground: oklch(0.39 0.08 280);
-  --sidebar-border: oklch(0.91 0.003 260);
+  --sidebar-border: oklch(0.87 0.018 290);    /* Lila-Rand */
   --sidebar-ring: oklch(0.57 0.08 280);
   --sidebar-muted-foreground: oklch(0.50 0.01 260);
 
-  /* --- Charts (Earth Tones + Indigo) --- */
+  /* --- Charts --- */
   --chart-1: oklch(0.39 0.08 280);
   --chart-2: oklch(0.62 0.12 180);
   --chart-3: oklch(0.80 0.10 85);
@@ -85,20 +84,18 @@
   --text-tertiary: oklch(0.35 0.01 260);
   --text-muted: oklch(0.66 0.005 260);
 
-  /* --- Shadows (stärker für mehr Tiefe) --- */
-  --shadow-2xs: 0 1px 2px 0 oklch(0.20 0.01 260 / 0.04);
-  --shadow-xs:  0 1px 3px 0 oklch(0.20 0.01 260 / 0.06);
-  --shadow-sm:  0 1px 3px 0 oklch(0.20 0.01 260 / 0.08), 0 1px 2px -1px oklch(0.20 0.01 260 / 0.06);
-  --shadow:     0 2px 6px 0 oklch(0.20 0.01 260 / 0.08), 0 1px 3px -1px oklch(0.20 0.01 260 / 0.05);
-  --shadow-md:  0 4px 8px 0 oklch(0.20 0.01 260 / 0.08), 0 2px 4px -2px oklch(0.20 0.01 260 / 0.05);
-  --shadow-lg:  0 8px 16px 0 oklch(0.20 0.01 260 / 0.07), 0 4px 6px -4px oklch(0.20 0.01 260 / 0.04);
-  --shadow-xl:  0 12px 24px 0 oklch(0.20 0.01 260 / 0.08), 0 6px 12px -6px oklch(0.20 0.01 260 / 0.04);
-  --shadow-2xl: 0 16px 32px 0 oklch(0.20 0.01 260 / 0.10);
+  /* --- Shadows: leichter aber größer, lila getönt --- */
+  --shadow-2xs: 0 1px 4px 0 oklch(0.39 0.08 280 / 0.04);
+  --shadow-xs:  0 2px 6px 0 oklch(0.39 0.08 280 / 0.05);
+  --shadow-sm:  0 2px 10px 0 oklch(0.39 0.08 280 / 0.05), 0 1px 4px -1px oklch(0.39 0.08 280 / 0.04);
+  --shadow:     0 4px 16px 0 oklch(0.39 0.08 280 / 0.06), 0 2px 6px -2px oklch(0.39 0.08 280 / 0.04);
+  --shadow-md:  0 6px 20px 0 oklch(0.39 0.08 280 / 0.07), 0 3px 8px -3px oklch(0.39 0.08 280 / 0.05);
+  --shadow-lg:  0 10px 30px 0 oklch(0.39 0.08 280 / 0.06), 0 5px 10px -5px oklch(0.39 0.08 280 / 0.04);
+  --shadow-xl:  0 16px 40px 0 oklch(0.39 0.08 280 / 0.07), 0 8px 16px -8px oklch(0.39 0.08 280 / 0.04);
+  --shadow-2xl: 0 20px 50px 0 oklch(0.39 0.08 280 / 0.09);
 
   /* --- Border Radius --- */
   --radius: 0.625rem;
-
-  /* --- Spacing/Tracking --- */
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
@@ -123,7 +120,7 @@
   --accent: oklch(0.28 0.02 270);
   --accent-foreground: oklch(0.57 0.12 280);
 
-  --border: oklch(0.30 0.02 270);
+  --border: oklch(0.32 0.03 280);
   --input: oklch(0.25 0.02 270);
   --ring: oklch(0.57 0.12 280);
 
@@ -134,9 +131,9 @@
   --sidebar-foreground: oklch(0.85 0.003 260);
   --sidebar-primary: oklch(0.57 0.12 280);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.28 0.02 270);
+  --sidebar-accent: oklch(0.28 0.03 280);
   --sidebar-accent-foreground: oklch(0.57 0.12 280);
-  --sidebar-border: oklch(0.28 0.02 270);
+  --sidebar-border: oklch(0.32 0.03 280);
   --sidebar-ring: oklch(0.57 0.12 280);
   --sidebar-muted-foreground: oklch(0.60 0.005 260);
 
@@ -167,11 +164,11 @@
   --text-tertiary: oklch(0.70 0.005 260);
   --text-muted: oklch(0.55 0.005 260);
 
-  --shadow:     0 2px 6px 0 oklch(0.05 0.01 270 / 0.30), 0 1px 3px -1px oklch(0.05 0.01 270 / 0.20);
-  --shadow-md:  0 4px 8px 0 oklch(0.05 0.01 270 / 0.35), 0 2px 4px -2px oklch(0.05 0.01 270 / 0.20);
-  --shadow-lg:  0 8px 16px 0 oklch(0.05 0.01 270 / 0.30), 0 4px 6px -4px oklch(0.05 0.01 270 / 0.15);
-  --shadow-xl:  0 12px 24px 0 oklch(0.05 0.01 270 / 0.25);
-  --shadow-2xl: 0 16px 32px 0 oklch(0.05 0.01 270 / 0.35);
+  --shadow:     0 4px 16px 0 oklch(0.05 0.02 270 / 0.35), 0 2px 6px -2px oklch(0.05 0.02 270 / 0.20);
+  --shadow-md:  0 6px 20px 0 oklch(0.05 0.02 270 / 0.40), 0 3px 8px -3px oklch(0.05 0.02 270 / 0.25);
+  --shadow-lg:  0 10px 30px 0 oklch(0.05 0.02 270 / 0.35), 0 5px 10px -5px oklch(0.05 0.02 270 / 0.20);
+  --shadow-xl:  0 16px 40px 0 oklch(0.05 0.02 270 / 0.35);
+  --shadow-2xl: 0 20px 50px 0 oklch(0.05 0.02 270 / 0.45);
 
   --radius: 0.625rem;
   --tracking-normal: 0em;
@@ -179,7 +176,6 @@
 }
 
 @theme inline {
-  /* Base colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -213,7 +209,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Semantische Farben */
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-muted: var(--success-muted);
@@ -254,24 +249,21 @@
     @apply bg-background text-foreground;
   }
 
-  /* Text selection */
   ::selection {
     background: color-mix(in oklch, var(--primary) 15%, transparent);
     color: var(--foreground);
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: var(--border);
+    background: color-mix(in oklch, var(--border) 80%, transparent);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--muted-foreground);
   }
 
-  /* Keyframes */
   @keyframes shimmer {
     0%   { background-position: -200% 0; }
     100% { background-position:  200% 0; }
@@ -311,37 +303,66 @@
 }
 
 @layer components {
-  /* ─── Main Content Gradient ─────────────────────────────── */
+  /* ─── Hintergrund-Gradient (deutlicher, mehr Flieder) ────── */
   .main-gradient {
     background:
       linear-gradient(
-        180deg,
-        oklch(0.970 0.003 260) 0%,
-        oklch(0.958 0.005 270) 50%,
-        oklch(0.965 0.003 260) 100%
+        160deg,
+        oklch(0.982 0.016 295) 0%,
+        oklch(0.960 0.030 285) 45%,
+        oklch(0.974 0.014 290) 100%
       );
     min-height: 100%;
   }
   .dark .main-gradient {
     background:
       linear-gradient(
-        180deg,
-        oklch(0.18 0.02 270) 0%,
-        oklch(0.17 0.025 275) 50%,
-        oklch(0.18 0.02 270) 100%
+        160deg,
+        oklch(0.19 0.025 275) 0%,
+        oklch(0.17 0.030 280) 45%,
+        oklch(0.18 0.022 270) 100%
       );
   }
 
-  /* ─── Card shadows ──────────────────────────────────────── */
+  /* ─── Cards: kein Rahmen, nur Schatten ──────────────────── */
   [data-slot="card"] {
-    box-shadow: var(--shadow-sm);
-    border-color: color-mix(in oklch, var(--border) 60%, transparent);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    border: none;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s ease;
   }
   .card-interactive:hover [data-slot="card"],
   [data-slot="card"].card-interactive:hover {
     box-shadow: var(--shadow-md);
-    border-color: color-mix(in oklch, var(--border) 90%, transparent);
+  }
+
+  /* ─── Trennlinien heller ─────────────────────────────────── */
+  [data-slot="separator"],
+  hr {
+    background-color: color-mix(in oklch, var(--border) 50%, transparent) !important;
+  }
+
+  /* ─── Primary Button: leichter Verlauf ──────────────────── */
+  [data-slot="button"][data-variant="default"] {
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--primary) 82%, white) 0%,
+      var(--primary) 100%
+    );
+    background-color: transparent;
+  }
+  [data-slot="button"][data-variant="default"]:hover:not(:disabled) {
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--primary) 78%, white) 0%,
+      color-mix(in oklch, var(--primary) 93%, black) 100%
+    );
+  }
+  [data-slot="button"][data-variant="default"]:active:not(:disabled) {
+    background-image: linear-gradient(
+      180deg,
+      var(--primary) 0%,
+      color-mix(in oklch, var(--primary) 90%, black) 100%
+    );
   }
 
   /* ─── Micro-interactions ────────────────────────────────── */
@@ -356,7 +377,6 @@
     transform: translateY(0);
   }
 
-  /* ─── Sidebar active indicator ──────────────────────────── */
   .nav-link-active {
     position: relative;
   }
@@ -371,12 +391,8 @@
     background: var(--color-primary);
   }
 
-  /* ─── Button press ──────────────────────────────────────── */
-  .btn-press:active {
-    transform: scale(0.97);
-  }
+  .btn-press:active { transform: scale(0.97); }
 
-  /* ─── List item enter ───────────────────────────────────── */
   .list-item-enter {
     animation: page-enter 200ms ease-out both;
   }
