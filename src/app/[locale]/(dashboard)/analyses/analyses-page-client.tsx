@@ -6,7 +6,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import { toast } from 'sonner'
 import {
   Plus,
-  BarChart3,
+  AudioWaveform,
   Pencil,
   Archive,
   ArchiveRestore,
@@ -219,7 +219,7 @@ export function AnalysesPageClient({
       {/* Table */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
-          <BarChart3 className="text-muted-foreground mb-3 size-10" />
+          <AudioWaveform className="text-muted-foreground mb-3 size-10" />
           <p className="text-muted-foreground text-sm font-medium">
             {t('emptyTitle')}
           </p>

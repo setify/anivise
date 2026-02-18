@@ -1,5 +1,5 @@
 import {
-  BarChart3,
+  AudioWaveform,
   Bell,
   BookOpen,
   Building2,
@@ -66,7 +66,7 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
         key: 'analyses',
         labelKey: 'org.sidebar.analyses',
         href: '/analyses',
-        icon: BarChart3,
+        icon: AudioWaveform,
       },
       {
         key: 'employees',
