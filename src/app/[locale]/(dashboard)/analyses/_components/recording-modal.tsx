@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Mic, Square, AlertTriangle } from 'lucide-react'
+import { Mic, CirclePause, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -553,7 +553,7 @@ export function RecordingModal({
                   disabled={state === 'stopping'}
                   className="gap-2 px-8"
                 >
-                  <Square className="size-4" />
+                  <CirclePause className="size-4" />
                   {state === 'stopping' ? t('stopping') : t('stopButton')}
                 </Button>
               </div>
@@ -580,7 +580,7 @@ export function RecordingModal({
                 handleStop()
               }}
             >
-              <Square className="mr-2 size-3.5" />
+              <CirclePause className="mr-2 size-3.5" />
               {t('stopAndSave')}
             </Button>
           </DialogFooter>
