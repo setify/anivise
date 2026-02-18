@@ -214,7 +214,8 @@
       "userFooter": {
         "profile": "Profile",
         "logout": "Sign out"
-      }
+      },
+      "settingsDesign": "Design"
     },
     "organizations": "Organizations",
     "organizationsDescription": "Manage all organizations on the platform",
