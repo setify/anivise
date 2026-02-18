@@ -546,12 +546,15 @@ function DeepgramCard({ t }: { t: ReturnType<typeof useTranslations> }) {
   const [latency, setLatency] = useState<number | null>(null)
 
   useEffect(() => {
-    getIntegrationSecretsForUI('deepgram').then((secrets) => {
-      for (const s of secrets) {
-        if (s.key === 'api_key' && s.maskedValue) setApiKey(s.maskedValue)
-      }
-    })
+    loadSaved()
   }, [])
+
+  async function loadSaved() {
+    const secrets = await getIntegrationSecretsForUI('deepgram')
+    for (const s of secrets) {
+      if (s.key === 'api_key') setApiKey(s.maskedValue || '')
+    }
+  }
 
   function handleSave() {
     startTransition(async () => {
@@ -560,11 +563,7 @@ function DeepgramCard({ t }: { t: ReturnType<typeof useTranslations> }) {
       ])
       if (result.success) {
         toast.success(t('saved'))
-        // Reload masked value
-        const secrets = await getIntegrationSecretsForUI('deepgram')
-        for (const s of secrets) {
-          if (s.key === 'api_key' && s.maskedValue) setApiKey(s.maskedValue)
-        }
+        await loadSaved()
       } else {
         toast.error(result.error ?? 'Failed to save')
       }
