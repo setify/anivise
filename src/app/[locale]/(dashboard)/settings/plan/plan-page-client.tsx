@@ -83,68 +83,71 @@ export function PlanPageClient({
         </CardHeader>
       </Card>
 
-      {/* Team Seats */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t('seats')}</CardTitle>
-          <CardDescription>{t('seatsDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <PlanUsageBar
-            label={t('orgAdmins')}
-            current={overview.usage.orgAdmins}
-            limit={overview.limits.maxOrgAdmins}
-            unit={t('unitSeats')}
-          />
-          <PlanUsageBar
-            label={t('managers')}
-            current={overview.usage.managers}
-            limit={overview.limits.maxManagers}
-            unit={t('unitSeats')}
-          />
-          <PlanUsageBar
-            label={t('members')}
-            current={overview.usage.members}
-            limit={overview.limits.maxMembers}
-            unit={t('unitSeats')}
-          />
-        </CardContent>
-      </Card>
+      {/* Usage Cards – 2 columns */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {/* Team Seats */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{t('seats')}</CardTitle>
+            <CardDescription>{t('seatsDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <PlanUsageBar
+              label={t('orgAdmins')}
+              current={overview.usage.orgAdmins}
+              limit={overview.limits.maxOrgAdmins}
+              unit={t('unitSeats')}
+            />
+            <PlanUsageBar
+              label={t('managers')}
+              current={overview.usage.managers}
+              limit={overview.limits.maxManagers}
+              unit={t('unitSeats')}
+            />
+            <PlanUsageBar
+              label={t('members')}
+              current={overview.usage.members}
+              limit={overview.limits.maxMembers}
+              unit={t('unitSeats')}
+            />
+          </CardContent>
+        </Card>
 
-      {/* Feature Limits */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t('features')}</CardTitle>
-          <CardDescription>{t('featuresDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <PlanUsageBar
-            label={t('analysesThisMonth')}
-            current={overview.usage.analysesThisMonth}
-            limit={overview.limits.maxAnalysesPerMonth}
-            unit={t('unitUsed')}
-          />
-          <PlanUsageBar
-            label={t('activeForms')}
-            current={overview.usage.activeForms}
-            limit={overview.limits.maxForms}
-            unit={t('unitActive')}
-          />
-          <PlanUsageBar
-            label={t('submissionsThisMonth')}
-            current={overview.usage.formSubmissionsThisMonth}
-            limit={overview.limits.maxFormSubmissionsPerMonth}
-            unit={t('unitUsed')}
-          />
-          <PlanUsageBar
-            label={t('storage')}
-            current={0}
-            limit={overview.limits.maxStorageMb}
-            unit={t('unitUsed')}
-            formatValue={formatMb}
-          />
-        </CardContent>
-      </Card>
+        {/* Feature Limits */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{t('features')}</CardTitle>
+            <CardDescription>{t('featuresDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <PlanUsageBar
+              label={t('analysesThisMonth')}
+              current={overview.usage.analysesThisMonth}
+              limit={overview.limits.maxAnalysesPerMonth}
+              unit={t('unitUsed')}
+            />
+            <PlanUsageBar
+              label={t('activeForms')}
+              current={overview.usage.activeForms}
+              limit={overview.limits.maxForms}
+              unit={t('unitActive')}
+            />
+            <PlanUsageBar
+              label={t('submissionsThisMonth')}
+              current={overview.usage.formSubmissionsThisMonth}
+              limit={overview.limits.maxFormSubmissionsPerMonth}
+              unit={t('unitUsed')}
+            />
+            <PlanUsageBar
+              label={t('storage')}
+              current={0}
+              limit={overview.limits.maxStorageMb}
+              unit={t('unitUsed')}
+              formatValue={formatMb}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Info + Contact */}
       <div className="rounded-lg border p-4 space-y-3">

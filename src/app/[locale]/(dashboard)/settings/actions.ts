@@ -228,13 +228,17 @@ export async function saveBrandingSettings(
 
     const d = parsed.data
 
-    // Handle logo file upload
+    // Handle logo: file upload OR media library URL OR remove
     const logoFile = formData.get('logoFile') as File | null
+    const logoUrlFromMedia = formData.get('logoUrl') as string | null
     const removeLogo = formData.get('removeLogo') === 'true'
     let logoStoragePathUpdate: string | null | undefined = undefined
 
     if (removeLogo) {
       logoStoragePathUpdate = null
+    } else if (logoUrlFromMedia) {
+      // URL from org media library – store the URL directly as path
+      logoStoragePathUpdate = logoUrlFromMedia
     } else if (logoFile && logoFile.size > 0) {
       const adminSupabase = createAdminClient()
       const ext = logoFile.name.split('.').pop() ?? 'png'
@@ -258,13 +262,16 @@ export async function saveBrandingSettings(
       }
     }
 
-    // Handle favicon file upload
+    // Handle favicon: file upload OR media library URL OR remove
     const faviconFile = formData.get('faviconFile') as File | null
+    const faviconUrlFromMedia = formData.get('faviconUrl') as string | null
     const removeFavicon = formData.get('removeFavicon') === 'true'
     let faviconStoragePathUpdate: string | null | undefined = undefined
 
     if (removeFavicon) {
       faviconStoragePathUpdate = null
+    } else if (faviconUrlFromMedia) {
+      faviconStoragePathUpdate = faviconUrlFromMedia
     } else if (faviconFile && faviconFile.size > 0) {
       const adminSupabase = createAdminClient()
       const ext = faviconFile.name.split('.').pop() ?? 'png'

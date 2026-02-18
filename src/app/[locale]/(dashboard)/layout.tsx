@@ -91,7 +91,7 @@ export default async function DashboardLayout({
   const logoUrl = await getSetting('platform.logo_url')
 
   // Load org branding (CSS variables + favicon)
-  let brandingStyles: Record<string, string> = {}
+  let brandingCssVars: React.CSSProperties = {}
   let faviconUrl: string | null = null
   let orgLogoUrl: string | null = null
 
@@ -100,17 +100,19 @@ export default async function DashboardLayout({
     faviconUrl = branding.faviconUrl
     orgLogoUrl = branding.logoUrl
 
-    if (branding.primaryColor) {
-      brandingStyles = {
-        '--brand-primary': hexToHsl(branding.primaryColor),
-        ...(branding.accentColor ? { '--brand-accent': hexToHsl(branding.accentColor) } : {}),
-        ...(branding.backgroundColor ? { '--brand-background': hexToHsl(branding.backgroundColor) } : {}),
-        ...(branding.textColor ? { '--brand-foreground': hexToHsl(branding.textColor) } : {}),
-      }
-    }
-  }
+    // Always apply colors: use stored values or fall back to Anivise defaults
+    const primary = branding.primaryColor ?? '#6366f1'
+    const accent = branding.accentColor ?? '#f59e0b'
+    const bg = branding.backgroundColor ?? '#ffffff'
+    const fg = branding.textColor ?? '#1e293b'
 
-  const hasBranding = Object.keys(brandingStyles).length > 0
+    brandingCssVars = {
+      '--primary': hexToHsl(primary),
+      '--accent': hexToHsl(accent),
+      '--background': hexToHsl(bg),
+      '--foreground': hexToHsl(fg),
+    } as React.CSSProperties
+  }
 
   return (
     <>
@@ -120,16 +122,6 @@ export default async function DashboardLayout({
           <link rel="icon" href={faviconUrl} />
         </head>
       )}
-      {hasBranding && (
-        <style>{`
-          [data-org-dashboard] {
-            --primary: ${brandingStyles['--brand-primary'] ?? 'var(--primary)'};
-            ${brandingStyles['--brand-accent'] ? `--accent: ${brandingStyles['--brand-accent']};` : ''}
-            ${brandingStyles['--brand-background'] ? `--background: ${brandingStyles['--brand-background']};` : ''}
-            ${brandingStyles['--brand-foreground'] ? `--foreground: ${brandingStyles['--brand-foreground']};` : ''}
-          }
-        `}</style>
-      )}
       {impersonation && (
         <ImpersonationBanner
           orgId={impersonation.orgId}
@@ -137,7 +129,7 @@ export default async function DashboardLayout({
           role={impersonation.role}
         />
       )}
-      <div data-org-dashboard="">
+      <div data-org-dashboard="" style={brandingCssVars}>
         <AppShell
           user={userData}
           orgName={orgName}

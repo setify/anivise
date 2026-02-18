@@ -15,17 +15,21 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
-import { RotateCcw, Upload, X } from 'lucide-react'
+import { Images, RotateCcw, Upload, X } from 'lucide-react'
 import { BrandingPreview } from '@/components/org/branding-preview'
 import { saveBrandingSettings, type OrgBrandingData } from '../actions'
 import { isValidHex, normalizeHex } from '@/lib/branding/color-utils'
+import { OrgMediaPicker } from './org-media-picker'
 
+// Anivise default colors – must match globals.css / tailwind config
 const DEFAULT_COLORS = {
   primary: '#6366f1',
   accent: '#f59e0b',
   background: '#ffffff',
   text: '#1e293b',
 }
+
+// ─── Color Picker ─────────────────────────────────────────────────────────────
 
 interface ColorPickerProps {
   label: string
@@ -37,6 +41,11 @@ interface ColorPickerProps {
 function ColorPicker({ label, value, onChange, name }: ColorPickerProps) {
   const [inputVal, setInputVal] = useState(value)
 
+  // Sync when parent resets
+  if (inputVal !== value && isValidHex(value)) {
+    setInputVal(value)
+  }
+
   function handleTextChange(v: string) {
     setInputVal(v)
     const normalized = normalizeHex(v)
@@ -46,11 +55,6 @@ function ColorPicker({ label, value, onChange, name }: ColorPickerProps) {
   function handleColorInput(v: string) {
     setInputVal(v)
     onChange(v)
-  }
-
-  // Sync from parent changes
-  if (inputVal !== value && isValidHex(value)) {
-    setInputVal(value)
   }
 
   return (
@@ -78,6 +82,8 @@ function ColorPicker({ label, value, onChange, name }: ColorPickerProps) {
   )
 }
 
+// ─── Upload Zone ──────────────────────────────────────────────────────────────
+
 interface UploadZoneProps {
   label: string
   hint: string
@@ -86,9 +92,11 @@ interface UploadZoneProps {
   currentUrl: string | null
   previewMode?: 'logo' | 'favicon'
   onFileSelect: (file: File | null) => void
+  onUrlSelect: (url: string) => void
   onRemove: () => void
   removed: boolean
   fileSelected: File | null
+  selectedUrl: string | null
 }
 
 function UploadZone({
@@ -99,19 +107,24 @@ function UploadZone({
   currentUrl,
   previewMode = 'logo',
   onFileSelect,
+  onUrlSelect,
   onRemove,
   removed,
   fileSelected,
+  selectedUrl,
 }: UploadZoneProps) {
   const t = useTranslations('org.settings.branding')
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
+  const [mediaOpen, setMediaOpen] = useState(false)
 
   const previewSrc = fileSelected
     ? URL.createObjectURL(fileSelected)
+    : selectedUrl
+    ? selectedUrl
     : !removed
-      ? currentUrl
-      : null
+    ? currentUrl
+    : null
 
   function handleFile(file: File) {
     if (file.size > maxBytes) {
@@ -139,7 +152,7 @@ function UploadZone({
       )}
 
       <div
-        className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-sm transition-colors ${
+        className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-5 text-sm transition-colors ${
           dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-muted-foreground/50'
         }`}
         onClick={() => inputRef.current?.click()}
@@ -153,7 +166,7 @@ function UploadZone({
         }}
       >
         <Upload className="text-muted-foreground mb-2 size-5" />
-        <span className="text-muted-foreground">{t('dropOrClick')}</span>
+        <span className="text-muted-foreground text-xs">{t('dropOrClick')}</span>
         <input
           ref={inputRef}
           type="file"
@@ -166,21 +179,43 @@ function UploadZone({
         />
       </div>
 
-      {(previewSrc || fileSelected) && (
+      <div className="flex items-center gap-2">
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className="text-destructive hover:text-destructive"
-          onClick={onRemove}
+          onClick={() => setMediaOpen(true)}
         >
-          <X className="mr-1.5 size-3.5" />
-          {t('remove')}
+          <Images className="mr-1.5 size-3.5" />
+          Aus Mediathek
         </Button>
-      )}
+        {previewSrc && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="text-destructive hover:text-destructive"
+            onClick={onRemove}
+          >
+            <X className="mr-1.5 size-3.5" />
+            {t('remove')}
+          </Button>
+        )}
+      </div>
+
+      <OrgMediaPicker
+        open={mediaOpen}
+        onOpenChange={setMediaOpen}
+        onSelect={(url) => {
+          onUrlSelect(url)
+          setMediaOpen(false)
+        }}
+      />
     </div>
   )
 }
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 interface Props {
   data: OrgBrandingData
@@ -199,8 +234,11 @@ export function BrandingClient({ data, orgName }: Props) {
   const [emailFooter, setEmailFooter] = useState(data.emailFooterText ?? '')
 
   const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [removeLogo, setRemoveLogo] = useState(false)
+
   const [faviconFile, setFaviconFile] = useState<File | null>(null)
+  const [faviconUrl, setFaviconUrl] = useState<string | null>(null)
   const [removeFavicon, setRemoveFavicon] = useState(false)
 
   function resetColors() {
@@ -213,10 +251,20 @@ export function BrandingClient({ data, orgName }: Props) {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
-    if (logoFile) fd.set('logoFile', logoFile)
-    else if (removeLogo) fd.set('removeLogo', 'true')
-    if (faviconFile) fd.set('faviconFile', faviconFile)
-    else if (removeFavicon) fd.set('removeFavicon', 'true')
+    if (logoFile) {
+      fd.set('logoFile', logoFile)
+    } else if (logoUrl) {
+      fd.set('logoUrl', logoUrl)
+    } else if (removeLogo) {
+      fd.set('removeLogo', 'true')
+    }
+    if (faviconFile) {
+      fd.set('faviconFile', faviconFile)
+    } else if (faviconUrl) {
+      fd.set('faviconUrl', faviconUrl)
+    } else if (removeFavicon) {
+      fd.set('removeFavicon', 'true')
+    }
 
     startTransition(async () => {
       const result = await saveBrandingSettings(fd)
@@ -253,10 +301,12 @@ export function BrandingClient({ data, orgName }: Props) {
                   maxBytes={2 * 1024 * 1024}
                   currentUrl={data.logoPublicUrl}
                   previewMode="logo"
-                  onFileSelect={(f) => { setLogoFile(f); setRemoveLogo(false) }}
-                  onRemove={() => { setLogoFile(null); setRemoveLogo(true) }}
+                  onFileSelect={(f) => { setLogoFile(f); setLogoUrl(null); setRemoveLogo(false) }}
+                  onUrlSelect={(url) => { setLogoUrl(url); setLogoFile(null); setRemoveLogo(false) }}
+                  onRemove={() => { setLogoFile(null); setLogoUrl(null); setRemoveLogo(true) }}
                   removed={removeLogo}
                   fileSelected={logoFile}
+                  selectedUrl={logoUrl}
                 />
               </CardContent>
             </Card>
@@ -275,10 +325,12 @@ export function BrandingClient({ data, orgName }: Props) {
                   maxBytes={500 * 1024}
                   currentUrl={data.faviconPublicUrl}
                   previewMode="favicon"
-                  onFileSelect={(f) => { setFaviconFile(f); setRemoveFavicon(false) }}
-                  onRemove={() => { setFaviconFile(null); setRemoveFavicon(true) }}
+                  onFileSelect={(f) => { setFaviconFile(f); setFaviconUrl(null); setRemoveFavicon(false) }}
+                  onUrlSelect={(url) => { setFaviconUrl(url); setFaviconFile(null); setRemoveFavicon(false) }}
+                  onRemove={() => { setFaviconFile(null); setFaviconUrl(null); setRemoveFavicon(true) }}
                   removed={removeFavicon}
                   fileSelected={faviconFile}
+                  selectedUrl={faviconUrl}
                 />
               </CardContent>
             </Card>
@@ -338,13 +390,7 @@ export function BrandingClient({ data, orgName }: Props) {
               accentColor={accent}
               backgroundColor={background}
               textColor={textColor}
-              logoUrl={
-                logoFile
-                  ? URL.createObjectURL(logoFile)
-                  : !removeLogo
-                    ? data.logoPublicUrl
-                    : null
-              }
+              logoUrl={logoUrl ?? (logoFile ? URL.createObjectURL(logoFile) : !removeLogo ? data.logoPublicUrl : null)}
               orgName={orgName}
             />
           </div>
