@@ -398,6 +398,56 @@ export async function loadFromEnv(service: string): Promise<{
   }
 }
 
+export async function testDeepgramConnection(): Promise<{
+  success: boolean
+  latency?: number
+  error?: string
+}> {
+  const currentUser = await requirePlatformRole('superadmin')
+
+  const start = Date.now()
+  try {
+    const apiKey = await getIntegrationSecret('deepgram', 'api_key')
+
+    if (!apiKey) {
+      return { success: false, error: 'Deepgram API key not configured' }
+    }
+
+    // Test by hitting Deepgram's /v1/listen endpoint with a minimal request
+    const response = await fetch('https://api.deepgram.com/v1/projects', {
+      headers: { Authorization: `Token ${apiKey}` },
+      signal: AbortSignal.timeout(10000),
+    })
+
+    const latency = Date.now() - start
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'integration_secrets',
+      metadata: {
+        service: 'deepgram',
+        action: 'integration.connection_tested',
+        success: response.ok,
+        latency,
+      },
+    })
+
+    if (response.ok) {
+      return { success: true, latency }
+    }
+    return { success: false, latency, error: `HTTP ${response.status}` }
+  } catch (err) {
+    const latency = Date.now() - start
+    return {
+      success: false,
+      latency,
+      error: err instanceof Error ? err.message : 'Connection failed',
+    }
+  }
+}
+
 export async function getVercelInfo() {
   await requirePlatformRole('staff')
 

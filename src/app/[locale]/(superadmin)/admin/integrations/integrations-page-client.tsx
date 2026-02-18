@@ -33,6 +33,7 @@ import {
   testSupabaseConnection,
   testResendConnection,
   testN8nConnection,
+  testDeepgramConnection,
   sendTestEmail,
   rotateN8nSecret,
   loadFromEnv,
@@ -559,21 +560,27 @@ function DeepgramCard({ t }: { t: ReturnType<typeof useTranslations> }) {
       ])
       if (result.success) {
         toast.success(t('saved'))
+        // Reload masked value
+        const secrets = await getIntegrationSecretsForUI('deepgram')
+        for (const s of secrets) {
+          if (s.key === 'api_key' && s.maskedValue) setApiKey(s.maskedValue)
+        }
       } else {
-        toast.error(result.error ?? t('error'))
+        toast.error(result.error ?? 'Failed to save')
       }
     })
   }
 
   async function handleTest() {
     setStatus('testing')
-    const start = Date.now()
     try {
-      const res = await fetch('/api/recordings/deepgram-key', { method: 'POST' })
-      setLatency(Date.now() - start)
-      setStatus(res.ok ? 'connected' : 'error')
+      const result = await testDeepgramConnection()
+      setLatency(result.latency ?? null)
+      setStatus(result.success ? 'connected' : 'error')
+      if (!result.success && result.error) {
+        toast.error(result.error)
+      }
     } catch {
-      setLatency(Date.now() - start)
       setStatus('error')
     }
   }
