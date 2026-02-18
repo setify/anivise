@@ -3,6 +3,7 @@ import { eq, and } from 'drizzle-orm'
 import { AppShell } from '@/components/layout/app-shell'
 import { getImpersonation } from '@/lib/auth/impersonation'
 import { ImpersonationBanner } from '@/components/layout/impersonation-banner'
+import { DynamicFavicon } from '@/components/shared/dynamic-favicon'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/db'
 import { users, organizations, organizationMembers } from '@/lib/db/schema'
@@ -113,12 +114,7 @@ export default async function DashboardLayout({
 
   return (
     <>
-      {faviconUrl && (
-        // eslint-disable-next-line @next/next/no-head-element
-        <head>
-          <link rel="icon" href={faviconUrl} />
-        </head>
-      )}
+      {faviconUrl && <DynamicFavicon href={faviconUrl} />}
       {impersonation && (
         <ImpersonationBanner
           orgId={impersonation.orgId}
