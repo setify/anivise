@@ -18,11 +18,12 @@ function Switch({
         "transition-colors duration-200",
         "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        // Inaktiv: weißer Background, sichtbarer Rahmen
-        "border-2 border-input bg-white",
-        "dark:bg-muted dark:border-muted-foreground/40",
-        // Aktiv: Primary Background, Rahmen in Primary
-        "data-[state=checked]:bg-primary data-[state=checked]:border-primary",
+        // Track: immer weißer Hintergrund
+        "border-2 bg-white dark:bg-muted",
+        // Inaktiv: dezenter grauer Rahmen
+        "border-input dark:border-muted-foreground/40",
+        // Aktiv: Primary-Rahmen
+        "data-[state=checked]:border-primary dark:data-[state=checked]:border-primary",
         className
       )}
       {...props}
@@ -36,10 +37,9 @@ function Switch({
           "data-[state=unchecked]:translate-x-0",
           "data-[state=checked]:translate-x-5",
           // Inaktiv: grauer Kreis
-          "bg-muted-foreground/40",
-          "dark:bg-muted-foreground/60",
-          // Aktiv: weißer Kreis
-          "data-[state=checked]:bg-white",
+          "bg-muted-foreground/40 dark:bg-muted-foreground/60",
+          // Aktiv: Primary-Kreis
+          "data-[state=checked]:bg-primary",
         )}
       />
     </SwitchPrimitive.Root>
