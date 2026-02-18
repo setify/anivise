@@ -20,6 +20,7 @@ import type {
   products,
   organizationProducts,
   mediaFiles,
+  organizationNotificationSettings,
 } from '@/lib/db/schema'
 
 // Organization
@@ -110,6 +111,10 @@ export type MediaContext =
   | 'org_logo'
   | 'report_asset'
   | 'general'
+
+// Organization Notification Settings
+export type OrganizationNotificationSettings = InferSelectModel<typeof organizationNotificationSettings>
+export type NewOrganizationNotificationSettings = InferInsertModel<typeof organizationNotificationSettings>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

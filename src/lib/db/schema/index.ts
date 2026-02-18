@@ -40,3 +40,4 @@ export {
 } from './forms'
 export { products, organizationProducts } from './products'
 export { mediaFiles } from './media-files'
+export { organizationNotificationSettings } from './organization-notification-settings'

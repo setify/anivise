@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.8.0] - 2026-02-18
+### Added
+- **Org Settings: Mediathek** (`/settings/media`): Eigene Org-Dateien in Supabase Storage — Grid/Listen-Ansicht, Upload (10 MB, drag & drop, 8 Typen), Löschen mit Verwendungs-Check, Speicher-Fortschrittsbalken (PlanUsageBar). Alle Actions org-isoliert (contextEntityId = orgId).
+- **Org Settings: Benachrichtigungen** (`/settings/notifications`): 11 konfigurierbare Notification-Typen in 5 Gruppen (Limits, Analysen, Team, Formulare, System) mit Switch-Toggles. Upsert in `organization_notification_settings` Tabelle. "Zuletzt geändert von" Anzeige.
+- **Org Settings: Integrationen** (`/settings/integrations`): Aufgewerteter Platzhalter mit 3 Integrations-Karten (HR-Systeme, Webhooks, API), "In Entwicklung" Badge, "Benachrichtigen wenn verfügbar" als mailto-Link.
+- **`organization_notification_settings` DB-Tabelle**: 11 boolean Felder mit Defaults, unique auf org_id, updatedBy/updatedAt tracking.
+- **`src/lib/notifications/should-notify.ts`**: `shouldNotifyOrg(orgId, type)` und `getNotificationSettings(orgId)` — beide fallen auf Defaults zurück wenn kein Row existiert. Bereit für alle zukünftigen Notification-Trigger.
+- DB migration `0004_cheerful_mister_fear.sql`: `organization_notification_settings` Tabelle.
+- i18n: `org.settings.media`, `org.settings.notifications`, `org.settings.integrations` Namespaces (DE + EN).
+
 ## [1.7.0] - 2026-02-18
 ### Added
 - **Org Settings: General** (`/settings`): View/edit mode for org info — company name, address (street, zip, city, country with EU select), contact (phone, email, website with auto-https), business data (VAT ID, industry with Combobox + freetext). Subdomain shown as read-only with lock tooltip. Server action `updateOrgGeneralSettings` with Zod validation and audit logging.

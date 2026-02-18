@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.7.0
+**Version:** 1.8.0
 **Last Updated:** 2026-02-18
-**Last Commit:** feat(org): add organization settings for general info, plan view and branding with live preview
+**Last Commit:** feat(org): add media library, notification settings and integrations placeholder
 
 ## What's Implemented
 
@@ -151,6 +151,12 @@
 - [x] `src/components/org/branding-preview.tsx`: live branding preview with WCAG warnings
 - [x] `src/components/ui/combobox.tsx`: searchable combobox with freetext
 - [x] Platform setting: `contact.upgrade_email`
+- [x] Settings > Mediathek (`/settings/media`): grid/list, upload 10 MB, löschen mit Verwendungs-Check, Speicher-Progress
+- [x] Settings > Benachrichtigungen (`/settings/notifications`): 11 Toggles in 5 Gruppen, Upsert in organization_notification_settings
+- [x] Settings > Integrationen (`/settings/integrations`): aufgewerteter Platzhalter mit 3 Karten + mailto-Button
+- [x] DB: `organization_notification_settings` Tabelle (11 boolean Felder, unique on org_id)
+- [x] `src/lib/notifications/should-notify.ts`: shouldNotifyOrg() + getNotificationSettings() mit Defaults
+- [x] i18n: org.settings.media/notifications/integrations Namespaces (DE + EN)
 
 ### UX Polish
 - [x] Skeleton loading system (5 composites: Table, Card, Form, Detail, Stats) with shimmer animation
