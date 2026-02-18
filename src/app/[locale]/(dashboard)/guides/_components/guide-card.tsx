@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { GuideIcon } from './icon-picker'
+import { getFileTypeBadge, formatFileSize } from './guide-utils'
 import { getGuideDownloadUrl } from '../actions'
 import type { GuideRow } from '../actions'
 
@@ -21,20 +22,6 @@ interface GuideCardProps {
   isAdmin: boolean
   onEdit: (guide: GuideRow) => void
   onDelete: (guide: GuideRow) => void
-}
-
-function getFileTypeBadge(mimeType: string): string {
-  if (mimeType === 'application/pdf') return 'PDF'
-  if (mimeType.includes('wordprocessingml')) return 'Word'
-  if (mimeType.includes('spreadsheetml')) return 'Excel'
-  if (mimeType.includes('presentationml')) return 'PowerPoint'
-  return 'File'
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export function GuideCard({ guide, isAdmin, onEdit, onDelete }: GuideCardProps) {

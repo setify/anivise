@@ -1608,9 +1608,19 @@
       "description": "Documents, guides and resources for your team.",
       "addGuide": "New Guide",
       "search": "Search guides...",
+      "viewGrid": "Grid view",
+      "viewTable": "Table view",
       "emptyTitle": "No guides yet",
       "emptyDescription": "Create your first guide to share documents with your team.",
       "uncategorized": "General",
+      "table": {
+        "category": "Category",
+        "type": "Type",
+        "size": "Size",
+        "access": "Access",
+        "managers": "Managers",
+        "employees": "Employees"
+      },
       "fileTypes": {
         "pdf": "PDF",
         "docx": "Word",

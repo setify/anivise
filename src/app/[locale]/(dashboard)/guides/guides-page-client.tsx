@@ -2,13 +2,17 @@
 
 import { useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { Plus, BookOpen } from 'lucide-react'
+import { Plus, BookOpen, LayoutGrid, List } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Toggle } from '@/components/ui/toggle'
 import { GuideCard } from './_components/guide-card'
+import { GuideTable } from './_components/guide-table'
 import { GuideFormDialog } from './_components/guide-form-dialog'
 import { DeleteGuideDialog } from './_components/delete-guide-dialog'
 import type { GuideRow, GuideCategoryRow } from './actions'
+
+type ViewMode = 'grid' | 'table'
 
 interface GuidesPageClientProps {
   guides: GuideRow[]
@@ -23,6 +27,7 @@ export function GuidesPageClient({
 }: GuidesPageClientProps) {
   const t = useTranslations('org.guides')
   const [search, setSearch] = useState('')
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [formOpen, setFormOpen] = useState(false)
   const [editGuide, setEditGuide] = useState<GuideRow | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<GuideRow | null>(null)
@@ -39,7 +44,7 @@ export function GuidesPageClient({
     )
   }, [guides, search])
 
-  // Group by category
+  // Group by category (for grid view)
   const grouped = useMemo(() => {
     const map = new Map<string, { label: string; guides: GuideRow[] }>()
 
@@ -52,7 +57,6 @@ export function GuidesPageClient({
       map.get(key)!.guides.push(guide)
     }
 
-    // Sort: named categories first (alphabetically), uncategorized last
     const entries = Array.from(map.entries())
     entries.sort((a, b) => {
       if (a[0] === '__uncategorized__') return 1
@@ -89,14 +93,36 @@ export function GuidesPageClient({
         )}
       </div>
 
-      {/* Search */}
+      {/* Search + View Toggle */}
       {guides.length > 0 && (
-        <Input
-          placeholder={t('search')}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder={t('search')}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-sm"
+          />
+          <div className="border-border ml-auto flex rounded-md border">
+            <Toggle
+              size="sm"
+              pressed={viewMode === 'grid'}
+              onPressedChange={() => setViewMode('grid')}
+              aria-label={t('viewGrid')}
+              className="rounded-r-none"
+            >
+              <LayoutGrid className="size-4" />
+            </Toggle>
+            <Toggle
+              size="sm"
+              pressed={viewMode === 'table'}
+              onPressedChange={() => setViewMode('table')}
+              aria-label={t('viewTable')}
+              className="rounded-l-none"
+            >
+              <List className="size-4" />
+            </Toggle>
+          </div>
+        </div>
       )}
 
       {/* Content */}
@@ -110,6 +136,13 @@ export function GuidesPageClient({
             {t('emptyDescription')}
           </p>
         </div>
+      ) : viewMode === 'table' ? (
+        <GuideTable
+          guides={filtered}
+          isAdmin={isAdmin}
+          onEdit={handleEdit}
+          onDelete={setDeleteTarget}
+        />
       ) : (
         <div className="space-y-8">
           {grouped.map((group) => (
