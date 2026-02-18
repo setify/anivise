@@ -2,19 +2,20 @@
 
 import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 import {
   Mic,
   Clock,
   ChevronDown,
   ChevronRight,
   Play,
-  Pause,
   Square,
+  Trash2,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getRecordingAudioUrl } from '../actions'
+import { getRecordingAudioUrl, deleteRecording } from '../actions'
 import type { RecordingRow } from '../actions'
 
 interface RecordingsListProps {
@@ -158,19 +159,33 @@ export function RecordingsList({ recordings }: RecordingsListProps) {
                 </div>
               </div>
 
-              {/* Expand toggle */}
-              <button
-                className="text-muted-foreground shrink-0 p-1"
-                onClick={() =>
-                  setExpandedId(expandedId === rec.id ? null : rec.id)
-                }
-              >
-                {expandedId === rec.id ? (
-                  <ChevronDown className="size-4" />
-                ) : (
-                  <ChevronRight className="size-4" />
-                )}
-              </button>
+              {/* Actions */}
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-destructive size-7 shrink-0"
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    const result = await deleteRecording(rec.id)
+                    if (result.success) toast.success('Gelöscht')
+                  }}
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+                <button
+                  className="text-muted-foreground shrink-0 p-1"
+                  onClick={() =>
+                    setExpandedId(expandedId === rec.id ? null : rec.id)
+                  }
+                >
+                  {expandedId === rec.id ? (
+                    <ChevronDown className="size-4" />
+                  ) : (
+                    <ChevronRight className="size-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Transcript */}

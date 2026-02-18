@@ -776,6 +776,39 @@ export type RecordingRow = Awaited<ReturnType<typeof getAnalysisRecordings>>[num
 
 // ─── Deepgram ───────────────────────────────────────────────────────
 
+/** Delete a recording. */
+export async function deleteRecording(recordingId: string) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false, error: 'unauthorized' }
+
+  const [recording] = await db
+    .select()
+    .from(analysisRecordings)
+    .where(eq(analysisRecordings.id, recordingId))
+    .limit(1)
+
+  if (!recording) return { success: false, error: 'not_found' }
+
+  // Delete files from storage
+  if (recording.storagePath) {
+    const { createAdminClient } = await import('@/lib/supabase/admin')
+    const adminSupabase = createAdminClient()
+    const { data: files } = await adminSupabase.storage
+      .from('org-assets')
+      .list(recording.storagePath)
+    if (files && files.length > 0) {
+      await adminSupabase.storage
+        .from('org-assets')
+        .remove(files.map((f) => `${recording.storagePath}/${f.name}`))
+    }
+  }
+
+  await db.delete(analysisRecordings).where(eq(analysisRecordings.id, recordingId))
+
+  revalidatePath(`/analyses/${recording.analysisId}`)
+  return { success: true }
+}
+
 /** Upload an audio chunk to storage. */
 export async function uploadRecordingChunk(
   recordingId: string,
