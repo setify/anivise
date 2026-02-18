@@ -35,7 +35,7 @@
   --accent-foreground: oklch(0.39 0.08 280);
 
   /* --- Borders & Inputs --- */
-  --border: oklch(0.87 0.018 290);            /* Lila-Stich, heller */
+  --border: oklch(0.91 0.014 290);            /* Lila-Stich, heller */
   --input: oklch(1 0 0);
   --ring: oklch(0.57 0.08 280);
 
@@ -246,7 +246,27 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: hsla(204, 0%, 100%, 1);
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 1500 1500' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+      radial-gradient(circle at 12.66% 88.32%, hsla(240, 23%, 86%, 0.46) 4.09%, transparent 93.51%),
+      radial-gradient(circle at 35.30% 25.94%, hsla(240, 0%, 100%, 1) 4.09%, transparent 93.51%),
+      radial-gradient(circle at 49.21% 61.59%, hsla(240, 81%, 97%, 1) 4.09%, transparent 93.51%),
+      radial-gradient(circle at 84.05% 8.26%, hsla(240, 17%, 53%, 0.62) 4.09%, transparent 93.51%);
+    background-blend-mode: overlay, normal, normal, normal, normal;
+    background-attachment: fixed;
+  }
+  .dark body {
+    background-color: var(--background);
+    background-image: none;
+    background-blend-mode: normal;
+  }
+  h1 {
+    color: #1a1a3e;
+  }
+  .dark h1 {
+    color: oklch(0.90 0.003 260);
   }
 
   ::selection {
@@ -303,15 +323,11 @@
 }
 
 @layer components {
-  /* ─── Hintergrund-Gradient (deutlicher, mehr Flieder) ────── */
+  /* ─── Hintergrund-Gradient (Noise + Flieder Radials) ─────── */
+  /* Previous design (kept as reference):
+     background: linear-gradient(160deg, oklch(0.982 0.016 295) 0%, oklch(0.960 0.030 285) 45%, oklch(0.974 0.014 290) 100%);
+  */
   .main-gradient {
-    background:
-      linear-gradient(
-        160deg,
-        oklch(0.982 0.016 295) 0%,
-        oklch(0.960 0.030 285) 45%,
-        oklch(0.974 0.014 290) 100%
-      );
     min-height: 100%;
   }
   .dark .main-gradient {
