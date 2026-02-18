@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 
 export interface PlatformSettings {
   'platform.name': string
+  'platform.logo_url': string
   'platform.default_locale': 'de' | 'en'
   'platform.default_product_id': string
   'invitation.expiry_days': number
@@ -41,6 +42,7 @@ export const EMAIL_LAYOUT_DEFAULTS = {
 
 const DEFAULTS: PlatformSettings = {
   'platform.name': 'Anivise',
+  'platform.logo_url': '',
   'platform.default_locale': 'de',
   'platform.default_product_id': '',
   'invitation.expiry_days': 7,

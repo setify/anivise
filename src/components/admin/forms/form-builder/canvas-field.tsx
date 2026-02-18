@@ -44,17 +44,18 @@ export function CanvasField({
   }
 
   const def = FIELD_TYPE_DEFINITIONS.find((d) => d.type === field.type)
+  const Icon = def?.icon
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group relative rounded-lg border bg-card transition-all',
+        'group relative rounded-lg border bg-card shadow-sm transition-all',
         isSelected
           ? 'border-primary/50 bg-primary/5 ring-primary/20 ring-1'
-          : 'hover:border-muted-foreground/30',
-        isDragging && 'z-50 shadow-lg opacity-90'
+          : 'hover:border-muted-foreground/30 hover:shadow-md',
+        isDragging && 'z-50 rotate-[1.5deg] scale-[1.02] shadow-xl opacity-90'
       )}
       onClick={(e) => {
         e.stopPropagation()
@@ -70,7 +71,7 @@ export function CanvasField({
         >
           <GripVertical className="size-4" />
         </button>
-        <span className="text-sm">{def?.icon}</span>
+        {Icon && <Icon className="text-muted-foreground size-4 shrink-0" />}
         <span className="text-muted-foreground truncate text-xs">
           {t(`fieldNames.${def?.labelKey ?? field.type}`)}
         </span>

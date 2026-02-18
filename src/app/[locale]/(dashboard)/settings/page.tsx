@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { Building2 } from 'lucide-react'
 
-export default function SettingsPage() {
-  const t = useTranslations('settings')
+export default function SettingsGeneralPage() {
+  const t = useTranslations('org.settingsGeneral')
 
   return (
     <div className="space-y-6">
@@ -18,47 +18,22 @@ export default function SettingsPage() {
         <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('profile')}</CardTitle>
-            <CardDescription>{t('profileDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-sm">
-              {t('comingSoon')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Separator />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('organization')}</CardTitle>
-            <CardDescription>{t('organizationDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-sm">
-              {t('comingSoon')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Separator />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('notifications')}</CardTitle>
-            <CardDescription>{t('notificationsDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-sm">
-              {t('comingSoon')}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Building2 className="text-muted-foreground size-5" />
+            <div>
+              <CardTitle>{t('orgInfo')}</CardTitle>
+              <CardDescription>{t('orgInfoDescription')}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground text-sm">
+            {t('comingSoon')}
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }

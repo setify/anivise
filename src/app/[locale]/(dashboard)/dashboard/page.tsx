@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart3, FileText, Users, Clock } from 'lucide-react'
 import { PlanWidget } from './plan-widget'
-import { getOrgPlanOverview } from '../plan/actions'
+import { getOrgPlanOverview } from '../settings/plan/actions'
 
 export default async function DashboardPage() {
   const overview = await getOrgPlanOverview()

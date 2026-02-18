@@ -23,7 +23,7 @@ export function FieldSettings({ field, stepId, allFields, dispatch }: FieldSetti
 
   if (!field) {
     return (
-      <div className="flex h-full w-80 flex-col border-l">
+      <div className="bg-card flex h-full w-80 flex-col border-l shadow-sm">
         <div className="flex flex-1 items-center justify-center p-6">
           <p className="text-muted-foreground text-center text-sm">
             {t('selectFieldHint')}
@@ -34,6 +34,7 @@ export function FieldSettings({ field, stepId, allFields, dispatch }: FieldSetti
   }
 
   const def = FIELD_TYPE_DEFINITIONS.find((d) => d.type === field.type)
+  const FieldIcon = def?.icon
   const hasOptions = field.type === 'radio' || field.type === 'checkbox'
   const isHidden = field.type === 'hidden'
 
@@ -47,11 +48,11 @@ export function FieldSettings({ field, stepId, allFields, dispatch }: FieldSetti
   }
 
   return (
-    <div className="flex h-full w-80 flex-col border-l">
+    <div className="bg-card flex h-full w-80 flex-col border-l shadow-sm">
       {/* Header */}
       <div className="border-b px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-base">{def?.icon}</span>
+          {FieldIcon && <FieldIcon className="text-muted-foreground size-4" />}
           <span className="text-sm font-semibold">
             {t(`fieldNames.${def?.labelKey ?? field.type}`)}
           </span>

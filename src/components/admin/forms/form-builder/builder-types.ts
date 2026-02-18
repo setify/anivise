@@ -1,4 +1,18 @@
+import type { ComponentType } from 'react'
 import type { FormSchema, FormStep, FormField, FieldType, FieldConfig } from '@/types/form-schema'
+import {
+  TextCursorInput,
+  AlignLeft,
+  Mail,
+  Phone,
+  CircleDot,
+  SquareCheck,
+  BarChart3,
+  Star,
+  Hash,
+  Calendar,
+  EyeOff,
+} from 'lucide-react'
 
 export type BuilderAction =
   | { type: 'ADD_FIELD'; stepId: string; field: FormField; index: number }
@@ -23,27 +37,27 @@ export interface BuilderState {
 export interface FieldTypeDefinition {
   type: FieldType
   labelKey: string
-  icon: string
+  icon: ComponentType<{ className?: string }>
   category: 'text' | 'selection' | 'rating' | 'other'
   defaultConfig: FieldConfig
 }
 
 export const FIELD_TYPE_DEFINITIONS: FieldTypeDefinition[] = [
   // Text fields
-  { type: 'text', labelKey: 'text', icon: '📝', category: 'text', defaultConfig: { type: 'text' } },
-  { type: 'textarea', labelKey: 'textarea', icon: '📄', category: 'text', defaultConfig: { type: 'textarea', rows: 4 } },
-  { type: 'email', labelKey: 'email', icon: '📧', category: 'text', defaultConfig: { type: 'email' } },
-  { type: 'phone', labelKey: 'phone', icon: '📱', category: 'text', defaultConfig: { type: 'phone' } },
+  { type: 'text', labelKey: 'text', icon: TextCursorInput, category: 'text', defaultConfig: { type: 'text' } },
+  { type: 'textarea', labelKey: 'textarea', icon: AlignLeft, category: 'text', defaultConfig: { type: 'textarea', rows: 4 } },
+  { type: 'email', labelKey: 'email', icon: Mail, category: 'text', defaultConfig: { type: 'email' } },
+  { type: 'phone', labelKey: 'phone', icon: Phone, category: 'text', defaultConfig: { type: 'phone' } },
   // Selection fields
-  { type: 'radio', labelKey: 'radio', icon: '🔘', category: 'selection', defaultConfig: { type: 'radio', options: [{ id: '1', label: 'Option 1', value: 'option_1' }, { id: '2', label: 'Option 2', value: 'option_2' }] } },
-  { type: 'checkbox', labelKey: 'checkbox', icon: '☑️', category: 'selection', defaultConfig: { type: 'checkbox', options: [{ id: '1', label: 'Option 1', value: 'option_1' }, { id: '2', label: 'Option 2', value: 'option_2' }] } },
+  { type: 'radio', labelKey: 'radio', icon: CircleDot, category: 'selection', defaultConfig: { type: 'radio', options: [{ id: '1', label: 'Option 1', value: 'option_1' }, { id: '2', label: 'Option 2', value: 'option_2' }] } },
+  { type: 'checkbox', labelKey: 'checkbox', icon: SquareCheck, category: 'selection', defaultConfig: { type: 'checkbox', options: [{ id: '1', label: 'Option 1', value: 'option_1' }, { id: '2', label: 'Option 2', value: 'option_2' }] } },
   // Rating fields
-  { type: 'csat', labelKey: 'csat', icon: '📊', category: 'rating', defaultConfig: { type: 'csat', scale: 10 } },
-  { type: 'rating', labelKey: 'rating', icon: '⭐', category: 'rating', defaultConfig: { type: 'rating', maxStars: 5 } },
+  { type: 'csat', labelKey: 'csat', icon: BarChart3, category: 'rating', defaultConfig: { type: 'csat', scale: 10 } },
+  { type: 'rating', labelKey: 'rating', icon: Star, category: 'rating', defaultConfig: { type: 'rating', maxStars: 5 } },
   // Other fields
-  { type: 'number', labelKey: 'number', icon: '🔢', category: 'other', defaultConfig: { type: 'number' } },
-  { type: 'date', labelKey: 'date', icon: '📅', category: 'other', defaultConfig: { type: 'date' } },
-  { type: 'hidden', labelKey: 'hidden', icon: '👁️', category: 'other', defaultConfig: { type: 'hidden' } },
+  { type: 'number', labelKey: 'number', icon: Hash, category: 'other', defaultConfig: { type: 'number' } },
+  { type: 'date', labelKey: 'date', icon: Calendar, category: 'other', defaultConfig: { type: 'date' } },
+  { type: 'hidden', labelKey: 'hidden', icon: EyeOff, category: 'other', defaultConfig: { type: 'hidden' } },
 ]
 
 export function createDefaultField(type: FieldType): FormField {

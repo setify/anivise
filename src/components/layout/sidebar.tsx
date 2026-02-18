@@ -26,9 +26,10 @@ interface NavItem {
 interface SidebarProps {
   user?: { displayName: string | null; email: string; avatarUrl: string | null } | null
   orgName?: string | null
+  logoUrl?: string
 }
 
-export function Sidebar({ user, orgName }: SidebarProps) {
+export function Sidebar({ user, orgName, logoUrl }: SidebarProps) {
   const t = useTranslations('nav')
   const locale = useLocale()
   const pathname = usePathname()
@@ -70,7 +71,16 @@ export function Sidebar({ user, orgName }: SidebarProps) {
     <div className="flex h-full flex-col">
       <div className="flex h-14 items-center border-b px-4">
         <Link href={`/${locale}/dashboard`} className="flex items-center gap-2">
-          <span className="text-lg font-semibold">Anivise</span>
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logoUrl}
+              alt="Logo"
+              className="max-h-8 max-w-[120px] object-contain"
+            />
+          ) : (
+            <span className="text-lg font-semibold">Anivise</span>
+          )}
         </Link>
       </div>
 

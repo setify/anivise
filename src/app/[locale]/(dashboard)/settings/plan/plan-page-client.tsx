@@ -40,7 +40,7 @@ function UsageBar({
       <div className="flex items-center justify-between text-sm">
         <span className="text-muted-foreground">{label}</span>
         <span className="font-medium">
-          {current} / {isUnlimited ? '∞' : limit}
+          {current} / {isUnlimited ? '\u221E' : limit}
         </span>
       </div>
       {!isUnlimited && (

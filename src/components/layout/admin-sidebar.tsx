@@ -12,6 +12,7 @@ import {
   ClipboardList,
   CreditCard,
   FlaskConical,
+  Image,
   LayoutDashboard,
   Link2,
   Mail,
@@ -33,7 +34,7 @@ interface NavItem {
   children?: NavItem[]
 }
 
-export function AdminSidebar({ platformRole }: { platformRole?: string | null }) {
+export function AdminSidebar({ platformRole, logoUrl }: { platformRole?: string | null; logoUrl?: string }) {
   const t = useTranslations('nav')
   const tAdmin = useTranslations('admin')
   const locale = useLocale()
@@ -99,6 +100,12 @@ export function AdminSidebar({ platformRole }: { platformRole?: string | null })
       icon: ClipboardList,
     },
     {
+      href: `/${locale}/admin/media`,
+      label: tAdmin('media.title'),
+      icon: Image,
+      superadminOnly: true,
+    },
+    {
       href: `/${locale}/admin/integrations`,
       label: tAdmin('integrations.title'),
       icon: Link2,
@@ -155,7 +162,16 @@ export function AdminSidebar({ platformRole }: { platformRole?: string | null })
     <div className="flex h-full flex-col">
       <div className="flex h-14 items-center border-b px-4">
         <Link href={`/${locale}/admin`} className="flex items-center gap-2">
-          <span className="text-lg font-semibold">Anivise</span>
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logoUrl}
+              alt="Logo"
+              className="max-h-8 max-w-[120px] object-contain"
+            />
+          ) : (
+            <span className="text-lg font-semibold">Anivise</span>
+          )}
           <span className="bg-destructive text-destructive-foreground rounded px-1.5 py-0.5 text-xs font-medium">
             {t('admin')}
           </span>

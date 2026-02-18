@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Save, X, Plus, Loader2, Mail, ArrowRight, Palette } from 'lucide-react'
+import { Save, X, Plus, Loader2, Mail, ArrowRight, Palette, Upload, Trash2, ImageIcon, Library } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -28,7 +28,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { updatePlatformSettings } from '../actions'
+import { Separator } from '@/components/ui/separator'
+import { MediaPickerDialog } from '@/components/shared/media-picker-dialog'
+import { updatePlatformSettings, uploadPlatformLogo, deletePlatformLogo, setPlatformLogoUrl } from '../actions'
 import type { PlatformSettings } from '@/lib/settings/platform'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
@@ -47,7 +49,14 @@ interface Props {
 
 export function SettingsPageClient({ settings, activeProducts }: Props) {
   const t = useTranslations('admin.platformSettings')
+  const tPicker = useTranslations('mediaPicker')
   const locale = useLocale()
+
+  // Logo state
+  const [logoUrl, setLogoUrl] = useState(settings['platform.logo_url'] ?? '')
+  const [uploading, setUploading] = useState(false)
+  const [showMediaPicker, setShowMediaPicker] = useState(false)
+  const logoInputRef = useRef<HTMLInputElement>(null)
 
   // General tab state
   const [platformName, setPlatformName] = useState(
@@ -117,6 +126,39 @@ export function SettingsPageClient({ settings, activeProducts }: Props) {
     setReservedSlugs(reservedSlugs.filter((s) => s !== slug))
   }
 
+  async function handleLogoUpload(file: File) {
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('logo', file)
+      const result = await uploadPlatformLogo(formData)
+      if (result.success && result.url) {
+        setLogoUrl(result.url)
+        toast.success(t('general.logo.uploadSuccess'), { className: 'rounded-full', position: 'top-center' })
+      } else {
+        toast.error(result.error || t('general.logo.uploadError'), { className: 'rounded-full', position: 'top-center' })
+      }
+    } finally {
+      setUploading(false)
+      if (logoInputRef.current) logoInputRef.current.value = ''
+    }
+  }
+
+  async function handleLogoDelete() {
+    setUploading(true)
+    try {
+      const result = await deletePlatformLogo()
+      if (result.success) {
+        setLogoUrl('')
+        toast.success(t('general.logo.removeSuccess'), { className: 'rounded-full', position: 'top-center' })
+      } else {
+        toast.error(result.error || t('general.logo.uploadError'), { className: 'rounded-full', position: 'top-center' })
+      }
+    } finally {
+      setUploading(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -135,7 +177,119 @@ export function SettingsPageClient({ settings, activeProducts }: Props) {
         </TabsList>
 
         {/* General Tab */}
-        <TabsContent value="general">
+        <TabsContent value="general" className="space-y-6">
+          {/* Logo Upload */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t('general.logo.title')}</CardTitle>
+              <CardDescription>{t('general.logo.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {logoUrl ? (
+                <div className="flex items-center gap-4">
+                  <div className="bg-muted flex h-16 items-center justify-center rounded-lg border px-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={logoUrl}
+                      alt={t('general.logo.currentLogo')}
+                      className="max-h-10 max-w-[160px] object-contain"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{t('general.logo.currentLogo')}</p>
+                    <p className="text-muted-foreground max-w-[200px] truncate text-xs">{logoUrl}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleLogoDelete}
+                    disabled={uploading}
+                    className="text-destructive hover:text-destructive shrink-0"
+                  >
+                    {uploading ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                    <span className="sr-only">{t('general.logo.remove')}</span>
+                  </Button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => logoInputRef.current?.click()}
+                  disabled={uploading}
+                  className="border-border hover:border-primary/50 hover:bg-accent/50 flex w-full flex-col items-center gap-2 rounded-lg border-2 border-dashed px-6 py-6 transition-colors"
+                >
+                  {uploading ? (
+                    <Loader2 className="text-muted-foreground size-8 animate-spin" />
+                  ) : (
+                    <div className="bg-muted flex size-10 items-center justify-center rounded-full">
+                      <ImageIcon className="text-muted-foreground size-5" />
+                    </div>
+                  )}
+                  <div className="text-center">
+                    <p className="text-sm font-medium">{t('general.logo.upload')}</p>
+                    <p className="text-muted-foreground text-xs">{t('general.logo.uploadHint')}</p>
+                  </div>
+                </button>
+              )}
+
+              <input
+                ref={logoInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) handleLogoUpload(file)
+                }}
+              />
+
+              {logoUrl ? (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => logoInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    <Upload className="mr-1.5 size-3.5" />
+                    {t('general.logo.upload')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowMediaPicker(true)}
+                  >
+                    <Library className="mr-1.5 size-3.5" />
+                    {tPicker('chooseFromLibrary')}
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowMediaPicker(true)}
+                >
+                  <Library className="mr-1.5 size-3.5" />
+                  {tPicker('chooseFromLibrary')}
+                </Button>
+              )}
+
+              <MediaPickerDialog
+                open={showMediaPicker}
+                onOpenChange={setShowMediaPicker}
+                onSelect={async (url) => {
+                  setLogoUrl(url)
+                  const result = await setPlatformLogoUrl(url)
+                  if (result.success) {
+                    toast.success(t('general.logo.uploadSuccess'), { className: 'rounded-full', position: 'top-center' })
+                  } else {
+                    toast.error(result.error || t('general.logo.uploadError'), { className: 'rounded-full', position: 'top-center' })
+                  }
+                }}
+              />
+            </CardContent>
+          </Card>
+
+          {/* General Settings */}
           <Card>
             <CardHeader>
               <CardTitle>{t('general.title')}</CardTitle>

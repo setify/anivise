@@ -1171,5 +1171,72 @@
     "uploadHint": "Datei hierher ziehen oder klicken",
     "uploading": "Wird hochgeladen...",
     "chooseFromLibrary": "Aus Mediathek wählen"
+  },
+  "org": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "groups": {
+        "analyses": "ANALYSEN",
+        "management": "VERWALTUNG"
+      },
+      "analyses": "Analysen",
+      "forms": "Formulare",
+      "employees": "Mitarbeiter",
+      "users": "Benutzer",
+      "team": "Team",
+      "settings": "Einstellungen",
+      "settingsGeneral": "Allgemein",
+      "settingsPlan": "Tarif",
+      "settingsBranding": "Branding",
+      "settingsMedia": "Mediathek",
+      "settingsNotifications": "Benachrichtigungen",
+      "settingsIntegrations": "Integrationen",
+      "userFooter": {
+        "profile": "Profil",
+        "logout": "Abmelden",
+        "roles": {
+          "org_admin": "Admin",
+          "manager": "Manager",
+          "member": "Mitglied"
+        }
+      }
+    },
+    "employees": {
+      "title": "Mitarbeiter",
+      "description": "Mitarbeiter verwalten und zuordnen",
+      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "users": {
+      "title": "Benutzer",
+      "description": "Benutzer und deren Berechtigungen verwalten",
+      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "settingsGeneral": {
+      "title": "Allgemein",
+      "description": "Allgemeine Organisationseinstellungen",
+      "orgInfo": "Organisationsinformationen",
+      "orgInfoDescription": "Name, Beschreibung und weitere Informationen zu Ihrer Organisation",
+      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "settingsBranding": {
+      "title": "Branding",
+      "description": "Erscheinungsbild Ihrer Organisation anpassen",
+      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "settingsMedia": {
+      "title": "Mediathek",
+      "description": "Dateien und Medien verwalten",
+      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "settingsNotifications": {
+      "title": "Benachrichtigungen",
+      "description": "Benachrichtigungseinstellungen verwalten",
+      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "settingsIntegrations": {
+      "title": "Integrationen",
+      "description": "Externe Dienste verbinden",
+      "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    }
   }
 }

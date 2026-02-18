@@ -1,8 +1,5 @@
-import { getOrgPlanOverview } from './actions'
-import { PlanPageClient } from './plan-page-client'
+import { redirect } from 'next/navigation'
 
-export default async function PlanPage() {
-  const overview = await getOrgPlanOverview()
-
-  return <PlanPageClient overview={overview} />
+export default function PlanRedirectPage() {
+  redirect('./settings/plan')
 }

@@ -61,7 +61,7 @@ export function BuilderCanvas({
         ref={setNodeRef}
         className={cn(
           'flex-1 overflow-y-auto p-6',
-          'bg-[radial-gradient(circle,_hsl(var(--muted-foreground)/0.08)_1px,_transparent_1px)] [background-size:20px_20px]',
+          'bg-muted/50 bg-[radial-gradient(circle,_hsl(var(--muted-foreground)/0.1)_1px,_transparent_1px)] [background-size:20px_20px]',
           isOver && 'bg-primary/5'
         )}
       >

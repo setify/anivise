@@ -1171,5 +1171,72 @@
     "uploadHint": "Drag file here or click to select",
     "uploading": "Uploading...",
     "chooseFromLibrary": "Choose from library"
+  },
+  "org": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "groups": {
+        "analyses": "ANALYSES",
+        "management": "MANAGEMENT"
+      },
+      "analyses": "Analyses",
+      "forms": "Forms",
+      "employees": "Employees",
+      "users": "Users",
+      "team": "Team",
+      "settings": "Settings",
+      "settingsGeneral": "General",
+      "settingsPlan": "Plan",
+      "settingsBranding": "Branding",
+      "settingsMedia": "Media Library",
+      "settingsNotifications": "Notifications",
+      "settingsIntegrations": "Integrations",
+      "userFooter": {
+        "profile": "Profile",
+        "logout": "Sign Out",
+        "roles": {
+          "org_admin": "Admin",
+          "manager": "Manager",
+          "member": "Member"
+        }
+      }
+    },
+    "employees": {
+      "title": "Employees",
+      "description": "Manage and assign employees",
+      "comingSoon": "This section will be available soon."
+    },
+    "users": {
+      "title": "Users",
+      "description": "Manage users and their permissions",
+      "comingSoon": "This section will be available soon."
+    },
+    "settingsGeneral": {
+      "title": "General",
+      "description": "General organization settings",
+      "orgInfo": "Organization Information",
+      "orgInfoDescription": "Name, description and other information about your organization",
+      "comingSoon": "This section will be available soon."
+    },
+    "settingsBranding": {
+      "title": "Branding",
+      "description": "Customize the look and feel of your organization",
+      "comingSoon": "This section will be available soon."
+    },
+    "settingsMedia": {
+      "title": "Media Library",
+      "description": "Manage files and media",
+      "comingSoon": "This section will be available soon."
+    },
+    "settingsNotifications": {
+      "title": "Notifications",
+      "description": "Manage notification settings",
+      "comingSoon": "This section will be available soon."
+    },
+    "settingsIntegrations": {
+      "title": "Integrations",
+      "description": "Connect external services",
+      "comingSoon": "This section will be available soon."
+    }
   }
 }

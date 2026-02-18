@@ -19,7 +19,7 @@ export function FieldPalette() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="flex h-full w-60 flex-col border-r">
+      <div className="bg-card flex h-full w-60 flex-col border-r shadow-sm">
         <div className="border-b px-4 py-3">
           <h3 className="text-sm font-semibold">{t('fieldTypes')}</h3>
         </div>

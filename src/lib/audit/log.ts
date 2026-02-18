@@ -24,6 +24,10 @@ export type AuditAction =
   | 'plan.assigned'
   | 'plan.changed'
   | 'plan.removed'
+  | 'media.uploaded'
+  | 'media.deleted'
+  | 'media.bulk_deleted'
+  | 'media.synced'
 
 export async function logAudit(params: {
   actorId: string

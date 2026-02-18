@@ -138,31 +138,45 @@ export async function testResendConnection(): Promise<{
       return { success: false, error: 'Resend API key not configured' }
     }
 
+    // Try /domains first; if 401 with "restricted" message, the key is valid but send-only
     const response = await fetch('https://api.resend.com/domains', {
       headers: { Authorization: `Bearer ${apiKey}` },
       signal: AbortSignal.timeout(10000),
     })
 
     const latency = Date.now() - start
+    let isConnected = response.ok
+
+    if (!isConnected) {
+      const body = await response.text()
+      // A restricted (send-only) key returns 401 with "restricted" — key is valid
+      if (response.status === 401 && body.includes('restricted')) {
+        isConnected = true
+      } else if (response.status === 403 && body.includes('restricted')) {
+        isConnected = true
+      }
+
+      if (!isConnected) {
+        await logAudit({
+          actorId: currentUser.id,
+          actorEmail: currentUser.email,
+          action: 'settings.updated',
+          entityType: 'integration_secrets',
+          metadata: { service: 'resend', action: 'integration.connection_tested', success: false, latency },
+        })
+        return { success: false, latency, error: `HTTP ${response.status}: ${body.slice(0, 100)}` }
+      }
+    }
 
     await logAudit({
       actorId: currentUser.id,
       actorEmail: currentUser.email,
       action: 'settings.updated',
       entityType: 'integration_secrets',
-      metadata: {
-        service: 'resend',
-        action: 'integration.connection_tested',
-        success: response.ok,
-        latency,
-      },
+      metadata: { service: 'resend', action: 'integration.connection_tested', success: true, latency },
     })
 
-    if (response.ok) {
-      return { success: true, latency }
-    }
-    const body = await response.text()
-    return { success: false, latency, error: `HTTP ${response.status}: ${body.slice(0, 100)}` }
+    return { success: true, latency }
   } catch (err) {
     const latency = Date.now() - start
     return {

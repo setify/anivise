@@ -10,6 +10,16 @@ import {
   type EmailLayoutConfig,
 } from '@/lib/email/send'
 import { getIntegrationSecret } from '@/lib/crypto/secrets'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { trackUpload } from '@/lib/media/track-upload'
+import { db } from '@/lib/db'
+import { mediaFiles } from '@/lib/db/schema'
+import { and, eq } from 'drizzle-orm'
+
+const LOGO_BUCKET = 'platform-assets'
+const LOGO_PATH = 'email-logo'
+const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp']
+const MAX_SIZE = 512_000 // 500 KB
 
 export async function saveEmailLayout(
   data: Partial<EmailLayoutConfig>
@@ -132,6 +142,207 @@ export async function sendTestLayoutEmail(): Promise<{
     return {
       success: false,
       error: err instanceof Error ? err.message : 'Failed to send test email',
+    }
+  }
+}
+
+// ─── Logo Upload ───
+
+async function ensureBucket(supabase: ReturnType<typeof createAdminClient>) {
+  const { error } = await supabase.storage.createBucket(LOGO_BUCKET, {
+    public: true,
+    allowedMimeTypes: ALLOWED_TYPES,
+    fileSizeLimit: MAX_SIZE,
+  })
+  // Ignore "already exists" error
+  if (error && !error.message.includes('already exists')) {
+    throw error
+  }
+}
+
+export async function uploadEmailLogo(
+  formData: FormData
+): Promise<{ success: boolean; url?: string; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+    const file = formData.get('logo') as File | null
+
+    if (!file || file.size === 0) {
+      return { success: false, error: 'No file provided' }
+    }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return { success: false, error: 'Invalid file type. Use PNG, JPG, SVG or WebP.' }
+    }
+
+    if (file.size > MAX_SIZE) {
+      return { success: false, error: 'File too large. Maximum 500 KB.' }
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'png'
+    const filePath = `${LOGO_PATH}.${ext}`
+
+    const supabase = createAdminClient()
+    await ensureBucket(supabase)
+
+    // Remove any existing logo files first
+    const { data: existingFiles } = await supabase.storage
+      .from(LOGO_BUCKET)
+      .list('', { search: LOGO_PATH })
+
+    if (existingFiles && existingFiles.length > 0) {
+      await supabase.storage
+        .from(LOGO_BUCKET)
+        .remove(existingFiles.map((f) => f.name))
+    }
+
+    // Upload new file
+    const { error: uploadError } = await supabase.storage
+      .from(LOGO_BUCKET)
+      .upload(filePath, file, {
+        upsert: true,
+        contentType: file.type,
+      })
+
+    if (uploadError) {
+      return { success: false, error: uploadError.message }
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(LOGO_BUCKET)
+      .getPublicUrl(filePath)
+
+    const publicUrl = urlData.publicUrl
+
+    // Save URL to platform settings
+    await setSetting('email.logo_url', publicUrl, currentUser.id)
+
+    // Remove old media_files entry for email_logo and track the new one
+    await db
+      .delete(mediaFiles)
+      .where(
+        and(
+          eq(mediaFiles.bucket, LOGO_BUCKET),
+          eq(mediaFiles.context, 'email_logo')
+        )
+      )
+
+    await trackUpload({
+      bucket: LOGO_BUCKET,
+      path: filePath,
+      filename: file.name,
+      mimeType: file.type,
+      size: file.size,
+      context: 'email_logo',
+      uploadedBy: currentUser.id,
+    })
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'platform_settings',
+      metadata: {
+        section: 'email_layout',
+        action: 'email_logo.uploaded',
+        fileName: file.name,
+        fileSize: file.size,
+      },
+    })
+
+    revalidatePath('/admin/settings/email-layout')
+    return { success: true, url: publicUrl }
+  } catch (err) {
+    console.error('Failed to upload email logo:', err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Failed to upload logo',
+    }
+  }
+}
+
+export async function deleteEmailLogo(): Promise<{
+  success: boolean
+  error?: string
+}> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+    const supabase = createAdminClient()
+
+    // List and remove all logo files
+    const { data: existingFiles } = await supabase.storage
+      .from(LOGO_BUCKET)
+      .list('', { search: LOGO_PATH })
+
+    if (existingFiles && existingFiles.length > 0) {
+      await supabase.storage
+        .from(LOGO_BUCKET)
+        .remove(existingFiles.map((f) => f.name))
+    }
+
+    // Clear the setting and remove media_files entry
+    await setSetting('email.logo_url', '', currentUser.id)
+
+    await db
+      .delete(mediaFiles)
+      .where(
+        and(
+          eq(mediaFiles.bucket, LOGO_BUCKET),
+          eq(mediaFiles.context, 'email_logo')
+        )
+      )
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'platform_settings',
+      metadata: {
+        section: 'email_layout',
+        action: 'email_logo.deleted',
+      },
+    })
+
+    revalidatePath('/admin/settings/email-layout')
+    return { success: true }
+  } catch (err) {
+    console.error('Failed to delete email logo:', err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Failed to delete logo',
+    }
+  }
+}
+
+// ─── Set Email Logo from URL (Media Picker) ───
+
+export async function setEmailLogoUrl(
+  url: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    await setSetting('email.logo_url', url, currentUser.id)
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'platform_settings',
+      metadata: {
+        section: 'email_layout',
+        action: 'email_logo.set_from_media',
+        url,
+      },
+    })
+
+    revalidatePath('/admin/settings/email-layout')
+    return { success: true }
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Failed to set logo URL',
     }
   }
 }

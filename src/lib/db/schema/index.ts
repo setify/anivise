@@ -15,6 +15,7 @@ export {
   formCompletionTypeEnum,
   formStepDisplayModeEnum,
   productStatusEnum,
+  mediaContextEnum,
 } from './enums'
 
 // Tables
@@ -38,3 +39,4 @@ export {
   formSubmissions,
 } from './forms'
 export { products, organizationProducts } from './products'
+export { mediaFiles } from './media-files'

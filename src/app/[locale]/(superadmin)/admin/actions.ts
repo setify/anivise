@@ -31,7 +31,12 @@ export {
 
 export { getAuditLogs } from './actions/activity'
 
-export { updatePlatformSettings } from './actions/settings'
+export {
+  updatePlatformSettings,
+  uploadPlatformLogo,
+  deletePlatformLogo,
+  setPlatformLogoUrl,
+} from './actions/settings'
 
 export { startImpersonationAction } from './actions/impersonation'
 

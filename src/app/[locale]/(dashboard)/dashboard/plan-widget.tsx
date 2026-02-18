@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { CreditCard, ArrowRight, AlertTriangle } from 'lucide-react'
-import type { PlanOverview } from '../plan/actions'
+import type { PlanOverview } from '../settings/plan/actions'
 
 function MiniUsageBar({
   label,
@@ -94,7 +94,7 @@ export function PlanWidget({ overview }: { overview: PlanOverview }) {
         />
 
         <Button variant="ghost" size="sm" className="w-full" asChild>
-          <Link href={`/${locale}/plan`}>
+          <Link href={`/${locale}/settings/plan`}>
             {t('viewDetails')}
             <ArrowRight className="ml-1 size-3" />
           </Link>

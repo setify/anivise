@@ -180,7 +180,7 @@ export function BuilderLayout({ form, initialSchema }: BuilderLayoutProps) {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex min-h-0 flex-1">
+        <div className="bg-muted/40 flex min-h-0 flex-1">
           <FieldPalette />
 
           <BuilderCanvas
@@ -198,16 +198,17 @@ export function BuilderLayout({ form, initialSchema }: BuilderLayoutProps) {
           />
         </div>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={null}>
           {activeDragId && activeDragId.startsWith('palette-') && (
-            <div className="rounded-lg border bg-card px-3 py-2 text-sm shadow-lg">
+            <div className="border-primary/30 bg-card rotate-[2deg] scale-105 rounded-lg border-2 px-4 py-2.5 text-sm shadow-2xl ring-4 ring-black/5">
               {(() => {
                 const type = activeDragId.replace('palette-', '')
                 const def = FIELD_TYPE_DEFINITIONS.find((d) => d.type === type)
+                const Icon = def?.icon
                 return (
-                  <span className="flex items-center gap-2">
-                    <span>{def?.icon}</span>
-                    <span>{t(`fieldNames.${def?.labelKey ?? type}`)}</span>
+                  <span className="flex items-center gap-2.5">
+                    {Icon && <Icon className="text-primary size-4" />}
+                    <span className="font-medium">{t(`fieldNames.${def?.labelKey ?? type}`)}</span>
                   </span>
                 )
               })()}

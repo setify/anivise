@@ -3,7 +3,12 @@
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback } from 'react'
-import { updateOrganization, checkSlugAvailability } from '../../../actions'
+import {
+  updateOrganization,
+  checkSlugAvailability,
+  assignOrganizationPlan,
+  removeOrganizationPlan,
+} from '../../../actions'
 import {
   Card,
   CardContent,
@@ -23,7 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Save, Loader2, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, CheckCircle2, XCircle, AlertTriangle, X } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -41,7 +46,20 @@ interface Organization {
   productName?: string | null
 }
 
-export function OrgEditClient({ organization }: { organization: Organization }) {
+interface AvailableProduct {
+  id: string
+  name: string
+}
+
+export function OrgEditClient({
+  organization,
+  currentProductId,
+  availableProducts,
+}: {
+  organization: Organization
+  currentProductId: string | null
+  availableProducts: AvailableProduct[]
+}) {
   const t = useTranslations('admin.orgs')
   const tEdit = useTranslations('admin.orgs.edit')
   const tCommon = useTranslations('common')
@@ -56,6 +74,8 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
     organization.defaultLocale || ''
   )
   const [internalNotes, setInternalNotes] = useState(organization.internalNotes || '')
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(currentProductId)
+  const [savingPlan, setSavingPlan] = useState(false)
 
   // Slug validation
   const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'reserved' | 'invalid'>('idle')
@@ -106,6 +126,33 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
   const showStatusWarning =
     subscriptionStatus !== organization.subscriptionStatus &&
     (subscriptionStatus === 'cancelled' || subscriptionStatus === 'expired')
+
+  async function handlePlanChange(productId: string | null) {
+    setSavingPlan(true)
+    try {
+      let result: { success: boolean; error?: string }
+      if (productId) {
+        result = await assignOrganizationPlan(organization.id, productId)
+      } else {
+        result = await removeOrganizationPlan(organization.id)
+      }
+
+      if (result.success) {
+        setSelectedProductId(productId)
+        toast.success(
+          productId ? tEdit('planAssignSuccess') : tEdit('planRemoveSuccess'),
+          { className: 'rounded-full', position: 'top-center' }
+        )
+      } else {
+        toast.error(result.error || t('error'), {
+          className: 'rounded-full',
+          position: 'top-center',
+        })
+      }
+    } finally {
+      setSavingPlan(false)
+    }
+  }
 
   async function handleSave() {
     if (slugStatus === 'taken' || slugStatus === 'reserved' || slugStatus === 'invalid') {
@@ -238,12 +285,26 @@ export function OrgEditClient({ organization }: { organization: Organization }) 
             <div className="space-y-2">
               <Label>{t('plan')}</Label>
               <div className="flex items-center gap-2">
-                <Badge variant="secondary">
-                  {organization.productName || t('noPlan')}
-                </Badge>
-                <p className="text-muted-foreground text-xs">
-                  {tEdit('planManagedHint')}
-                </p>
+                <Select
+                  value={selectedProductId || 'none'}
+                  onValueChange={(v) => handlePlanChange(v === 'none' ? null : v)}
+                  disabled={savingPlan}
+                >
+                  <SelectTrigger className="flex-1">
+                    {savingPlan ? (
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                    ) : null}
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t('noPlan')}</SelectItem>
+                    {availableProducts.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

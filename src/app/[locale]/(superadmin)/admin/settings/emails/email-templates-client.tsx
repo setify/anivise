@@ -39,7 +39,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Separator } from '@/components/ui/separator'
 import {
   updateEmailTemplate,
@@ -330,10 +330,9 @@ export function EmailTemplatesClient({
                 </div>
                 <div className="space-y-2">
                   <Label>{t('body')}</Label>
-                  <Textarea
-                    className="min-h-[300px] font-mono text-sm"
+                  <RichTextEditor
                     value={editBodyDe}
-                    onChange={(e) => setEditBodyDe(e.target.value)}
+                    onChange={setEditBodyDe}
                   />
                 </div>
                 <Button
@@ -358,10 +357,9 @@ export function EmailTemplatesClient({
                 </div>
                 <div className="space-y-2">
                   <Label>{t('body')}</Label>
-                  <Textarea
-                    className="min-h-[300px] font-mono text-sm"
+                  <RichTextEditor
                     value={editBodyEn}
-                    onChange={(e) => setEditBodyEn(e.target.value)}
+                    onChange={setEditBodyEn}
                   />
                 </div>
                 <Button

@@ -19,6 +19,7 @@ import type {
   formSubmissions,
   products,
   organizationProducts,
+  mediaFiles,
 } from '@/lib/db/schema'
 
 // Organization
@@ -96,6 +97,19 @@ export type NewProduct = InferInsertModel<typeof products>
 // Organization Product (plan assignment)
 export type OrganizationProduct = InferSelectModel<typeof organizationProducts>
 export type NewOrganizationProduct = InferInsertModel<typeof organizationProducts>
+
+// Media File
+export type MediaFile = InferSelectModel<typeof mediaFiles>
+export type NewMediaFile = InferInsertModel<typeof mediaFiles>
+
+// Media Context type
+export type MediaContext =
+  | 'email_logo'
+  | 'email_template'
+  | 'form_header'
+  | 'org_logo'
+  | 'report_asset'
+  | 'general'
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

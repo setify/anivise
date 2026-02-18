@@ -106,7 +106,7 @@ export function BuilderToolbar({
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onSettings}>
             <Settings2 className="mr-2 size-4" />
-            {t('settings')}
+            {t('settingsMenu')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

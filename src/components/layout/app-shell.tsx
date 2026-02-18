@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Sidebar } from '@/components/layout/sidebar'
+import { OrgSidebar } from '@/components/org/sidebar/org-sidebar'
 import { Header } from '@/components/layout/header'
 import {
   Sheet,
@@ -15,30 +15,39 @@ interface UserInfo {
   displayName: string | null
   email: string
   avatarUrl: string | null
+  orgRole: string | null
 }
 
 interface AppShellProps {
   children: React.ReactNode
   user?: UserInfo | null
   orgName?: string | null
+  logoUrl?: string
 }
 
-export function AppShell({ children, user, orgName }: AppShellProps) {
+export function AppShell({ children, user, orgName, logoUrl }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const t = useTranslations('nav')
+
+  const sidebarUser = user ?? {
+    displayName: null,
+    email: '',
+    avatarUrl: null,
+    orgRole: null,
+  }
 
   return (
     <div className="flex min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="bg-sidebar text-sidebar-foreground hidden w-64 shrink-0 border-r lg:block">
-        <Sidebar user={user} orgName={orgName} />
+      <aside className="bg-sidebar text-sidebar-foreground hidden w-[260px] shrink-0 border-r lg:block">
+        <OrgSidebar user={sidebarUser} orgName={orgName} logoUrl={logoUrl} />
       </aside>
 
       {/* Mobile sidebar */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
+        <SheetContent side="left" className="w-[260px] p-0" showCloseButton={false}>
           <SheetTitle className="sr-only">{t('menu')}</SheetTitle>
-          <Sidebar user={user} orgName={orgName} />
+          <OrgSidebar user={sidebarUser} orgName={orgName} logoUrl={logoUrl} />
         </SheetContent>
       </Sheet>
 
