@@ -1199,6 +1199,12 @@
     "title": "Forms",
     "description": "Forms available to your organization",
     "noForms": "No forms available yet.",
+    "table": {
+      "name": "Form",
+      "description": "Description",
+      "status": "Status",
+      "submittedAt": "Submitted at"
+    },
     "submitted": "Submitted",
     "notSubmitted": "Not submitted",
     "submittedOn": "Submitted on {date}",

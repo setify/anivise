@@ -1199,6 +1199,12 @@
     "title": "Formulare",
     "description": "Formulare für Ihre Organisation",
     "noForms": "Noch keine Formulare verfügbar.",
+    "table": {
+      "name": "Formular",
+      "description": "Beschreibung",
+      "status": "Status",
+      "submittedAt": "Ausgefüllt am"
+    },
     "submitted": "Ausgefüllt",
     "notSubmitted": "Noch nicht ausgefüllt",
     "submittedOn": "Ausgefüllt am {date}",

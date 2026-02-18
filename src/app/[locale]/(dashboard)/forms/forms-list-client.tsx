@@ -2,9 +2,18 @@
 
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
-import { ClipboardList, Check, ArrowRight } from 'lucide-react'
+import { ClipboardList, Check, ExternalLink } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import type { Form } from '@/types/database'
 
 interface FormWithSubmission extends Form {
@@ -39,48 +48,65 @@ export function FormsListClient({ forms }: FormsListClientProps) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {forms.map((form) => {
-        const isSubmitted = !!form.lastSubmittedAt
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('table.name')}</TableHead>
+              <TableHead>{t('table.description')}</TableHead>
+              <TableHead>{t('table.status')}</TableHead>
+              <TableHead>{t('table.submittedAt')}</TableHead>
+              <TableHead className="w-[100px]" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {forms.map((form) => {
+              const isSubmitted = !!form.lastSubmittedAt
 
-        return (
-          <Link key={form.id} href={`/${locale}/forms/${form.slug}`}>
-            <Card className="group relative h-full transition-shadow hover:shadow-md">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base">{form.title}</CardTitle>
-                  {isSubmitted ? (
-                    <Badge variant="outline" className="shrink-0 gap-1 text-green-600 dark:text-green-400">
-                      <Check className="size-3" />
-                      {t('submitted')}
-                    </Badge>
-                  ) : (
-                    <Badge variant="secondary" className="shrink-0">
-                      {t('notSubmitted')}
-                    </Badge>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                {form.description && (
-                  <p className="text-muted-foreground mb-3 line-clamp-2 text-sm">
-                    {form.description}
-                  </p>
-                )}
-                {isSubmitted && form.lastSubmittedAt && (
-                  <p className="text-muted-foreground text-xs">
-                    {t('submittedOn', { date: formatDate(form.lastSubmittedAt) })}
-                  </p>
-                )}
-                <div className="mt-3 flex items-center gap-1 text-sm font-medium">
-                  {isSubmitted ? t('viewSubmission') : t('fillOut')}
-                  <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        )
-      })}
-    </div>
+              return (
+                <TableRow key={form.id}>
+                  <TableCell>
+                    <span className="font-medium">{form.title}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-muted-foreground line-clamp-1 text-sm">
+                      {form.description || '–'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {isSubmitted ? (
+                      <Badge variant="outline" className="gap-1 text-green-600 dark:text-green-400">
+                        <Check className="size-3" />
+                        {t('submitted')}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary">
+                        {t('notSubmitted')}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-muted-foreground text-sm">
+                      {isSubmitted && form.lastSubmittedAt
+                        ? formatDate(form.lastSubmittedAt)
+                        : '–'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Link href={`/${locale}/forms/${form.slug}`}>
+                      <Button variant="ghost" size="sm" className="gap-1.5">
+                        {isSubmitted ? t('viewSubmission') : t('fillOut')}
+                        <ExternalLink className="size-3" />
+                      </Button>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   )
 }
