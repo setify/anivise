@@ -2,11 +2,14 @@ import {
   BarChart3,
   Bell,
   BookOpen,
+  Building2,
   ClipboardList,
   CreditCard,
+  FolderOpen,
   Image,
   LayoutDashboard,
   Link2,
+  MapPin,
   Palette,
   Settings,
   UserCog,
@@ -77,6 +80,21 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
         labelKey: 'org.sidebar.guides',
         href: '/guides',
         icon: BookOpen,
+        children: [
+          {
+            key: 'guides-overview',
+            labelKey: 'org.sidebar.guidesOverview',
+            href: '/guides',
+            icon: BookOpen,
+          },
+          {
+            key: 'guides-categories',
+            labelKey: 'org.sidebar.guidesCategories',
+            href: '/guides/categories',
+            icon: FolderOpen,
+            minRole: 'org_admin',
+          },
+        ],
       },
       {
         key: 'forms',
@@ -96,6 +114,26 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
         href: '/users',
         icon: UserCog,
         minRole: 'org_admin',
+        children: [
+          {
+            key: 'users-list',
+            labelKey: 'org.sidebar.usersList',
+            href: '/users',
+            icon: UserCog,
+          },
+          {
+            key: 'users-departments',
+            labelKey: 'org.sidebar.usersDepartments',
+            href: '/users/departments',
+            icon: Building2,
+          },
+          {
+            key: 'users-locations',
+            labelKey: 'org.sidebar.usersLocations',
+            href: '/users/locations',
+            icon: MapPin,
+          },
+        ],
       },
       {
         key: 'settings',

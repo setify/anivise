@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { OrgSidebarItem } from './org-sidebar-config'
+import { hasMinRole } from './org-sidebar-config'
 import { OrgSidebarNavItem, isItemActive } from './org-sidebar-item'
 
 interface OrgSidebarCollapsibleProps {
@@ -13,6 +14,7 @@ interface OrgSidebarCollapsibleProps {
   pathname: string
   isOpen: boolean
   onToggle: () => void
+  userRole: string | null
 }
 
 export function OrgSidebarCollapsible({
@@ -21,10 +23,28 @@ export function OrgSidebarCollapsible({
   pathname,
   isOpen,
   onToggle,
+  userRole,
 }: OrgSidebarCollapsibleProps) {
   const t = useTranslations()
 
-  const hasActiveChild = item.children?.some((child) =>
+  // Filter children by role
+  const visibleChildren = (item.children ?? []).filter(
+    (child) => !child.minRole || hasMinRole(userRole, child.minRole)
+  )
+
+  // If only 1 child visible, render as flat link instead of collapsible
+  if (visibleChildren.length <= 1) {
+    const target = visibleChildren[0] ?? item
+    return (
+      <OrgSidebarNavItem
+        item={{ ...item, href: target.href }}
+        locale={locale}
+        pathname={pathname}
+      />
+    )
+  }
+
+  const hasActiveChild = visibleChildren.some((child) =>
     isItemActive(pathname, child.href, locale, true)
   )
 
@@ -63,7 +83,7 @@ export function OrgSidebarCollapsible({
         )}
       >
         <div className="border-muted-foreground/20 ml-[18px] mt-1 space-y-0.5 border-l pl-3">
-          {item.children?.map((child) => (
+          {visibleChildren.map((child) => (
             <OrgSidebarNavItem
               key={child.key}
               item={child}

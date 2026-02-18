@@ -1204,7 +1204,9 @@
           "member": "Member"
         }
       },
-      "guides": "Guides"
+      "guides": "Guides",
+      "guidesOverview": "Overview",
+      "guidesCategories": "Categories"
     },
     "employees": {
       "title": "Employees",
@@ -1603,8 +1605,75 @@
     },
     "guides": {
       "title": "Guides",
-      "description": "Guides and best practices for psychodynamic analyses.",
-      "comingSoon": "Guides will be available soon."
+      "description": "Documents, guides and resources for your team.",
+      "addGuide": "New Guide",
+      "search": "Search guides...",
+      "emptyTitle": "No guides yet",
+      "emptyDescription": "Create your first guide to share documents with your team.",
+      "uncategorized": "General",
+      "fileTypes": {
+        "pdf": "PDF",
+        "docx": "Word",
+        "xlsx": "Excel",
+        "pptx": "PowerPoint"
+      },
+      "form": {
+        "addTitle": "Create New Guide",
+        "editTitle": "Edit Guide",
+        "name": "Name",
+        "namePlaceholder": "e.g. Employee Handbook",
+        "description": "Description",
+        "descriptionPlaceholder": "Brief description of the document...",
+        "category": "Category",
+        "categoryNone": "No category",
+        "icon": "Icon",
+        "file": "File",
+        "filePlaceholder": "PDF, Word, Excel or PowerPoint (max 20 MB)",
+        "fileReplace": "Upload new file (replaces existing)",
+        "currentFile": "Current file",
+        "accessManagers": "Visible to managers",
+        "accessEmployees": "Visible to employees",
+        "adding": "Creating...",
+        "saving": "Saving...",
+        "add": "Create",
+        "save": "Save",
+        "success": "Guide saved successfully.",
+        "error": "Failed to save the guide.",
+        "noFile": "Please select a file.",
+        "invalidFileType": "Invalid file format. Allowed: PDF, Word, Excel, PowerPoint.",
+        "fileTooLarge": "File is too large (max 20 MB).",
+        "uploadFailed": "Failed to upload the file."
+      },
+      "delete": {
+        "title": "Delete Guide",
+        "description": "Are you sure you want to delete the guide \"{name}\"? The file will be permanently removed.",
+        "confirm": "Delete",
+        "success": "Guide has been deleted.",
+        "error": "Failed to delete the guide."
+      },
+      "categories": {
+        "pageTitle": "Guide Categories",
+        "pageDescription": "Categories to organize your guides.",
+        "addButton": "Add Category",
+        "addTitle": "New Category",
+        "editTitle": "Edit Category",
+        "name": "Name",
+        "namePlaceholder": "e.g. Onboarding",
+        "description": "Description",
+        "descriptionPlaceholder": "Optional category description...",
+        "empty": "No categories created yet.",
+        "guideCount": "{count, plural, =0 {No guides} one {1 guide} other {# guides}}",
+        "hasGuides": "Guides in this category will be listed as \"General\".",
+        "created": "Category has been created.",
+        "updated": "Category has been updated.",
+        "deleted": "Category has been deleted.",
+        "error": "Failed to save the category.",
+        "delete": "Delete",
+        "adding": "Creating...",
+        "saving": "Saving...",
+        "add": "Create",
+        "save": "Save"
+      }
     },
     "settings": {
       "general": {

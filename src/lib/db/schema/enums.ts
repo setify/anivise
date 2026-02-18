@@ -93,6 +93,7 @@ export const mediaContextEnum = pgEnum('media_context', [
   'email_logo',
   'email_template',
   'form_header',
+  'guide',
   'org_logo',
   'report_asset',
   'user_avatar',

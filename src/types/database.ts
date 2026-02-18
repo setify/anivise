@@ -24,6 +24,8 @@ import type {
   mediaFiles,
   employees,
   organizationNotificationSettings,
+  guideCategories,
+  guides,
 } from '@/lib/db/schema'
 
 // Organization
@@ -121,11 +123,20 @@ export type NewEmployee = InferInsertModel<typeof employees>
 // Employee Status type
 export type EmployeeStatus = 'active' | 'inactive' | 'archived'
 
+// Guide Category
+export type GuideCategory = InferSelectModel<typeof guideCategories>
+export type NewGuideCategory = InferInsertModel<typeof guideCategories>
+
+// Guide
+export type Guide = InferSelectModel<typeof guides>
+export type NewGuide = InferInsertModel<typeof guides>
+
 // Media Context type
 export type MediaContext =
   | 'email_logo'
   | 'email_template'
   | 'form_header'
+  | 'guide'
   | 'org_logo'
   | 'report_asset'
   | 'user_avatar'

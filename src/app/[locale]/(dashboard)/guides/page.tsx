@@ -1,17 +1,21 @@
-import { useTranslations } from 'next-intl'
-import { BookOpen } from 'lucide-react'
-import { PagePlaceholder } from '@/components/ui/page-placeholder'
+import { getCurrentOrgContext } from '@/lib/auth/org-context'
+import { getGuides, getGuideCategories } from './actions'
+import { GuidesPageClient } from './guides-page-client'
 
-export default function GuidesPage() {
-  const t = useTranslations('org.guides')
+export default async function GuidesPage() {
+  const ctx = await getCurrentOrgContext()
+  const [guides, categories] = await Promise.all([
+    getGuides(),
+    getGuideCategories(),
+  ])
+
+  const isAdmin = ctx?.role === 'org_admin'
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-muted-foreground">{t('description')}</p>
-      </div>
-      <PagePlaceholder message={t('comingSoon')} icon={BookOpen} />
-    </div>
+    <GuidesPageClient
+      guides={guides}
+      categories={categories}
+      isAdmin={isAdmin}
+    />
   )
 }

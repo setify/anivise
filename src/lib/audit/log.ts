@@ -43,6 +43,12 @@ export type AuditAction =
   | 'employee.updated'
   | 'employee.deleted'
   | 'employee.status_changed'
+  | 'guide_category.created'
+  | 'guide_category.updated'
+  | 'guide_category.deleted'
+  | 'guide.created'
+  | 'guide.updated'
+  | 'guide.deleted'
 
 export async function logAudit(params: {
   actorId: string

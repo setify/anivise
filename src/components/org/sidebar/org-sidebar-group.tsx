@@ -49,6 +49,7 @@ export function OrgSidebarGroup({
                 pathname={pathname}
                 isOpen={!collapsedKeys.has(item.key)}
                 onToggle={() => onToggleCollapse(item.key)}
+                userRole={userRole}
               />
             )
           }

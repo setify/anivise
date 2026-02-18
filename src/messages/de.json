@@ -1204,7 +1204,9 @@
           "member": "Mitglied"
         }
       },
-      "guides": "Guides"
+      "guides": "Guides",
+      "guidesOverview": "Übersicht",
+      "guidesCategories": "Kategorien"
     },
     "employees": {
       "title": "Mitarbeiter",
@@ -1603,8 +1605,75 @@
     },
     "guides": {
       "title": "Guides",
-      "description": "Anleitungen und Best Practices für psychodynamische Analysen.",
-      "comingSoon": "Guides werden in Kürze verfügbar sein."
+      "description": "Dokumente, Anleitungen und Ressourcen für Ihr Team.",
+      "addGuide": "Neuer Guide",
+      "search": "Guides durchsuchen...",
+      "emptyTitle": "Noch keine Guides",
+      "emptyDescription": "Erstellen Sie Ihren ersten Guide, um Dokumente mit Ihrem Team zu teilen.",
+      "uncategorized": "Allgemein",
+      "fileTypes": {
+        "pdf": "PDF",
+        "docx": "Word",
+        "xlsx": "Excel",
+        "pptx": "PowerPoint"
+      },
+      "form": {
+        "addTitle": "Neuen Guide erstellen",
+        "editTitle": "Guide bearbeiten",
+        "name": "Name",
+        "namePlaceholder": "z.B. Mitarbeiter-Handbuch",
+        "description": "Beschreibung",
+        "descriptionPlaceholder": "Kurze Beschreibung des Dokuments...",
+        "category": "Kategorie",
+        "categoryNone": "Keine Kategorie",
+        "icon": "Icon",
+        "file": "Datei",
+        "filePlaceholder": "PDF, Word, Excel oder PowerPoint (max. 20 MB)",
+        "fileReplace": "Neue Datei hochladen (ersetzt die bestehende)",
+        "currentFile": "Aktuelle Datei",
+        "accessManagers": "Für Manager sichtbar",
+        "accessEmployees": "Für Mitarbeiter sichtbar",
+        "adding": "Wird erstellt...",
+        "saving": "Wird gespeichert...",
+        "add": "Erstellen",
+        "save": "Speichern",
+        "success": "Guide wurde erfolgreich gespeichert.",
+        "error": "Fehler beim Speichern des Guides.",
+        "noFile": "Bitte wählen Sie eine Datei aus.",
+        "invalidFileType": "Ungültiges Dateiformat. Erlaubt: PDF, Word, Excel, PowerPoint.",
+        "fileTooLarge": "Die Datei ist zu groß (max. 20 MB).",
+        "uploadFailed": "Fehler beim Hochladen der Datei."
+      },
+      "delete": {
+        "title": "Guide löschen",
+        "description": "Möchten Sie den Guide \"{name}\" wirklich löschen? Die Datei wird unwiderruflich entfernt.",
+        "confirm": "Löschen",
+        "success": "Guide wurde gelöscht.",
+        "error": "Fehler beim Löschen des Guides."
+      },
+      "categories": {
+        "pageTitle": "Guide-Kategorien",
+        "pageDescription": "Kategorien zum Organisieren Ihrer Guides.",
+        "addButton": "Kategorie hinzufügen",
+        "addTitle": "Neue Kategorie",
+        "editTitle": "Kategorie bearbeiten",
+        "name": "Name",
+        "namePlaceholder": "z.B. Onboarding",
+        "description": "Beschreibung",
+        "descriptionPlaceholder": "Optionale Beschreibung der Kategorie...",
+        "empty": "Noch keine Kategorien erstellt.",
+        "guideCount": "{count, plural, =0 {Keine Guides} one {1 Guide} other {# Guides}}",
+        "hasGuides": "Guides in dieser Kategorie werden als \"Allgemein\" eingestuft.",
+        "created": "Kategorie wurde erstellt.",
+        "updated": "Kategorie wurde aktualisiert.",
+        "deleted": "Kategorie wurde gelöscht.",
+        "error": "Fehler beim Speichern der Kategorie.",
+        "delete": "Löschen",
+        "adding": "Wird erstellt...",
+        "saving": "Wird gespeichert...",
+        "add": "Erstellen",
+        "save": "Speichern"
+      }
     },
     "settings": {
       "general": {
