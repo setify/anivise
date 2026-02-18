@@ -179,7 +179,7 @@ export function RecordingModal({
 
       const result = await startRecording(analysisId, language)
       if (!result.success || !result.recordingId) {
-        toast.error(t('errorStart'))
+        toast.error(`${t('errorStart')}: ${result.error ?? 'unknown'}`)
         stream.getTracks().forEach((t) => t.stop())
         return
       }
@@ -195,11 +195,19 @@ export function RecordingModal({
       source.connect(analyser)
       analyserRef.current = analyser
 
-      // MediaRecorder for storage chunks
-      const recorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus',
-        audioBitsPerSecond: 64000,
-      })
+      // MediaRecorder — try WebM/Opus, fallback to default
+      let mimeType = 'audio/webm;codecs=opus'
+      if (typeof MediaRecorder !== 'undefined' && !MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'audio/webm'
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          mimeType = '' // let browser choose
+        }
+      }
+
+      const recorderOpts: MediaRecorderOptions = { audioBitsPerSecond: 64000 }
+      if (mimeType) recorderOpts.mimeType = mimeType
+
+      const recorder = new MediaRecorder(stream, recorderOpts)
       mediaRecorderRef.current = recorder
       chunksRef.current = []
       allChunksRef.current = []
@@ -232,7 +240,9 @@ export function RecordingModal({
     } catch (err) {
       // Microphone was granted but something else failed — clean up
       stream.getTracks().forEach((t) => t.stop())
-      toast.error(t('errorStart'))
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error('[Recording] Start failed:', err)
+      toast.error(`${t('errorStart')}: ${msg}`)
     }
   }
 
