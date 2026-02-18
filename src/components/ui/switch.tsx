@@ -7,17 +7,22 @@ import { cn } from "@/lib/utils"
 
 function Switch({
   className,
-  size = "default",
   ...props
-}: React.ComponentProps<typeof SwitchPrimitive.Root> & {
-  size?: "sm" | "default"
-}) {
+}: React.ComponentProps<typeof SwitchPrimitive.Root>) {
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
-      data-size={size}
       className={cn(
-        "peer data-[state=checked]:bg-accent data-[state=unchecked]:bg-background focus-visible:border-ring focus-visible:ring-ring/50 group/switch inline-flex shrink-0 items-center rounded-full border border-border shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-[1.15rem] data-[size=default]:w-8 data-[size=sm]:h-3.5 data-[size=sm]:w-6",
+        // Base layout
+        "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full",
+        "transition-colors duration-200",
+        "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        // Inaktiv: weißer Background, sichtbarer Rahmen
+        "border-2 border-input bg-white",
+        "dark:bg-muted dark:border-muted-foreground/40",
+        // Aktiv: Primary Background, Rahmen in Primary
+        "data-[state=checked]:bg-primary data-[state=checked]:border-primary",
         className
       )}
       {...props}
@@ -25,7 +30,16 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          "bg-background dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block rounded-full ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0"
+          "pointer-events-none block h-5 w-5 rounded-full shadow-sm",
+          "transition-transform duration-200",
+          // Position
+          "data-[state=unchecked]:translate-x-0",
+          "data-[state=checked]:translate-x-5",
+          // Inaktiv: grauer Kreis
+          "bg-muted-foreground/40",
+          "dark:bg-muted-foreground/60",
+          // Aktiv: weißer Kreis
+          "data-[state=checked]:bg-white",
         )}
       />
     </SwitchPrimitive.Root>
