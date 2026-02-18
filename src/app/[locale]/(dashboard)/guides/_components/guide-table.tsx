@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Pencil, Trash2, MoreHorizontal, Download } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -36,20 +37,21 @@ export function GuideTable({ guides, isAdmin, onEdit, onDelete }: GuideTableProp
   const tCommon = useTranslations('common')
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[300px]">{tCommon('name')}</TableHead>
-            <TableHead>{t('table.category')}</TableHead>
-            <TableHead>{t('table.type')}</TableHead>
-            <TableHead>{t('table.size')}</TableHead>
-            {isAdmin && (
-              <TableHead>{t('table.access')}</TableHead>
-            )}
-            <TableHead className="w-[80px]" />
-          </TableRow>
-        </TableHeader>
+    <Card>
+      <CardContent className="p-0">
+        <Table className="table-fixed w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[40%]">{tCommon('name')}</TableHead>
+              <TableHead className="w-[15%]">{t('table.category')}</TableHead>
+              <TableHead className="w-[10%]">{t('table.type')}</TableHead>
+              <TableHead className="w-[10%]">{t('table.size')}</TableHead>
+              {isAdmin && (
+                <TableHead className="w-[15%]">{t('table.access')}</TableHead>
+              )}
+              <TableHead className="w-[10%]" />
+            </TableRow>
+          </TableHeader>
         <TableBody>
           {guides.map((guide) => (
             <GuideTableRow
@@ -65,7 +67,8 @@ export function GuideTable({ guides, isAdmin, onEdit, onDelete }: GuideTableProp
           ))}
         </TableBody>
       </Table>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -105,9 +108,9 @@ function GuideTableRow({
             <GuideIcon name={guide.icon} className="size-4" />
           </div>
           <div className="min-w-0">
-            <p className="truncate font-medium text-sm">{guide.name}</p>
+            <p className="font-medium text-sm">{guide.name}</p>
             {guide.description && (
-              <p className="text-muted-foreground truncate text-xs">
+              <p className="text-muted-foreground text-xs line-clamp-2">
                 {guide.description}
               </p>
             )}
