@@ -324,9 +324,9 @@
       );
   }
 
-  /* ─── Cards: kein Rahmen, nur Schatten ──────────────────── */
+  /* ─── Cards: weißer Rahmen + Schatten ───────────────────── */
   [data-slot="card"] {
-    border: none;
+    border: 1px solid white;
     box-shadow: var(--shadow);
     transition: box-shadow 0.2s ease;
   }
@@ -344,24 +344,24 @@
   /* ─── Primary Button: leichter Verlauf ──────────────────── */
   [data-slot="button"][data-variant="default"] {
     background-image: linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--primary) 82%, white) 0%,
+      90deg,
+      color-mix(in oklch, var(--primary) 88%, white) 0%,
       var(--primary) 100%
     );
     background-color: transparent;
   }
   [data-slot="button"][data-variant="default"]:hover:not(:disabled) {
     background-image: linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--primary) 78%, white) 0%,
-      color-mix(in oklch, var(--primary) 93%, black) 100%
+      90deg,
+      color-mix(in oklch, var(--primary) 84%, white) 0%,
+      color-mix(in oklch, var(--primary) 94%, black) 100%
     );
   }
   [data-slot="button"][data-variant="default"]:active:not(:disabled) {
     background-image: linear-gradient(
-      180deg,
+      90deg,
       var(--primary) 0%,
-      color-mix(in oklch, var(--primary) 90%, black) 100%
+      color-mix(in oklch, var(--primary) 92%, black) 100%
     );
   }
 
