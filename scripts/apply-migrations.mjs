@@ -28,6 +28,7 @@ async function main() {
   const toApply = [
     '0003_whole_the_call',
     '0004_cheerful_mister_fear',
+    '0005_supreme_scalphunter',
   ]
 
   console.log('Ensuring drizzle migrations schema and table exist...')

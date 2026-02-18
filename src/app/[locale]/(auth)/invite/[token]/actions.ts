@@ -201,13 +201,16 @@ export async function acceptInvitation(
       return { success: false, error: 'seat_limit_reached' }
     }
 
-    // Create organization membership
+    // Create organization membership (copy metadata from invitation)
     await db.insert(organizationMembers).values({
       organizationId: invitation.organizationId,
       userId: authUser.id,
       role: invitation.targetOrgRole,
       invitedBy: invitation.invitedBy,
       joinedAt: new Date(),
+      position: invitation.invitedPosition ?? null,
+      departmentId: invitation.invitedDepartmentId ?? null,
+      locationId: invitation.invitedLocationId ?? null,
     })
 
     // Get org name for notification
@@ -338,7 +341,21 @@ export async function registerAndAcceptInvitation(
       role: invitation.targetOrgRole,
       invitedBy: invitation.invitedBy,
       joinedAt: new Date(),
+      position: invitation.invitedPosition ?? null,
+      departmentId: invitation.invitedDepartmentId ?? null,
+      locationId: invitation.invitedLocationId ?? null,
     })
+
+    // Update user name from invitation if provided
+    if (invitation.invitedFirstName || invitation.invitedLastName) {
+      const fName = invitation.invitedFirstName || data.fullName.split(' ')[0] || ''
+      const lName = invitation.invitedLastName || data.fullName.split(' ').slice(1).join(' ') || ''
+      await db.update(users).set({
+        firstName: fName || null,
+        lastName: lName || null,
+        updatedAt: new Date(),
+      }).where(eq(users.id, authData.user.id))
+    }
 
     // Get org name for notification
     let orgName = ''

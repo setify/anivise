@@ -7,6 +7,8 @@ import {
 } from './enums'
 import { users } from './users'
 import { organizations } from './organizations'
+import { orgDepartments } from './org-departments'
+import { orgLocations } from './org-locations'
 
 export const teamInvitations = pgTable(
   'team_invitations',
@@ -26,6 +28,12 @@ export const teamInvitations = pgTable(
     token: text('token').unique().notNull(),
     expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
     acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+    invitedFirstName: text('invited_first_name'),
+    invitedLastName: text('invited_last_name'),
+    invitedPosition: text('invited_position'),
+    invitedDepartmentId: uuid('invited_department_id').references(() => orgDepartments.id),
+    invitedLocationId: uuid('invited_location_id').references(() => orgLocations.id),
+    tempPasswordHash: text('temp_password_hash'),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),

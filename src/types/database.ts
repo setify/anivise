@@ -3,6 +3,8 @@ import type {
   organizations,
   users,
   organizationMembers,
+  orgDepartments,
+  orgLocations,
   analysisSubjects,
   consents,
   analysisJobs,
@@ -34,6 +36,14 @@ export type NewUser = InferInsertModel<typeof users>
 // Organization Member
 export type OrganizationMember = InferSelectModel<typeof organizationMembers>
 export type NewOrganizationMember = InferInsertModel<typeof organizationMembers>
+
+// Org Department
+export type OrgDepartment = InferSelectModel<typeof orgDepartments>
+export type NewOrgDepartment = InferInsertModel<typeof orgDepartments>
+
+// Org Location
+export type OrgLocation = InferSelectModel<typeof orgLocations>
+export type NewOrgLocation = InferInsertModel<typeof orgLocations>
 
 // Analysis Subject
 export type AnalysisSubject = InferSelectModel<typeof analysisSubjects>
@@ -110,6 +120,7 @@ export type MediaContext =
   | 'form_header'
   | 'org_logo'
   | 'report_asset'
+  | 'user_avatar'
   | 'general'
 
 // Organization Notification Settings

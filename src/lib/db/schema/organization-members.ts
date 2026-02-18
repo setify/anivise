@@ -1,6 +1,7 @@
 import {
   pgTable,
   uuid,
+  text,
   timestamp,
   unique,
   index,
@@ -8,6 +9,8 @@ import {
 import { orgMemberRoleEnum } from './enums'
 import { organizations } from './organizations'
 import { users } from './users'
+import { orgDepartments } from './org-departments'
+import { orgLocations } from './org-locations'
 
 export const organizationMembers = pgTable(
   'organization_members',
@@ -22,6 +25,13 @@ export const organizationMembers = pgTable(
     role: orgMemberRoleEnum('role').notNull().default('member'),
     invitedBy: uuid('invited_by').references(() => users.id),
     joinedAt: timestamp('joined_at', { withTimezone: true }),
+    position: text('position'),
+    departmentId: uuid('department_id').references(() => orgDepartments.id),
+    locationId: uuid('location_id').references(() => orgLocations.id),
+    phone: text('phone'),
+    status: text('status').notNull().default('active'),
+    deactivatedAt: timestamp('deactivated_at', { withTimezone: true }),
+    deactivatedBy: uuid('deactivated_by').references(() => users.id),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -37,5 +47,6 @@ export const organizationMembers = pgTable(
     index('idx_org_members_org_id').on(table.organizationId),
     index('idx_org_members_user_id').on(table.userId),
     index('idx_org_members_role').on(table.role),
+    index('idx_org_members_status').on(table.status),
   ]
 )

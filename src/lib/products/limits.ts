@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { products, organizationProducts, organizationMembers } from '@/lib/db/schema'
-import { eq, count } from 'drizzle-orm'
+import { eq, and, count } from 'drizzle-orm'
 
 export interface OrganizationLimits {
   maxOrgAdmins: number | null
@@ -83,7 +83,7 @@ export async function getOrganizationUsage(
       value: count(),
     })
     .from(organizationMembers)
-    .where(eq(organizationMembers.organizationId, organizationId))
+    .where(and(eq(organizationMembers.organizationId, organizationId), eq(organizationMembers.status, 'active')))
     .groupBy(organizationMembers.role)
 
   const countByRole = new Map(roleCounts.map((r) => [r.role, r.value]))

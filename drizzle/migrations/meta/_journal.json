@@ -36,6 +36,13 @@
       "when": 1771400172882,
       "tag": "0004_cheerful_mister_fear",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1771427501199,
+      "tag": "0005_supreme_scalphunter",
+      "breakpoints": true
     }
   ]
 }

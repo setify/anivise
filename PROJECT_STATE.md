@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.8.0
+**Version:** 1.10.0
 **Last Updated:** 2026-02-18
-**Last Commit:** feat(org): add media library, notification settings and integrations placeholder
+**Last Commit:** feat(org): add user management with invite, direct create, role management, departments and locations
 
 ## What's Implemented
 
@@ -24,7 +24,9 @@
 - [x] Schema: products (name, slug, description, status, is_default, sort_order, seat limits [max_org_admins/managers/members], feature limits [max_analyses/forms/submissions/storage])
 - [x] Schema: organization_products (1:1 org-plan junction, override columns for custom plans, assigned_by/at, notes, unique on organization_id)
 - [x] Schema: users (Supabase Auth ID, email, first/last/display name, phone, timezone, avatar, platform_role, locale)
-- [x] Schema: organization_members (junction table, role enum, unique constraint)
+- [x] Schema: organization_members (junction table, role enum, unique constraint, position, department_id, location_id, phone, status active/deactivated)
+- [x] Schema: org_departments (org-scoped departments with unique name)
+- [x] Schema: org_locations (org-scoped locations with address/city/country)
 - [x] Schema: analysis_subjects (full_name, email, role_title, organization_id)
 - [x] Schema: consents (consent_type, status, granted_at, revoked_at, ip_address)
 - [x] Schema: analysis_jobs (status lifecycle, n8n timestamps, transcript path, error tracking)
@@ -211,6 +213,15 @@
 - [x] Staff permission filtering on admin sidebar (Settings hidden for staff)
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
+- [x] **Org User Management** (`/users`): User list with tabs (All, Active, Deactivated, Invitations), search, stat cards, seat usage bar
+- [x] Add User dialog with Email Invite and Direct Create tabs, role selector, department/location comboboxes
+- [x] Edit User dialog (position, department, location, phone, name)
+- [x] Change Role dialog with radio group and seat impact
+- [x] Deactivate/Reactivate dialog with consequences list
+- [x] Remove User dialog with name confirmation
+- [x] Manage Departments dialog (CRUD with usage count, delete protection)
+- [x] Manage Locations dialog (CRUD with address/city/country, usage count, delete protection)
+- [x] Reusable `AvatarDisplay` component with initials fallback and deterministic color
 - [ ] Analysis upload flow
 - [ ] Report viewer
 
@@ -235,6 +246,22 @@
 - [x] createOrganizationWithAdmin - create org and org-admin invitation in one step
 - [x] getOrgInvitations - list invitations for a specific organization
 - [x] resendOrgInvitation - cancel old invitation and create new one
+- [x] getOrgUsers - join members + users + departments + locations
+- [x] getOrgUserStats - counts for total, active, deactivated, pending invitations
+- [x] getOrgInvitations (org-level) - pending/expired invitations for the org
+- [x] getOrgDepartments / getOrgLocations - CRUD data with usage counts
+- [x] getOrgSeats - limits + usage for seat display
+- [x] inviteUser - create org invitation with email, role, metadata
+- [x] createUserDirect - create Supabase Auth user + DB record + membership
+- [x] updateMember - update position, department, location, phone, name
+- [x] changeUserRole - with last-admin protection and seat limit check
+- [x] deactivateUser - set status=deactivated, self/last-admin protection
+- [x] reactivateUser - set status=active with seat limit check
+- [x] removeUserFromOrg - hard delete with name confirmation
+- [x] resendInvitation (org-level) - cancel old, create new with same metadata
+- [x] revokeInvitation (org-level) - set status=cancelled
+- [x] createDepartment / updateDepartment / deleteDepartment (with usage check)
+- [x] createLocation / updateLocation / deleteLocation (with usage check)
 - [x] cancelOrgInvitation - cancel an org invitation
 - [x] logAudit - append audit log entry (20 action types)
 - [x] getAuditLogs - list audit logs with action/period filters and pagination
@@ -338,10 +365,7 @@
 - Supabase Storage RLS policies (uploads work via admin client, RLS not yet applied)
 - OAuth providers (Google, Microsoft)
 - SSO/SAML for Enterprise
-- Team management UI for organizations (functional, currently placeholder)
-- Organization settings UI (functional, currently placeholder)
 - Consent management UI
-- User invitation flow (for org-level)
 - Testing (Vitest, Playwright)
 - Avatar upload in profile page
 - Email templates created (React components) but Resend not yet integrated

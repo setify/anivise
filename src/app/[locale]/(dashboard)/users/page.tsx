@@ -1,17 +1,24 @@
-import { useTranslations } from 'next-intl'
-import { UserCog } from 'lucide-react'
-import { PagePlaceholder } from '@/components/ui/page-placeholder'
+import { getOrgUsers, getOrgUserStats, getOrgInvitations, getOrgDepartments, getOrgLocations, getOrgSeats } from './actions'
+import { UsersPageClient } from './users-page-client'
 
-export default function UsersPage() {
-  const t = useTranslations('org.users')
+export default async function UsersPage() {
+  const [members, stats, invitations, departments, locations, seats] = await Promise.all([
+    getOrgUsers(),
+    getOrgUserStats(),
+    getOrgInvitations(),
+    getOrgDepartments(),
+    getOrgLocations(),
+    getOrgSeats(),
+  ])
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-muted-foreground">{t('description')}</p>
-      </div>
-      <PagePlaceholder message={t('comingSoon')} icon={UserCog} />
-    </div>
+    <UsersPageClient
+      members={members}
+      stats={stats}
+      invitations={invitations}
+      departments={departments}
+      locations={locations}
+      seats={seats}
+    />
   )
 }

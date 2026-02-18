@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.10.0] - 2026-02-18
+### Added
+- **Org User Management** (`/users`): Full user management for org admins — invite by email, direct create with password, edit profile/position, change role, deactivate/reactivate, remove with name confirmation.
+- **User list with tabs**: All, Active, Deactivated, Invitations — with search, stat cards (total, active, deactivated, pending), seat usage bar.
+- **Departments & Locations**: CRUD management as org metadata — inline edit, usage count badges, delete protection when in use.
+- **Invitation management**: Resend, revoke invitations from the users page. Invitation metadata (first/last name, position, department, location) flows through to membership on acceptance.
+- **`org_departments` table**: Organization-scoped departments with unique(org_id, name).
+- **`org_locations` table**: Organization-scoped locations with address, city, country, unique(org_id, name).
+- **Organization members extended**: New columns — position, department_id, location_id, phone, status (active/deactivated), deactivated_at, deactivated_by.
+- **Team invitations extended**: New columns — invited_first_name, invited_last_name, invited_position, invited_department_id, invited_location_id, temp_password_hash.
+- **`user_avatar` media context**: Added to mediaContextEnum for avatar uploads.
+- **`src/components/shared/avatar-display.tsx`**: Reusable avatar with initials fallback and deterministic color from name hash.
+- **`src/lib/validations/org-users.ts`**: Zod schemas for all user management actions.
+- **13 new audit actions**: org_member.deactivated/reactivated/updated/created_direct, department/location CRUD, invitation.revoked.
+- DB migration `0005_supreme_scalphunter.sql`.
+- i18n: Comprehensive `org.users` namespace (stats, tabs, dialogs, form fields, messages, departments, locations) in DE + EN.
+
+### Changed
+- `getOrganizationUsage()` now filters by `status = 'active'` so deactivated members don't consume seats.
+- Invitation acceptance copies position/department/location metadata from invitation to membership.
+
 ## [1.8.0] - 2026-02-18
 ### Added
 - **Org Settings: Mediathek** (`/settings/media`): Eigene Org-Dateien in Supabase Storage — Grid/Listen-Ansicht, Upload (10 MB, drag & drop, 8 Typen), Löschen mit Verwendungs-Check, Speicher-Fortschrittsbalken (PlanUsageBar). Alle Actions org-isoliert (contextEntityId = orgId).

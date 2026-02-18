@@ -28,6 +28,17 @@ export type AuditAction =
   | 'media.deleted'
   | 'media.bulk_deleted'
   | 'media.synced'
+  | 'org_member.deactivated'
+  | 'org_member.reactivated'
+  | 'org_member.updated'
+  | 'org_member.created_direct'
+  | 'department.created'
+  | 'department.updated'
+  | 'department.deleted'
+  | 'location.created'
+  | 'location.updated'
+  | 'location.deleted'
+  | 'invitation.revoked'
 
 export async function logAudit(params: {
   actorId: string
