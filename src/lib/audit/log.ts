@@ -49,6 +49,15 @@ export type AuditAction =
   | 'guide.created'
   | 'guide.updated'
   | 'guide.deleted'
+  | 'analysis.created'
+  | 'analysis.updated'
+  | 'analysis.deleted'
+  | 'analysis.status_changed'
+  | 'analysis.shared'
+  | 'analysis.unshared'
+  | 'analysis.archived'
+  | 'analysis.unarchived'
+  | 'analysis.manager_changed'
 
 export async function logAudit(params: {
   actorId: string

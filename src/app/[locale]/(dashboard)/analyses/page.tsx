@@ -1,34 +1,24 @@
-import { useTranslations } from 'next-intl'
-import { Button } from '@/components/ui/button'
-import { BarChart3, Plus } from 'lucide-react'
-import { EmptyState } from '@/components/ui/empty-state'
+import { getCurrentOrgContext } from '@/lib/auth/org-context'
+import { getAnalyses, getActiveEmployees, getOrgManagers } from './actions'
+import { AnalysesPageClient } from './analyses-page-client'
 
-export default function AnalysesPage() {
-  const t = useTranslations('analyses')
-  const tEmpty = useTranslations('ui.empty.analyses')
+export default async function AnalysesPage() {
+  const ctx = await getCurrentOrgContext()
+  const [analyses, employees, managers] = await Promise.all([
+    getAnalyses(),
+    getActiveEmployees(),
+    getOrgManagers(),
+  ])
+
+  const isAdmin = ctx?.role === 'org_admin'
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-          <p className="text-muted-foreground">{t('description')}</p>
-        </div>
-        <Button>
-          <Plus className="size-4" />
-          {t('newAnalysis')}
-        </Button>
-      </div>
-
-      <EmptyState
-        icon={BarChart3}
-        title={tEmpty('title')}
-        description={tEmpty('description')}
-        action={{
-          label: tEmpty('action'),
-          icon: Plus,
-        }}
-      />
-    </div>
+    <AnalysesPageClient
+      analyses={analyses}
+      employees={employees}
+      managers={managers}
+      isAdmin={isAdmin}
+      currentUserId={ctx?.userId ?? ''}
+    />
   )
 }

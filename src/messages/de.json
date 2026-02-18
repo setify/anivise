@@ -165,9 +165,120 @@
   "analyses": {
     "title": "Analysen",
     "description": "Muster-Analysen für Führungsentscheidungen",
-    "empty": "Starten Sie Ihre erste Analyse, um Muster und Handlungsoptionen zu erkennen.",
+    "newAnalysis": "Neue Analyse",
     "emptyTitle": "Keine Analysen vorhanden",
-    "newAnalysis": "Neue Analyse"
+    "emptyDescription": "Starten Sie Ihre erste Analyse, um Muster und Handlungsoptionen zu erkennen.",
+    "tabs": {
+      "active": "Aktiv",
+      "archived": "Archiviert"
+    },
+    "status": {
+      "planned": "Geplant",
+      "active": "Aktiv",
+      "completed": "Erledigt"
+    },
+    "table": {
+      "name": "Analyse",
+      "employee": "Mitarbeiter",
+      "manager": "Manager",
+      "status": "Status",
+      "createdAt": "Erstellt",
+      "updatedAt": "Aktualisiert"
+    },
+    "filter": {
+      "allStatuses": "Alle Status",
+      "allManagers": "Alle Manager",
+      "search": "Analysen durchsuchen..."
+    },
+    "create": {
+      "title": "Neue Analyse erstellen",
+      "employee": "Mitarbeiter",
+      "employeePlaceholder": "Mitarbeiter auswählen...",
+      "manager": "Zuständiger Manager",
+      "managerPlaceholder": "Manager auswählen...",
+      "submit": "Analyse erstellen",
+      "creating": "Wird erstellt...",
+      "success": "Analyse wurde erstellt.",
+      "error": "Fehler beim Erstellen der Analyse."
+    },
+    "actions": {
+      "edit": "Umbenennen",
+      "archive": "Archivieren",
+      "unarchive": "Wiederherstellen",
+      "delete": "Löschen",
+      "changeManager": "Manager ändern",
+      "share": "Freigeben",
+      "changeStatus": "Status ändern",
+      "runAnalysis": "Analyse durchführen"
+    },
+    "delete": {
+      "title": "Analyse löschen",
+      "description": "Möchten Sie die Analyse \"{name}\" wirklich löschen?",
+      "confirm": "Löschen",
+      "success": "Analyse wurde gelöscht.",
+      "error": "Fehler beim Löschen."
+    },
+    "rename": {
+      "title": "Analyse umbenennen",
+      "name": "Name",
+      "save": "Speichern",
+      "saving": "Wird gespeichert...",
+      "success": "Name wurde aktualisiert.",
+      "error": "Fehler beim Umbenennen."
+    },
+    "detail": {
+      "recording": {
+        "title": "Gesprächsaufzeichnung",
+        "description": "Fügen Sie eine Gesprächsaufzeichnung hinzu oder starten Sie eine neue.",
+        "upload": "Datei hochladen",
+        "start": "Aufzeichnung starten"
+      },
+      "forms": {
+        "title": "Formulare",
+        "description": "Wählen Sie Formulare aus, die dem Mitarbeiter zugeschickt werden.",
+        "select": "Formular auswählen"
+      },
+      "info": {
+        "title": "Analyse-Details",
+        "status": "Status",
+        "manager": "Manager",
+        "created": "Erstellt am",
+        "updated": "Aktualisiert am"
+      },
+      "employee": {
+        "title": "Mitarbeiter"
+      },
+      "notes": {
+        "title": "Notizen",
+        "placeholder": "Notiz hinzufügen...",
+        "add": "Hinzufügen",
+        "adding": "Wird hinzugefügt...",
+        "empty": "Noch keine Notizen.",
+        "edited": "bearbeitet",
+        "editSave": "Speichern",
+        "editCancel": "Abbrechen"
+      },
+      "share": {
+        "title": "Analyse freigeben",
+        "description": "Geben Sie diese Analyse für andere Manager frei.",
+        "selectUser": "Person auswählen...",
+        "add": "Freigeben",
+        "remove": "Entfernen",
+        "empty": "Noch nicht freigegeben.",
+        "success": "Analyse wurde freigegeben.",
+        "removeSuccess": "Freigabe wurde entfernt.",
+        "alreadyShared": "Diese Person hat bereits Zugriff.",
+        "error": "Fehler beim Freigeben."
+      },
+      "managerChange": {
+        "title": "Manager ändern",
+        "select": "Neuer Manager",
+        "save": "Ändern",
+        "saving": "Wird geändert...",
+        "success": "Manager wurde geändert.",
+        "error": "Fehler beim Ändern."
+      }
+    }
   },
   "team": {
     "title": "Team",

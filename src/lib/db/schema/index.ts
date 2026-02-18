@@ -17,6 +17,7 @@ export {
   productStatusEnum,
   employeeStatusEnum,
   mediaContextEnum,
+  analysisStatusEnum,
 } from './enums'
 
 // Tables
@@ -47,3 +48,4 @@ export { employees } from './employees'
 export { organizationNotificationSettings } from './organization-notification-settings'
 export { guideCategories } from './guide-categories'
 export { guides } from './guides'
+export { analyses, analysisShares, analysisComments } from './analyses'

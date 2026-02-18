@@ -26,6 +26,9 @@ import type {
   organizationNotificationSettings,
   guideCategories,
   guides,
+  analyses,
+  analysisShares,
+  analysisComments,
 } from '@/lib/db/schema'
 
 // Organization
@@ -130,6 +133,21 @@ export type NewGuideCategory = InferInsertModel<typeof guideCategories>
 // Guide
 export type Guide = InferSelectModel<typeof guides>
 export type NewGuide = InferInsertModel<typeof guides>
+
+// Analysis
+export type Analysis = InferSelectModel<typeof analyses>
+export type NewAnalysis = InferInsertModel<typeof analyses>
+
+// Analysis Share
+export type AnalysisShare = InferSelectModel<typeof analysisShares>
+export type NewAnalysisShare = InferInsertModel<typeof analysisShares>
+
+// Analysis Comment
+export type AnalysisComment = InferSelectModel<typeof analysisComments>
+export type NewAnalysisComment = InferInsertModel<typeof analysisComments>
+
+// Analysis Status type
+export type AnalysisStatus = 'planned' | 'active' | 'completed'
 
 // Media Context type
 export type MediaContext =

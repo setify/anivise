@@ -165,9 +165,120 @@
   "analyses": {
     "title": "Analyses",
     "description": "Pattern analyses for leadership decisions",
-    "empty": "Start your first analysis to discover patterns and action options.",
+    "newAnalysis": "New Analysis",
     "emptyTitle": "No analyses yet",
-    "newAnalysis": "New Analysis"
+    "emptyDescription": "Start your first analysis to discover patterns and action options.",
+    "tabs": {
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "status": {
+      "planned": "Planned",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "table": {
+      "name": "Analysis",
+      "employee": "Employee",
+      "manager": "Manager",
+      "status": "Status",
+      "createdAt": "Created",
+      "updatedAt": "Updated"
+    },
+    "filter": {
+      "allStatuses": "All statuses",
+      "allManagers": "All managers",
+      "search": "Search analyses..."
+    },
+    "create": {
+      "title": "Create New Analysis",
+      "employee": "Employee",
+      "employeePlaceholder": "Select employee...",
+      "manager": "Assigned Manager",
+      "managerPlaceholder": "Select manager...",
+      "submit": "Create Analysis",
+      "creating": "Creating...",
+      "success": "Analysis has been created.",
+      "error": "Failed to create analysis."
+    },
+    "actions": {
+      "edit": "Rename",
+      "archive": "Archive",
+      "unarchive": "Restore",
+      "delete": "Delete",
+      "changeManager": "Change Manager",
+      "share": "Share",
+      "changeStatus": "Change Status",
+      "runAnalysis": "Run Analysis"
+    },
+    "delete": {
+      "title": "Delete Analysis",
+      "description": "Are you sure you want to delete the analysis \"{name}\"?",
+      "confirm": "Delete",
+      "success": "Analysis has been deleted.",
+      "error": "Failed to delete."
+    },
+    "rename": {
+      "title": "Rename Analysis",
+      "name": "Name",
+      "save": "Save",
+      "saving": "Saving...",
+      "success": "Name has been updated.",
+      "error": "Failed to rename."
+    },
+    "detail": {
+      "recording": {
+        "title": "Conversation Recording",
+        "description": "Add a conversation recording or start a new one.",
+        "upload": "Upload File",
+        "start": "Start Recording"
+      },
+      "forms": {
+        "title": "Forms",
+        "description": "Select forms to send to the employee.",
+        "select": "Select Form"
+      },
+      "info": {
+        "title": "Analysis Details",
+        "status": "Status",
+        "manager": "Manager",
+        "created": "Created",
+        "updated": "Updated"
+      },
+      "employee": {
+        "title": "Employee"
+      },
+      "notes": {
+        "title": "Notes",
+        "placeholder": "Add a note...",
+        "add": "Add",
+        "adding": "Adding...",
+        "empty": "No notes yet.",
+        "edited": "edited",
+        "editSave": "Save",
+        "editCancel": "Cancel"
+      },
+      "share": {
+        "title": "Share Analysis",
+        "description": "Share this analysis with other managers.",
+        "selectUser": "Select person...",
+        "add": "Share",
+        "remove": "Remove",
+        "empty": "Not shared yet.",
+        "success": "Analysis has been shared.",
+        "removeSuccess": "Share has been removed.",
+        "alreadyShared": "This person already has access.",
+        "error": "Failed to share."
+      },
+      "managerChange": {
+        "title": "Change Manager",
+        "select": "New Manager",
+        "save": "Change",
+        "saving": "Changing...",
+        "success": "Manager has been changed.",
+        "error": "Failed to change."
+      }
+    }
   },
   "team": {
     "title": "Team",

@@ -31,6 +31,7 @@ async function main() {
     '0005_supreme_scalphunter',
     '0006_lean_legion',
     '0007_public_killer_shrike',
+    '0008_big_donald_blake',
   ]
 
   console.log('Ensuring drizzle migrations schema and table exist...')
