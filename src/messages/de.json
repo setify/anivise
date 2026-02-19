@@ -278,6 +278,18 @@
         "description": "Wählen Sie Formulare aus, die dem Mitarbeiter zugeschickt werden.",
         "select": "Formular auswählen"
       },
+      "documents": {
+        "title": "Dokumente",
+        "add": "Dokument hinzufügen",
+        "uploading": "Wird hochgeladen...",
+        "empty": "Noch keine Dokumente.",
+        "emptyHint": "Laden Sie PDF-, Word- oder Text-Dateien hoch. Der Text wird automatisch extrahiert.",
+        "uploadSuccess": "Dokument wurde hochgeladen.",
+        "uploadError": "Fehler beim Hochladen.",
+        "tooLarge": "Die Datei ist zu groß (max. 50 MB).",
+        "deleted": "Dokument wurde gelöscht.",
+        "noText": "Text konnte nicht extrahiert werden."
+      },
       "info": {
         "title": "Analyse-Details",
         "status": "Status",

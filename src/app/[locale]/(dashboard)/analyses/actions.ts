@@ -7,6 +7,7 @@ import {
   analysisShares,
   analysisComments,
   analysisRecordings,
+  analysisDocuments,
   employees,
   users,
   organizationMembers,
@@ -984,4 +985,120 @@ export async function getDeepgramKey(): Promise<string | null> {
   if (!ctx) return null
 
   return getIntegrationSecret('deepgram', 'api_key')
+}
+
+// ─── Documents ──────────────────────────────────────────────────────
+
+export async function uploadAnalysisDocument(params: {
+  analysisId: string
+  filename: string
+  mimeType: string
+  fileSize: number
+  base64: string
+}) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false, error: 'unauthorized' }
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const adminSupabase = createAdminClient()
+
+  const storagePath = `${ctx.organizationId}/documents/${params.analysisId}/${Date.now()}-${params.filename}`
+  const bytes = Buffer.from(params.base64, 'base64')
+
+  // Upload to storage
+  const { error: uploadError } = await adminSupabase.storage
+    .from('org-assets')
+    .upload(storagePath, bytes, { contentType: params.mimeType, upsert: false })
+
+  if (uploadError) {
+    return { success: false, error: 'upload_failed' }
+  }
+
+  // Extract text
+  let extractedText: string | null = null
+  try {
+    if (params.mimeType === 'application/pdf') {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const pdfParse = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>
+      const result = await pdfParse(Buffer.from(bytes))
+      extractedText = result.text?.trim() || null
+    } else if (
+      params.mimeType ===
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      const mammoth = await import('mammoth')
+      const result = await mammoth.extractRawText({ buffer: Buffer.from(bytes) })
+      extractedText = result.value?.trim() || null
+    } else if (params.mimeType === 'text/plain') {
+      extractedText = Buffer.from(bytes).toString('utf-8').trim() || null
+    }
+  } catch {
+    // Text extraction failed — document is still saved
+  }
+
+  // Insert document record
+  const name = params.filename.replace(/\.[^.]+$/, '')
+  await db.insert(analysisDocuments).values({
+    analysisId: params.analysisId,
+    name,
+    storagePath,
+    filename: params.filename,
+    mimeType: params.mimeType,
+    fileSize: params.fileSize,
+    extractedText,
+    uploadedBy: ctx.userId,
+  })
+
+  revalidatePath(`/analyses/${params.analysisId}`)
+  return { success: true }
+}
+
+export async function getAnalysisDocuments(analysisId: string) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return []
+
+  const rows = await db
+    .select({
+      document: analysisDocuments,
+      uploaderName: users.fullName,
+      uploaderEmail: users.email,
+    })
+    .from(analysisDocuments)
+    .innerJoin(users, eq(analysisDocuments.uploadedBy, users.id))
+    .where(eq(analysisDocuments.analysisId, analysisId))
+    .orderBy(desc(analysisDocuments.createdAt))
+
+  return rows.map((r) => ({
+    id: r.document.id,
+    name: r.document.name,
+    filename: r.document.filename,
+    mimeType: r.document.mimeType,
+    fileSize: r.document.fileSize,
+    extractedText: r.document.extractedText,
+    uploaderName: r.uploaderName ?? r.uploaderEmail,
+    createdAt: r.document.createdAt,
+  }))
+}
+
+export type DocumentRow = Awaited<ReturnType<typeof getAnalysisDocuments>>[number]
+
+export async function deleteAnalysisDocument(documentId: string) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false, error: 'unauthorized' }
+
+  const [doc] = await db
+    .select()
+    .from(analysisDocuments)
+    .where(eq(analysisDocuments.id, documentId))
+    .limit(1)
+  if (!doc) return { success: false, error: 'not_found' }
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const adminSupabase = createAdminClient()
+  await adminSupabase.storage.from('org-assets').remove([doc.storagePath])
+
+  await db.delete(analysisDocuments).where(eq(analysisDocuments.id, documentId))
+
+  revalidatePath(`/analyses/${doc.analysisId}`)
+  return { success: true }
 }

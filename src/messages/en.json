@@ -278,6 +278,18 @@
         "description": "Select forms to send to the employee.",
         "select": "Select Form"
       },
+      "documents": {
+        "title": "Documents",
+        "add": "Add Document",
+        "uploading": "Uploading...",
+        "empty": "No documents yet.",
+        "emptyHint": "Upload PDF, Word or text files. Text will be extracted automatically.",
+        "uploadSuccess": "Document uploaded successfully.",
+        "uploadError": "Failed to upload.",
+        "tooLarge": "File is too large (max 50 MB).",
+        "deleted": "Document has been deleted.",
+        "noText": "Text could not be extracted."
+      },
       "info": {
         "title": "Analysis Details",
         "status": "Status",

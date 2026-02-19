@@ -71,6 +71,13 @@
       "when": 1771449889038,
       "tag": "0009_supreme_hitman",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1771489448390,
+      "tag": "0010_superb_eternity",
+      "breakpoints": true
     }
   ]
 }

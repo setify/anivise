@@ -52,6 +52,7 @@ import { ShareDialog } from '../_components/share-dialog'
 import { RecordingModal } from '../_components/recording-modal'
 import { RecordingsList } from '../_components/recordings-list'
 import { UploadAudioDialog } from '../_components/upload-audio-dialog'
+import { DocumentsSection } from '../_components/documents-section'
 import {
   updateAnalysis,
   changeAnalysisStatus,
@@ -65,6 +66,7 @@ import type {
   AnalysisShareRow,
   OrgManager,
   RecordingRow,
+  DocumentRow,
 } from '../actions'
 import type { AnalysisStatus } from '@/types/database'
 
@@ -79,6 +81,7 @@ interface AnalysisDetailClientProps {
   comments: AnalysisCommentRow[]
   shares: AnalysisShareRow[]
   recordings: RecordingRow[]
+  documents: DocumentRow[]
   managers: OrgManager[]
   isAdmin: boolean
   currentUserId: string
@@ -89,6 +92,7 @@ export function AnalysisDetailClient({
   comments,
   shares,
   recordings,
+  documents,
   managers,
   isAdmin,
   currentUserId,
@@ -285,6 +289,13 @@ export function AnalysisDetailClient({
               </Button>
             </div>
           </div>
+
+          {/* Documents section */}
+          <DocumentsSection
+            analysisId={analysis.id}
+            documents={documents}
+            onUploadComplete={() => router.refresh()}
+          />
 
           {/* Forms placeholder */}
           <div className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8">
