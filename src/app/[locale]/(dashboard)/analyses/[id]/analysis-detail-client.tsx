@@ -8,7 +8,6 @@ import {
   ArrowLeft,
   Upload,
   Mic,
-  ClipboardList,
   Play,
   Pencil,
   MoreHorizontal,
@@ -53,6 +52,7 @@ import { RecordingModal } from '../_components/recording-modal'
 import { RecordingsList } from '../_components/recordings-list'
 import { UploadAudioDialog } from '../_components/upload-audio-dialog'
 import { DocumentsSection } from '../_components/documents-section'
+import { FormsSection } from '../_components/forms-section'
 import {
   updateAnalysis,
   changeAnalysisStatus,
@@ -68,6 +68,7 @@ import type {
   RecordingRow,
   DocumentRow,
 } from '../actions'
+import type { FormAssignmentRow } from '../form-assignment-actions'
 import type { AnalysisStatus } from '@/types/database'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -82,6 +83,7 @@ interface AnalysisDetailClientProps {
   shares: AnalysisShareRow[]
   recordings: RecordingRow[]
   documents: DocumentRow[]
+  formAssignments: FormAssignmentRow[]
   managers: OrgManager[]
   isAdmin: boolean
   currentUserId: string
@@ -93,6 +95,7 @@ export function AnalysisDetailClient({
   shares,
   recordings,
   documents,
+  formAssignments,
   managers,
   isAdmin,
   currentUserId,
@@ -297,20 +300,11 @@ export function AnalysisDetailClient({
             onUploadComplete={() => router.refresh()}
           />
 
-          {/* Forms placeholder */}
-          <div className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8">
-            <ClipboardList className="text-muted-foreground size-8" />
-            <p className="text-muted-foreground text-sm font-medium">
-              {t('detail.forms.title')}
-            </p>
-            <p className="text-muted-foreground text-center text-xs">
-              {t('detail.forms.description')}
-            </p>
-            <Button variant="outline" size="sm" disabled>
-              <ClipboardList className="mr-2 size-3.5" />
-              {t('detail.forms.select')}
-            </Button>
-          </div>
+          {/* Forms section */}
+          <FormsSection
+            analysisId={analysis.id}
+            formAssignments={formAssignments}
+          />
         </div>
 
         {/* Right: Info sidebar (sticky) */}

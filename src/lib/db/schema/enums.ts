@@ -95,6 +95,13 @@ export const analysisStatusEnum = pgEnum('analysis_status', [
   'completed',
 ])
 
+export const analysisFormAssignmentStatusEnum = pgEnum('analysis_form_assignment_status', [
+  'pending',
+  'sent',
+  'opened',
+  'completed',
+])
+
 export const mediaContextEnum = pgEnum('media_context', [
   'email_logo',
   'email_template',

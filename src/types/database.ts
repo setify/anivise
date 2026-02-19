@@ -31,6 +31,7 @@ import type {
   analysisComments,
   analysisRecordings,
   analysisDocuments,
+  analysisFormAssignments,
 } from '@/lib/db/schema'
 
 // Organization
@@ -155,6 +156,13 @@ export type NewAnalysisRecording = InferInsertModel<typeof analysisRecordings>
 // Analysis Document
 export type AnalysisDocument = InferSelectModel<typeof analysisDocuments>
 export type NewAnalysisDocument = InferInsertModel<typeof analysisDocuments>
+
+// Analysis Form Assignment
+export type AnalysisFormAssignment = InferSelectModel<typeof analysisFormAssignments>
+export type NewAnalysisFormAssignment = InferInsertModel<typeof analysisFormAssignments>
+
+// Analysis Form Assignment Status type
+export type AnalysisFormAssignmentStatus = 'pending' | 'sent' | 'opened' | 'completed'
 
 // Analysis Status type
 export type AnalysisStatus = 'planned' | 'active' | 'completed'

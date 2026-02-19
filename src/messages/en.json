@@ -280,7 +280,53 @@
       "forms": {
         "title": "Forms",
         "description": "Select forms to send to the employee.",
-        "select": "Select Form"
+        "select": "Select Form",
+        "assign": "Assign Form",
+        "empty": "No forms assigned yet.",
+        "emptyHint": "Assign a form to send it to the employee via email.",
+        "assignDialog": {
+          "title": "Assign Form",
+          "description": "Select a form and send it to the employee.",
+          "selectForm": "Select Form",
+          "selectFormPlaceholder": "Choose a form...",
+          "noForms": "No published forms available.",
+          "dueDate": "Due date (optional)",
+          "confirm": "Assign & Send Email",
+          "assigning": "Assigning...",
+          "success": "Form assigned and email sent.",
+          "error": "Failed to assign form."
+        },
+        "status": {
+          "pending": "Pending",
+          "sent": "Sent",
+          "opened": "Opened",
+          "completed": "Completed",
+          "overdue": "Overdue"
+        },
+        "dueDate": "Due: {date}",
+        "overdue": "Overdue since {date}",
+        "remind": "Remind",
+        "reminding": "Sending...",
+        "reminded": "Reminder has been sent.",
+        "remindError": "Failed to send reminder.",
+        "remove": "Remove",
+        "removeConfirm": "Remove form assignment?",
+        "removeDescription": "The assignment and token link will be deleted. The employee will no longer be able to fill out the form.",
+        "removed": "Assignment removed.",
+        "removeError": "Failed to remove assignment.",
+        "cannotRemoveCompleted": "Completed forms cannot be removed.",
+        "sentCount": "{count, plural, =1 {1 reminder} other {# reminders}} sent",
+        "responses": {
+          "title": "Responses",
+          "noResponses": "No responses yet.",
+          "submittedAt": "Submitted on {date}"
+        },
+        "timeline": {
+          "assigned": "Assigned",
+          "sent": "Email sent",
+          "opened": "Form opened",
+          "completed": "Completed"
+        }
       },
       "documents": {
         "title": "Documents",
@@ -2050,5 +2096,23 @@
         "notifySubject": "Integrations: Request notification"
       }
     }
+  },
+  "formFill": {
+    "title": "Fill out form",
+    "welcome": "Please fill out the following form.",
+    "poweredBy": "Powered by",
+    "expired": {
+      "title": "Link expired",
+      "description": "This form link has expired. Please contact the person who sent you the link."
+    },
+    "invalid": {
+      "title": "Invalid link",
+      "description": "This form link is invalid. Please check the link or contact the sender."
+    },
+    "alreadyCompleted": {
+      "title": "Already completed",
+      "description": "This form has already been completed. Thank you!"
+    },
+    "submitError": "An error occurred while submitting. Please try again."
   }
 }

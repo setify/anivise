@@ -58,6 +58,8 @@ export type AuditAction =
   | 'analysis.archived'
   | 'analysis.unarchived'
   | 'analysis.manager_changed'
+  | 'analysis.form_assigned'
+  | 'analysis.form_unassigned'
 
 export async function logAudit(params: {
   actorId: string

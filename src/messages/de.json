@@ -280,7 +280,53 @@
       "forms": {
         "title": "Formulare",
         "description": "Wählen Sie Formulare aus, die dem Mitarbeiter zugeschickt werden.",
-        "select": "Formular auswählen"
+        "select": "Formular auswählen",
+        "assign": "Formular zuweisen",
+        "empty": "Noch keine Formulare zugewiesen.",
+        "emptyHint": "Weisen Sie ein Formular zu, das dem Mitarbeiter per E-Mail zugeschickt wird.",
+        "assignDialog": {
+          "title": "Formular zuweisen",
+          "description": "Wählen Sie ein Formular aus und senden Sie es an den Mitarbeiter.",
+          "selectForm": "Formular auswählen",
+          "selectFormPlaceholder": "Formular wählen...",
+          "noForms": "Keine veröffentlichten Formulare verfügbar.",
+          "dueDate": "Fälligkeitsdatum (optional)",
+          "confirm": "Zuweisen & E-Mail senden",
+          "assigning": "Wird zugewiesen...",
+          "success": "Formular wurde zugewiesen und E-Mail versendet.",
+          "error": "Fehler beim Zuweisen des Formulars."
+        },
+        "status": {
+          "pending": "Ausstehend",
+          "sent": "Versendet",
+          "opened": "Geöffnet",
+          "completed": "Ausgefüllt",
+          "overdue": "Überfällig"
+        },
+        "dueDate": "Fällig: {date}",
+        "overdue": "Überfällig seit {date}",
+        "remind": "Erinnern",
+        "reminding": "Wird gesendet...",
+        "reminded": "Erinnerung wurde gesendet.",
+        "remindError": "Fehler beim Senden der Erinnerung.",
+        "remove": "Entfernen",
+        "removeConfirm": "Formular-Zuweisung entfernen?",
+        "removeDescription": "Die Zuweisung und der Token-Link werden gelöscht. Der Mitarbeiter kann das Formular nicht mehr ausfüllen.",
+        "removed": "Zuweisung wurde entfernt.",
+        "removeError": "Fehler beim Entfernen der Zuweisung.",
+        "cannotRemoveCompleted": "Ausgefüllte Formulare können nicht entfernt werden.",
+        "sentCount": "{count, plural, =1 {1 Erinnerung} other {# Erinnerungen}} gesendet",
+        "responses": {
+          "title": "Antworten",
+          "noResponses": "Noch keine Antworten.",
+          "submittedAt": "Ausgefüllt am {date}"
+        },
+        "timeline": {
+          "assigned": "Zugewiesen",
+          "sent": "E-Mail versendet",
+          "opened": "Formular geöffnet",
+          "completed": "Ausgefüllt"
+        }
       },
       "documents": {
         "title": "Dokumente",
@@ -2050,5 +2096,23 @@
         "notifySubject": "Integrationen: Benachrichtigung anfordern"
       }
     }
+  },
+  "formFill": {
+    "title": "Formular ausfüllen",
+    "welcome": "Bitte füllen Sie das folgende Formular aus.",
+    "poweredBy": "Bereitgestellt von",
+    "expired": {
+      "title": "Link abgelaufen",
+      "description": "Dieser Formular-Link ist abgelaufen. Bitte kontaktieren Sie die Person, die Ihnen den Link geschickt hat."
+    },
+    "invalid": {
+      "title": "Ungültiger Link",
+      "description": "Dieser Formular-Link ist ungültig. Bitte überprüfen Sie den Link oder kontaktieren Sie den Absender."
+    },
+    "alreadyCompleted": {
+      "title": "Bereits ausgefüllt",
+      "description": "Dieses Formular wurde bereits ausgefüllt. Vielen Dank!"
+    },
+    "submitError": "Beim Absenden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
   }
 }

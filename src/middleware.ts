@@ -10,6 +10,7 @@ const PUBLIC_PATTERNS = [
   /^\/(de|en)\/login(\/|$)/,
   /^\/(de|en)\/register(\/|$)/,
   /^\/(de|en)\/invite(\/|$)/,
+  /^\/(de|en)\/form-fill(\/|$)/,
   /^\/api\//,
 ]
 

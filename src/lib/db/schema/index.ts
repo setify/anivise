@@ -18,6 +18,7 @@ export {
   employeeStatusEnum,
   mediaContextEnum,
   analysisStatusEnum,
+  analysisFormAssignmentStatusEnum,
 } from './enums'
 
 // Tables
@@ -51,3 +52,4 @@ export { guides } from './guides'
 export { analyses, analysisShares, analysisComments } from './analyses'
 export { analysisRecordings } from './analysis-recordings'
 export { analysisDocuments } from './analysis-documents'
+export { analysisFormAssignments } from './analysis-form-assignments'
