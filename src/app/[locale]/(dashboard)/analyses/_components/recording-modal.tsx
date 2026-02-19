@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Mic, CirclePause, AlertTriangle } from 'lucide-react'
+import { Mic, CirclePause, CirclePlay, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -44,7 +44,7 @@ interface RecordingModalProps {
   onRecordingComplete: () => void
 }
 
-type RecordingState = 'idle' | 'recording' | 'stopping'
+type RecordingState = 'idle' | 'recording' | 'paused' | 'stopping'
 
 // ─── Component ──────────────────────────────────────────────────────
 
@@ -65,6 +65,8 @@ export function RecordingModal({
     new Array(WAVEFORM_BARS).fill(0)
   )
   const [confirmStop, setConfirmStop] = useState(false)
+  const pauseStartRef = useRef(0)
+  const totalPausedRef = useRef(0)
   const [deepgramAvailable, setDeepgramAvailable] = useState<boolean | null>(
     null
   )
@@ -98,7 +100,7 @@ export function RecordingModal({
   // ─── beforeunload ─────────────────────────────────────────────────
 
   useEffect(() => {
-    if (state !== 'recording') return
+    if (state !== 'recording' && state !== 'paused') return
     const handler = (e: BeforeUnloadEvent) => e.preventDefault()
     window.addEventListener('beforeunload', handler)
     return () => window.removeEventListener('beforeunload', handler)
@@ -226,8 +228,10 @@ export function RecordingModal({
 
       // Timer
       startTimeRef.current = Date.now()
+      totalPausedRef.current = 0
       timerRef.current = setInterval(() => {
-        setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000))
+        const totalElapsed = Math.floor((Date.now() - startTimeRef.current) / 1000)
+        setElapsed(totalElapsed - totalPausedRef.current)
       }, 1000)
 
       // Chunk upload timer
@@ -413,10 +417,78 @@ export function RecordingModal({
     onOpenChange(false)
   }
 
+  // ─── Pause / Resume ──────────────────────────────────────────────
+
+  function handlePause() {
+    if (state !== 'recording') return
+    setState('paused')
+    pauseStartRef.current = Date.now()
+
+    // Pause MediaRecorder
+    if (mediaRecorderRef.current?.state === 'recording') {
+      mediaRecorderRef.current.pause()
+    }
+
+    // Pause Deepgram recorder
+    if (dgRecorderRef.current?.state === 'recording') {
+      dgRecorderRef.current.pause()
+    }
+
+    // Stop timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+
+    // Stop waveform
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current)
+      animFrameRef.current = 0
+    }
+    setWaveformData(new Array(WAVEFORM_BARS).fill(0))
+  }
+
+  function handleResume() {
+    if (state !== 'paused') return
+
+    // Calculate pause duration
+    const pauseDuration = Math.floor((Date.now() - pauseStartRef.current) / 1000)
+    totalPausedRef.current += pauseDuration
+
+    // Add pause marker to transcript
+    const pauseMinutes = Math.floor(pauseDuration / 60)
+    const pauseSeconds = pauseDuration % 60
+    const pauseStr = pauseMinutes > 0
+      ? `${pauseMinutes}:${String(pauseSeconds).padStart(2, '0')}`
+      : `${pauseSeconds}s`
+    setTranscript((prev) => [...prev, `[Pause ${pauseStr}]`])
+
+    // Resume MediaRecorder
+    if (mediaRecorderRef.current?.state === 'paused') {
+      mediaRecorderRef.current.resume()
+    }
+
+    // Resume Deepgram recorder
+    if (dgRecorderRef.current?.state === 'paused') {
+      dgRecorderRef.current.resume()
+    }
+
+    // Resume timer
+    timerRef.current = setInterval(() => {
+      const totalElapsed = Math.floor((Date.now() - startTimeRef.current) / 1000)
+      setElapsed(totalElapsed - totalPausedRef.current)
+    }, 1000)
+
+    // Resume waveform
+    drawWaveform()
+
+    setState('recording')
+  }
+
   // ─── Close protection ─────────────────────────────────────────────
 
   function handleOpenChange(newOpen: boolean) {
-    if (!newOpen && state === 'recording') {
+    if (!newOpen && (state === 'recording' || state === 'paused')) {
       setConfirmStop(true)
       return
     }
@@ -433,10 +505,10 @@ export function RecordingModal({
         <DialogContent
           className="max-w-lg overflow-hidden"
           onPointerDownOutside={(e) => {
-            if (state === 'recording') e.preventDefault()
+            if (state === 'recording' || state === 'paused') e.preventDefault()
           }}
           onEscapeKeyDown={(e) => {
-            if (state === 'recording') e.preventDefault()
+            if (state === 'recording' || state === 'paused') e.preventDefault()
           }}
         >
           <DialogHeader>
@@ -486,13 +558,24 @@ export function RecordingModal({
               {/* Status + timer */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="relative flex size-3">
-                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-400 opacity-75" />
-                    <span className="relative inline-flex size-3 rounded-full bg-red-500" />
-                  </span>
-                  <Badge variant="destructive" className="text-xs">
-                    {t('recordingLabel')}
-                  </Badge>
+                  {state === 'paused' ? (
+                    <>
+                      <span className="size-3 rounded-full bg-amber-500" />
+                      <Badge variant="secondary" className="text-xs">
+                        {t('pausedLabel')}
+                      </Badge>
+                    </>
+                  ) : (
+                    <>
+                      <span className="relative flex size-3">
+                        <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex size-3 rounded-full bg-red-500" />
+                      </span>
+                      <Badge variant="destructive" className="text-xs">
+                        {t('recordingLabel')}
+                      </Badge>
+                    </>
+                  )}
                 </div>
                 <span className="font-mono text-2xl font-bold tabular-nums tracking-wider">
                   {formatTime(elapsed)}
@@ -544,14 +627,36 @@ export function RecordingModal({
                 </div>
               </div>
 
-              {/* Stop */}
-              <div className="flex justify-center pt-2">
+              {/* Pause / Resume / Stop */}
+              <div className="flex justify-center gap-3 pt-2">
+                {state === 'recording' && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handlePause}
+                    className="gap-2 px-6"
+                  >
+                    <CirclePause className="size-4" />
+                    {t('pauseButton')}
+                  </Button>
+                )}
+                {state === 'paused' && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handleResume}
+                    className="gap-2 px-6"
+                  >
+                    <CirclePlay className="size-4" />
+                    {t('resumeButton')}
+                  </Button>
+                )}
                 <Button
                   variant="destructive"
                   size="lg"
                   onClick={() => setConfirmStop(true)}
                   disabled={state === 'stopping'}
-                  className="gap-2 px-8"
+                  className="gap-2 px-6"
                 >
                   <CirclePause className="size-4" />
                   {state === 'stopping' ? t('stopping') : t('stopButton')}
