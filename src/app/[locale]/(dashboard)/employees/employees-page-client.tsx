@@ -36,7 +36,7 @@ export function EmployeesPageClient({
 }: EmployeesPageClientProps) {
   const t = useTranslations('org.employees')
   const [search, setSearch] = useState('')
-  const [viewMode, setViewMode] = useState<'card' | 'table'>('card')
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('table')
   const [departmentFilter, setDepartmentFilter] = useState('')
   const [locationFilter, setLocationFilter] = useState('')
   const [managerFilter, setManagerFilter] = useState('')
