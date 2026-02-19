@@ -10,6 +10,7 @@ import {
   Image,
   LayoutDashboard,
   Link2,
+  Mail,
   MapPin,
   Palette,
   Settings,
@@ -165,6 +166,13 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
             labelKey: 'org.sidebar.settingsMedia',
             href: '/settings/media',
             icon: Image,
+          },
+          {
+            key: 'settings-emails',
+            labelKey: 'org.sidebar.settingsEmails',
+            href: '/settings/emails',
+            icon: Mail,
+            minRole: 'org_admin',
           },
           {
             key: 'settings-notifications',

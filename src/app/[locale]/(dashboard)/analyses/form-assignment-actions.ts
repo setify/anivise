@@ -290,6 +290,7 @@ export async function assignFormToAnalysis(
         fillLink,
         assignerName: assigner?.fullName ?? assigner?.email ?? '',
       },
+      organizationId: ctx.organizationId,
     }).catch(() => {
       // Email failure shouldn't block the assignment
     })
@@ -384,6 +385,7 @@ export async function sendFormReminder(assignmentId: string) {
       fillLink,
       assignerName: assigner?.fullName ?? assigner?.email ?? '',
     },
+    organizationId: ctx.organizationId,
   })
 
   const now = new Date()

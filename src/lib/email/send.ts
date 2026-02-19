@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
-import { emailTemplates } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { emailTemplates, orgEmailTemplateOverrides } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { getSetting, EMAIL_LAYOUT_DEFAULTS } from '@/lib/settings/platform'
 
 /**
@@ -48,6 +48,30 @@ export async function getEmailLayoutConfig(): Promise<EmailLayoutConfig> {
     borderRadius: await getSetting('email.border_radius'),
     supportEmail: await getSetting('email.support_email'),
     platformName,
+  }
+}
+
+/**
+ * Loads email layout config with org-branding overrides applied.
+ * Falls back to platform settings for anything the org hasn't customized.
+ */
+export async function getOrgEmailLayoutConfig(
+  orgId: string
+): Promise<EmailLayoutConfig> {
+  const { getOrgBranding } = await import('@/lib/branding/apply-branding')
+  const [baseConfig, branding] = await Promise.all([
+    getEmailLayoutConfig(),
+    getOrgBranding(orgId),
+  ])
+
+  return {
+    ...baseConfig,
+    logoUrl: branding.logoUrl || baseConfig.logoUrl,
+    primaryColor: branding.primaryColor || baseConfig.primaryColor,
+    textColor: branding.textColor || baseConfig.textColor,
+    bgColor: branding.backgroundColor || baseConfig.bgColor,
+    footerTextDe: branding.emailFooterText || baseConfig.footerTextDe,
+    footerTextEn: branding.emailFooterText || baseConfig.footerTextEn,
   }
 }
 
@@ -119,11 +143,17 @@ export function getDefaultEmailLayoutConfig(): EmailLayoutConfig {
 /**
  * Loads an email template from the database, renders it with variables,
  * and returns the subject and HTML body ready for sending.
+ *
+ * When organizationId is provided:
+ * 1. Checks for org-level template override
+ * 2. Uses org-branding for layout (logo, colors)
+ * 3. Falls back to global template if no override exists
  */
 export async function renderTemplatedEmail(params: {
   templateSlug: string
   locale: 'de' | 'en'
   variables: Record<string, string>
+  organizationId?: string
 }): Promise<{ subject: string; html: string } | null> {
   const [template] = await db
     .select()
@@ -133,11 +163,38 @@ export async function renderTemplatedEmail(params: {
 
   if (!template) return null
 
-  const layoutConfig = await getEmailLayoutConfig()
+  // Determine subject/body: check for org override first
+  let subject: string
+  let body: string
 
-  const subject =
-    params.locale === 'de' ? template.subjectDe : template.subjectEn
-  const body = params.locale === 'de' ? template.bodyDe : template.bodyEn
+  if (params.organizationId) {
+    const [override] = await db
+      .select()
+      .from(orgEmailTemplateOverrides)
+      .where(
+        and(
+          eq(orgEmailTemplateOverrides.organizationId, params.organizationId),
+          eq(orgEmailTemplateOverrides.templateSlug, params.templateSlug)
+        )
+      )
+      .limit(1)
+
+    if (override) {
+      subject = params.locale === 'de' ? override.subjectDe : override.subjectEn
+      body = params.locale === 'de' ? override.bodyDe : override.bodyEn
+    } else {
+      subject = params.locale === 'de' ? template.subjectDe : template.subjectEn
+      body = params.locale === 'de' ? template.bodyDe : template.bodyEn
+    }
+  } else {
+    subject = params.locale === 'de' ? template.subjectDe : template.subjectEn
+    body = params.locale === 'de' ? template.bodyDe : template.bodyEn
+  }
+
+  // Determine layout config: org-branding or platform default
+  const layoutConfig = params.organizationId
+    ? await getOrgEmailLayoutConfig(params.organizationId)
+    : await getEmailLayoutConfig()
 
   const renderedSubject = renderTemplate(subject, params.variables)
   const renderedBody = renderTemplate(body, params.variables)
@@ -149,17 +206,22 @@ export async function renderTemplatedEmail(params: {
 /**
  * Sends an email using a template from the database.
  * Falls back gracefully if Resend is not configured.
+ *
+ * When organizationId is provided, org-level template overrides
+ * and org-branding (logo, colors) are applied automatically.
  */
 export async function sendTemplatedEmail(params: {
   to: string
   templateSlug: string
   locale: 'de' | 'en'
   variables: Record<string, string>
+  organizationId?: string
 }): Promise<{ success: boolean; error?: string }> {
   const rendered = await renderTemplatedEmail({
     templateSlug: params.templateSlug,
     locale: params.locale,
     variables: params.variables,
+    organizationId: params.organizationId,
   })
 
   if (!rendered) {

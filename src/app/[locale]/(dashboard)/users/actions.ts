@@ -218,6 +218,98 @@ export async function getOrgSeats() {
   return { limits, usage }
 }
 
+export async function getMembersByDepartment(departmentId: string) {
+  const ctx = await getCurrentOrgContext('org_admin')
+  if (!ctx) return []
+
+  const rows = await db
+    .select({
+      member: {
+        id: organizationMembers.id,
+        role: organizationMembers.role,
+        position: organizationMembers.position,
+      },
+      user: {
+        id: users.id,
+        email: users.email,
+        fullName: users.fullName,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        avatarUrl: users.avatarUrl,
+      },
+    })
+    .from(organizationMembers)
+    .innerJoin(users, eq(organizationMembers.userId, users.id))
+    .where(
+      and(
+        eq(organizationMembers.organizationId, ctx.organizationId),
+        eq(organizationMembers.departmentId, departmentId),
+        eq(organizationMembers.status, 'active')
+      )
+    )
+    .orderBy(users.fullName)
+
+  return rows.map((r) => ({
+    memberId: r.member.id,
+    userId: r.user.id,
+    email: r.user.email,
+    fullName: r.user.fullName,
+    firstName: r.user.firstName,
+    lastName: r.user.lastName,
+    avatarUrl: r.user.avatarUrl,
+    role: r.member.role,
+    position: r.member.position,
+  }))
+}
+
+export type DepartmentMember = Awaited<ReturnType<typeof getMembersByDepartment>>[number]
+
+export async function getMembersByLocation(locationId: string) {
+  const ctx = await getCurrentOrgContext('org_admin')
+  if (!ctx) return []
+
+  const rows = await db
+    .select({
+      member: {
+        id: organizationMembers.id,
+        role: organizationMembers.role,
+        position: organizationMembers.position,
+      },
+      user: {
+        id: users.id,
+        email: users.email,
+        fullName: users.fullName,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        avatarUrl: users.avatarUrl,
+      },
+    })
+    .from(organizationMembers)
+    .innerJoin(users, eq(organizationMembers.userId, users.id))
+    .where(
+      and(
+        eq(organizationMembers.organizationId, ctx.organizationId),
+        eq(organizationMembers.locationId, locationId),
+        eq(organizationMembers.status, 'active')
+      )
+    )
+    .orderBy(users.fullName)
+
+  return rows.map((r) => ({
+    memberId: r.member.id,
+    userId: r.user.id,
+    email: r.user.email,
+    fullName: r.user.fullName,
+    firstName: r.user.firstName,
+    lastName: r.user.lastName,
+    avatarUrl: r.user.avatarUrl,
+    role: r.member.role,
+    position: r.member.position,
+  }))
+}
+
+export type LocationMember = Awaited<ReturnType<typeof getMembersByLocation>>[number]
+
 // ─── User CRUD ───────────────────────────────────────────────────────
 
 export async function inviteUser(formData: FormData) {
@@ -287,6 +379,7 @@ export async function inviteUser(formData: FormData) {
       expiryDays: String(expiryDays),
       inviterName: ctx.email,
     },
+    organizationId: ctx.organizationId,
   })
 
   await logAudit({
@@ -374,6 +467,7 @@ export async function createUserDirect(formData: FormData) {
       loginUrl: `${appUrl}/de/login`,
       email,
     },
+    organizationId: ctx.organizationId,
   })
 
   await logAudit({
@@ -756,6 +850,7 @@ export async function resendInvitation(invitationId: string) {
       expiryDays: String(expiryDays),
       inviterName: ctx.email,
     },
+    organizationId: ctx.organizationId,
   })
 
   await logAudit({
@@ -828,6 +923,7 @@ export async function createDepartment(formData: FormData) {
   })
 
   revalidatePath('/users')
+  revalidatePath('/users/departments')
   return { success: true, department: dept }
 }
 
@@ -859,6 +955,7 @@ export async function updateDepartment(formData: FormData) {
   })
 
   revalidatePath('/users')
+  revalidatePath('/users/departments')
   return { success: true }
 }
 
@@ -895,6 +992,7 @@ export async function deleteDepartment(id: string) {
   })
 
   revalidatePath('/users')
+  revalidatePath('/users/departments')
   return { success: true }
 }
 
@@ -931,6 +1029,7 @@ export async function createLocation(formData: FormData) {
   })
 
   revalidatePath('/users')
+  revalidatePath('/users/locations')
   return { success: true, location: loc }
 }
 
@@ -964,6 +1063,7 @@ export async function updateLocation(formData: FormData) {
   })
 
   revalidatePath('/users')
+  revalidatePath('/users/locations')
   return { success: true }
 }
 
@@ -1000,5 +1100,6 @@ export async function deleteLocation(id: string) {
   })
 
   revalidatePath('/users')
+  revalidatePath('/users/locations')
   return { success: true }
 }

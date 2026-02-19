@@ -35,6 +35,7 @@ async function main() {
     '0009_supreme_hitman',
     '0010_superb_eternity',
     '0011_luxuriant_makkari',
+    '0012_same_valeria_richards',
   ]
 
   console.log('Ensuring drizzle migrations schema and table exist...')

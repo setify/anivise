@@ -561,6 +561,7 @@ export async function shareAnalysis(analysisId: string, userId: string) {
         analysisLink: `${appUrl}/de/analyses/${analysisId}`,
         sharedBy: ctx.email,
       },
+      organizationId: ctx.organizationId,
     }).catch(() => {
       // Email failure shouldn't block the share
     })

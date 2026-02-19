@@ -32,6 +32,7 @@ import type {
   analysisRecordings,
   analysisDocuments,
   analysisFormAssignments,
+  orgEmailTemplateOverrides,
 } from '@/lib/db/schema'
 
 // Organization
@@ -182,6 +183,10 @@ export type MediaContext =
 // Organization Notification Settings
 export type OrganizationNotificationSettings = InferSelectModel<typeof organizationNotificationSettings>
 export type NewOrganizationNotificationSettings = InferInsertModel<typeof organizationNotificationSettings>
+
+// Org Email Template Override
+export type OrgEmailTemplateOverride = InferSelectModel<typeof orgEmailTemplateOverrides>
+export type NewOrgEmailTemplateOverride = InferInsertModel<typeof orgEmailTemplateOverrides>
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'
