@@ -33,6 +33,7 @@ import type {
   analysisDocuments,
   analysisFormAssignments,
   orgEmailTemplateOverrides,
+  analysisDossiers,
 } from '@/lib/db/schema'
 
 // Organization
@@ -187,6 +188,13 @@ export type NewOrganizationNotificationSettings = InferInsertModel<typeof organi
 // Org Email Template Override
 export type OrgEmailTemplateOverride = InferSelectModel<typeof orgEmailTemplateOverrides>
 export type NewOrgEmailTemplateOverride = InferInsertModel<typeof orgEmailTemplateOverrides>
+
+// Analysis Dossier
+export type AnalysisDossier = InferSelectModel<typeof analysisDossiers>
+export type NewAnalysisDossier = InferInsertModel<typeof analysisDossiers>
+
+// Dossier Status type
+export type DossierStatus = 'pending' | 'processing' | 'completed' | 'failed'
 
 // Platform Role type
 export type PlatformRole = 'superadmin' | 'staff'

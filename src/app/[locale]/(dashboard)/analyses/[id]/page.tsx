@@ -9,6 +9,7 @@ import {
   getOrgManagers,
 } from '../actions'
 import { getAnalysisFormAssignments } from '../form-assignment-actions'
+import { getAnalysisDossiers } from '../dossier-actions'
 import { AnalysisDetailClient } from './analysis-detail-client'
 
 interface Props {
@@ -20,7 +21,7 @@ export default async function AnalysisDetailPage({ params }: Props) {
   const ctx = await getCurrentOrgContext()
   if (!ctx) notFound()
 
-  const [analysis, comments, shares, recordings, documents, managers, formAssignments] = await Promise.all([
+  const [analysis, comments, shares, recordings, documents, managers, formAssignments, dossiers] = await Promise.all([
     getAnalysisById(id),
     getAnalysisComments(id),
     getAnalysisShares(id),
@@ -28,6 +29,7 @@ export default async function AnalysisDetailPage({ params }: Props) {
     getAnalysisDocuments(id),
     getOrgManagers(),
     getAnalysisFormAssignments(id),
+    getAnalysisDossiers(id),
   ])
 
   if (!analysis) notFound()
@@ -42,6 +44,7 @@ export default async function AnalysisDetailPage({ params }: Props) {
       recordings={recordings}
       documents={documents}
       formAssignments={formAssignments}
+      dossiers={dossiers}
       managers={managers}
       isAdmin={isAdmin}
       currentUserId={ctx.userId}

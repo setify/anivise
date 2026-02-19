@@ -16,6 +16,7 @@ export {
   formStepDisplayModeEnum,
   productStatusEnum,
   employeeStatusEnum,
+  dossierStatusEnum,
   mediaContextEnum,
   analysisStatusEnum,
   analysisFormAssignmentStatusEnum,
@@ -54,3 +55,4 @@ export { analysisRecordings } from './analysis-recordings'
 export { analysisDocuments } from './analysis-documents'
 export { analysisFormAssignments } from './analysis-form-assignments'
 export { orgEmailTemplateOverrides } from './org-email-template-overrides'
+export { analysisDossiers } from './analysis-dossiers'

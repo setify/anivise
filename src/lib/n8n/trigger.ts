@@ -1,4 +1,5 @@
 import { getCachedSecret } from '@/lib/crypto/secrets-cache'
+import { resolveWebhookUrl } from './resolve-webhook-url'
 
 export interface N8nTriggerPayload {
   jobId: string
@@ -21,14 +22,14 @@ export interface N8nHealthStatus {
  */
 export async function triggerN8nWebhook(
   payload: N8nTriggerPayload
-): Promise<{ success: boolean; error?: string }> {
-  const webhookUrl =
-    (await getCachedSecret('n8n', 'webhook_url')) ||
-    process.env.N8N_WEBHOOK_URL
+): Promise<{ success: boolean; isTest: boolean; error?: string }> {
+  const resolved = await resolveWebhookUrl('analysis')
 
-  if (!webhookUrl) {
-    return { success: false, error: 'n8n webhook URL not configured' }
+  if (!resolved) {
+    return { success: false, isTest: false, error: 'n8n webhook URL not configured' }
   }
+
+  const { url: webhookUrl, isTest } = resolved
 
   const authHeaderName =
     (await getCachedSecret('n8n', 'auth_header_name')) || 'X-Anivise-Secret'
@@ -37,7 +38,7 @@ export async function triggerN8nWebhook(
     process.env.N8N_WEBHOOK_SECRET
 
   if (!authHeaderValue) {
-    return { success: false, error: 'n8n auth secret not configured' }
+    return { success: false, isTest, error: 'n8n auth secret not configured' }
   }
 
   try {
@@ -54,15 +55,16 @@ export async function triggerN8nWebhook(
     if (!response.ok) {
       return {
         success: false,
+        isTest,
         error: `n8n responded with status ${response.status}`,
       }
     }
 
-    return { success: true }
+    return { success: true, isTest }
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Unknown error'
-    return { success: false, error: `Failed to reach n8n: ${message}` }
+    return { success: false, isTest, error: `Failed to reach n8n: ${message}` }
   }
 }
 

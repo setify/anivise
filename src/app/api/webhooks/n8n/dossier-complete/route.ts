@@ -1,22 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { analysisJobs, reports } from '@/lib/db/schema'
+import { analysisDossiers } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { z } from 'zod/v4'
 import { createNotification } from '@/lib/notifications/create'
 import { getCachedSecret } from '@/lib/crypto/secrets-cache'
 
 const callbackSchema = z.object({
-  jobId: z.string().uuid(),
+  dossierId: z.string().uuid(),
   organizationId: z.string().uuid(),
   status: z.enum(['completed', 'failed']),
-  reportData: z.record(z.string(), z.unknown()).optional(),
-  reportVersion: z.string().optional(),
+  resultData: z.record(z.string(), z.unknown()).optional(),
+  modelUsed: z.string().optional(),
+  tokenUsage: z
+    .object({
+      prompt_tokens: z.number(),
+      completion_tokens: z.number(),
+    })
+    .optional(),
   errorMessage: z.string().optional(),
 })
 
 export async function POST(request: NextRequest) {
-  // Validate the shared secret (DB-stored secret takes priority, fallback to ENV)
+  // Validate the shared secret
   const authHeaderName =
     (await getCachedSecret('n8n', 'auth_header_name')) || 'X-Anivise-Secret'
   const expectedSecret =
@@ -50,72 +56,69 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { jobId, organizationId, status, reportData, reportVersion, errorMessage } = parsed.data
+  const { dossierId, organizationId, status, resultData, modelUsed, tokenUsage, errorMessage } =
+    parsed.data
 
-  // Verify job exists and belongs to claimed org
-  const [job] = await db
+  // Verify dossier exists and belongs to claimed org
+  const [dossier] = await db
     .select()
-    .from(analysisJobs)
+    .from(analysisDossiers)
     .where(
       and(
-        eq(analysisJobs.id, jobId),
-        eq(analysisJobs.organizationId, organizationId)
+        eq(analysisDossiers.id, dossierId),
+        eq(analysisDossiers.organizationId, organizationId)
       )
     )
     .limit(1)
 
-  if (!job) {
+  if (!dossier) {
     return NextResponse.json(
-      { success: false, error: { code: 'NOT_FOUND', message: 'Job not found' } },
+      { success: false, error: { code: 'NOT_FOUND', message: 'Dossier not found' } },
       { status: 404 }
     )
   }
 
-  // Update job status
+  // Update dossier
   await db
-    .update(analysisJobs)
+    .update(analysisDossiers)
     .set({
       status,
-      n8nCallbackReceivedAt: new Date(),
+      resultData: resultData ?? null,
+      modelUsed: modelUsed ?? null,
+      tokenUsage: tokenUsage ?? null,
+      completedAt: new Date(),
       errorMessage: errorMessage ?? null,
       updatedAt: new Date(),
     })
-    .where(eq(analysisJobs.id, jobId))
+    .where(eq(analysisDossiers.id, dossierId))
 
-  // If completed, store the report
-  if (status === 'completed' && reportData) {
-    await db.insert(reports).values({
-      organizationId,
-      analysisJobId: jobId,
-      subjectId: job.subjectId,
-      reportData,
-      reportVersion: reportVersion ?? null,
-      generatedAt: new Date(),
-    })
-
+  // Notifications — in test mode, only notify the requester (superadmin who triggered)
+  if (status === 'completed') {
     await createNotification({
-      recipientId: job.requestedBy,
+      recipientId: dossier.requestedBy,
       type: 'analysis.completed',
-      title: job.isTest ? '[TEST] Analysis completed' : 'Analysis completed',
-      body: `Job ${jobId.slice(0, 8)}... has finished successfully.`,
+      title: dossier.isTest ? '[TEST] Dossier erstellt' : 'Dossier erstellt',
+      body: `Das Dossier für Analyse ${dossier.analysisId.slice(0, 8)}... wurde erfolgreich erstellt.`,
+      link: `/analyses/${dossier.analysisId}`,
     })
   }
 
   if (status === 'failed') {
     await createNotification({
-      recipientId: job.requestedBy,
+      recipientId: dossier.requestedBy,
       type: 'analysis.failed',
-      title: job.isTest ? '[TEST] Analysis failed' : 'Analysis failed',
-      body: errorMessage ?? `Job ${jobId.slice(0, 8)}... failed.`,
+      title: dossier.isTest ? '[TEST] Dossier fehlgeschlagen' : 'Dossier fehlgeschlagen',
+      body: errorMessage ?? `Dossier ${dossierId.slice(0, 8)}... ist fehlgeschlagen.`,
+      link: `/analyses/${dossier.analysisId}`,
     })
 
-    // Only notify all superadmins for non-test jobs
-    if (!job.isTest) {
+    // Only notify all superadmins for non-test dossiers
+    if (!dossier.isTest) {
       await createNotification({
         recipientId: 'all_superadmins',
         type: 'analysis.failed',
-        title: 'Analysis job failed',
-        body: `Job ${jobId.slice(0, 8)}... in org ${organizationId.slice(0, 8)}... failed: ${errorMessage ?? 'Unknown error'}`,
+        title: 'Dossier-Generierung fehlgeschlagen',
+        body: `Dossier ${dossierId.slice(0, 8)}... in Org ${organizationId.slice(0, 8)}... fehlgeschlagen: ${errorMessage ?? 'Unbekannter Fehler'}`,
       })
     }
   }

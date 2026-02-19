@@ -102,6 +102,13 @@ export const analysisFormAssignmentStatusEnum = pgEnum('analysis_form_assignment
   'completed',
 ])
 
+export const dossierStatusEnum = pgEnum('dossier_status', [
+  'pending',
+  'processing',
+  'completed',
+  'failed',
+])
+
 export const mediaContextEnum = pgEnum('media_context', [
   'email_logo',
   'email_template',

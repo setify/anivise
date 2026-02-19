@@ -159,7 +159,7 @@ export function SettingsGeneralClient({ data }: Props) {
 
       {/* ── VIEW MODE ── */}
       {!editing && (
-        <div className="space-y-4">
+        <div className="grid gap-4 lg:grid-cols-2">
           {/* Basic */}
           <Card>
             <CardHeader className="pb-3">
@@ -236,174 +236,176 @@ export function SettingsGeneralClient({ data }: Props) {
       {/* ── EDIT MODE ── */}
       {editing && (
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Basic */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">{t('basicData')}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="name">{t('companyName')} *</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  required
-                  value={form.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label>{t('subdomain')}</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={`${data.slug}.anivise.com`}
-                    readOnly
-                    disabled
-                    className="font-mono text-sm text-muted-foreground"
-                  />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Lock className="size-4 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">
-                        <p className="max-w-xs">{t('subdomainLockedHint')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Address */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">{t('address')}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="street">{t('street')}</Label>
-                <Input
-                  id="street"
-                  name="street"
-                  placeholder="Musterstraße 42"
-                  value={form.street}
-                  onChange={(e) => handleChange('street', e.target.value)}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-4 lg:grid-cols-2">
+            {/* Basic */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">{t('basicData')}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="zipCode">{t('zipCode')}</Label>
+                  <Label htmlFor="name">{t('companyName')} *</Label>
                   <Input
-                    id="zipCode"
-                    name="zipCode"
-                    placeholder="10115"
-                    value={form.zipCode}
-                    onChange={(e) => handleChange('zipCode', e.target.value)}
+                    id="name"
+                    name="name"
+                    required
+                    value={form.name}
+                    onChange={(e) => handleChange('name', e.target.value)}
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="city">{t('city')}</Label>
+                  <Label>{t('subdomain')}</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={`${data.slug}.anivise.com`}
+                      readOnly
+                      disabled
+                      className="font-mono text-sm text-muted-foreground"
+                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Lock className="size-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          <p className="max-w-xs">{t('subdomainLockedHint')}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Address */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">{t('address')}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="street">{t('street')}</Label>
                   <Input
-                    id="city"
-                    name="city"
-                    placeholder="Berlin"
-                    value={form.city}
-                    onChange={(e) => handleChange('city', e.target.value)}
+                    id="street"
+                    name="street"
+                    placeholder="Musterstraße 42"
+                    value={form.street}
+                    onChange={(e) => handleChange('street', e.target.value)}
                   />
                 </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label>{t('country')}</Label>
-                <Select
-                  value={form.country}
-                  onValueChange={(v) => handleChange('country', v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="zipCode">{t('zipCode')}</Label>
+                    <Input
+                      id="zipCode"
+                      name="zipCode"
+                      placeholder="10115"
+                      value={form.zipCode}
+                      onChange={(e) => handleChange('zipCode', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="city">{t('city')}</Label>
+                    <Input
+                      id="city"
+                      name="city"
+                      placeholder="Berlin"
+                      value={form.city}
+                      onChange={(e) => handleChange('city', e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>{t('country')}</Label>
+                  <Select
+                    value={form.country}
+                    onValueChange={(v) => handleChange('country', v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COUNTRIES.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* Contact */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">{t('contactInfo')}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="phone">{t('phone')}</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="+49 30 12345678"
-                  value={form.phone}
-                  onChange={(e) => handleChange('phone', e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="email">{t('emailField')}</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="info@firma.de"
-                  value={form.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="website">{t('website')}</Label>
-                <Input
-                  id="website"
-                  name="website"
-                  placeholder="www.firma.de"
-                  value={form.website}
-                  onChange={(e) => handleChange('website', e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
+            {/* Contact */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">{t('contactInfo')}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone">{t('phone')}</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+49 30 12345678"
+                    value={form.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">{t('emailField')}</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="info@firma.de"
+                    value={form.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="website">{t('website')}</Label>
+                  <Input
+                    id="website"
+                    name="website"
+                    placeholder="www.firma.de"
+                    value={form.website}
+                    onChange={(e) => handleChange('website', e.target.value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* Business */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">{t('businessData')}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="taxId">{t('taxId')}</Label>
-                <Input
-                  id="taxId"
-                  name="taxId"
-                  placeholder="DE123456789"
-                  value={form.taxId}
-                  onChange={(e) => handleChange('taxId', e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label>{t('industry')}</Label>
-                <Combobox
-                  value={form.industry}
-                  onValueChange={(v) => handleChange('industry', v)}
-                  options={INDUSTRIES.map((i) => ({ label: i, value: i }))}
-                  placeholder={t('industryPlaceholder')}
-                  allowCustomValue
-                />
-              </div>
-            </CardContent>
-          </Card>
+            {/* Business */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">{t('businessData')}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="taxId">{t('taxId')}</Label>
+                  <Input
+                    id="taxId"
+                    name="taxId"
+                    placeholder="DE123456789"
+                    value={form.taxId}
+                    onChange={(e) => handleChange('taxId', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>{t('industry')}</Label>
+                  <Combobox
+                    value={form.industry}
+                    onValueChange={(v) => handleChange('industry', v)}
+                    options={INDUSTRIES.map((i) => ({ label: i, value: i }))}
+                    placeholder={t('industryPlaceholder')}
+                    allowCustomValue
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           <div className="flex gap-3">
             <Button type="submit" disabled={isPending}>

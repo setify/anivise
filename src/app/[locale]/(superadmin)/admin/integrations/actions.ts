@@ -9,7 +9,11 @@ import {
   getSecretMetadata,
   getAllSecretsForService,
 } from '@/lib/crypto/secrets'
-import { invalidateSecretCache } from '@/lib/crypto/secrets-cache'
+import { invalidateSecretCache, getCachedSecret } from '@/lib/crypto/secrets-cache'
+import { resolveWebhookUrl } from '@/lib/n8n/resolve-webhook-url'
+import { db } from '@/lib/db'
+import { analysisJobs, analysisDossiers, reports } from '@/lib/db/schema'
+import { eq, inArray } from 'drizzle-orm'
 import crypto from 'crypto'
 
 // ─── Save Secrets ───
@@ -251,6 +255,57 @@ export async function testN8nConnection(): Promise<{
   }
 }
 
+export async function testN8nApiConnection(): Promise<{
+  success: boolean
+  latency?: number
+  error?: string
+}> {
+  const currentUser = await requirePlatformRole('superadmin')
+
+  const start = Date.now()
+  try {
+    const apiUrl = await getIntegrationSecret('n8n', 'api_url')
+    const apiKey = await getIntegrationSecret('n8n', 'api_key')
+
+    if (!apiUrl || !apiKey) {
+      return { success: false, error: 'n8n API URL or API Key not configured' }
+    }
+
+    const baseUrl = apiUrl.replace(/\/+$/, '')
+    const response = await fetch(`${baseUrl}/api/v1/workflows?limit=1`, {
+      headers: { 'X-N8N-API-KEY': apiKey },
+      signal: AbortSignal.timeout(10000),
+    })
+
+    const latency = Date.now() - start
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'integration_secrets',
+      metadata: {
+        service: 'n8n',
+        action: 'integration.api_tested',
+        success: response.ok,
+        latency,
+      },
+    })
+
+    if (response.ok) {
+      return { success: true, latency }
+    }
+    return { success: false, latency, error: `HTTP ${response.status}` }
+  } catch (err) {
+    const latency = Date.now() - start
+    return {
+      success: false,
+      latency,
+      error: err instanceof Error ? err.message : 'Connection failed',
+    }
+  }
+}
+
 export async function sendTestEmail(): Promise<{
   success: boolean
   error?: string
@@ -353,6 +408,8 @@ export async function loadFromEnv(service: string): Promise<{
         { key: 'from_email', envVar: 'RESEND_FROM_EMAIL', sensitive: false },
       ],
       n8n: [
+        { key: 'api_url', envVar: 'N8N_API_URL', sensitive: false },
+        { key: 'api_key', envVar: 'N8N_API_KEY', sensitive: true },
         { key: 'webhook_url', envVar: 'N8N_WEBHOOK_URL', sensitive: false },
         { key: 'auth_header_value', envVar: 'N8N_WEBHOOK_SECRET', sensitive: true },
       ],
@@ -445,6 +502,176 @@ export async function testDeepgramConnection(): Promise<{
       latency,
       error: err instanceof Error ? err.message : 'Connection failed',
     }
+  }
+}
+
+// ─── Webhook Environment Toggle ───
+
+export async function setWebhookEnvironment(
+  type: 'analysis' | 'dossier',
+  env: 'test' | 'production'
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    await setIntegrationSecret('n8n', `webhook_env_${type}`, env, false, currentUser.id)
+    invalidateSecretCache('n8n')
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'integration_secrets',
+      metadata: {
+        service: 'n8n',
+        action: 'integration.webhook_env_changed',
+        webhookType: type,
+        environment: env,
+      },
+    })
+
+    revalidatePath('/admin/integrations')
+    return { success: true }
+  } catch {
+    return { success: false, error: 'Failed to set webhook environment' }
+  }
+}
+
+// ─── Dry Run Webhook ───
+
+export async function dryRunWebhook(
+  type: 'analysis' | 'dossier'
+): Promise<{
+  success: boolean
+  statusCode?: number
+  responseBody?: string
+  url?: string
+  isTest?: boolean
+  error?: string
+}> {
+  try {
+    await requirePlatformRole('superadmin')
+
+    const resolved = await resolveWebhookUrl(type)
+    if (!resolved) {
+      return { success: false, error: 'No webhook URL configured for this environment' }
+    }
+
+    const authHeaderName =
+      (await getCachedSecret('n8n', 'auth_header_name')) || 'X-Anivise-Secret'
+    const authHeaderValue =
+      (await getCachedSecret('n8n', 'auth_header_value')) ||
+      process.env.N8N_WEBHOOK_SECRET
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    if (authHeaderValue) {
+      headers[authHeaderName] = authHeaderValue
+    }
+
+    const dummyPayload =
+      type === 'analysis'
+        ? {
+            jobId: '00000000-0000-0000-0000-000000000000',
+            organizationId: '00000000-0000-0000-0000-000000000000',
+            fileUrl: 'https://example.com/dry-run-test.txt',
+            callbackUrl: 'https://example.com/dry-run-callback',
+            metadata: { dryRun: true },
+          }
+        : {
+            dossierId: '00000000-0000-0000-0000-000000000000',
+            analysisId: '00000000-0000-0000-0000-000000000000',
+            organizationId: '00000000-0000-0000-0000-000000000000',
+            callbackUrl: 'https://example.com/dry-run-callback',
+            subject: { name: 'Dry Run Test' },
+            transcripts: [],
+            documents: [],
+            formResponses: [],
+            prompt: 'Dry run test — please ignore.',
+          }
+
+    const response = await fetch(resolved.url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(dummyPayload),
+      signal: AbortSignal.timeout(15000),
+    })
+
+    const body = await response.text()
+
+    return {
+      success: response.ok,
+      statusCode: response.status,
+      responseBody: body.slice(0, 500),
+      url: resolved.url,
+      isTest: resolved.isTest,
+    }
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : 'Dry run failed',
+    }
+  }
+}
+
+// ─── Cleanup Test Data ───
+
+export async function cleanupTestData(): Promise<{
+  success: boolean
+  deletedDossiers?: number
+  deletedJobs?: number
+  deletedReports?: number
+  error?: string
+}> {
+  try {
+    const currentUser = await requirePlatformRole('superadmin')
+
+    // Delete reports linked to test jobs
+    const testJobIds = db
+      .select({ id: analysisJobs.id })
+      .from(analysisJobs)
+      .where(eq(analysisJobs.isTest, true))
+
+    const deletedReportsResult = await db
+      .delete(reports)
+      .where(inArray(reports.analysisJobId, testJobIds))
+      .returning({ id: reports.id })
+
+    // Delete test dossiers
+    const deletedDossiersResult = await db
+      .delete(analysisDossiers)
+      .where(eq(analysisDossiers.isTest, true))
+      .returning({ id: analysisDossiers.id })
+
+    // Delete test jobs
+    const deletedJobsResult = await db
+      .delete(analysisJobs)
+      .where(eq(analysisJobs.isTest, true))
+      .returning({ id: analysisJobs.id })
+
+    const deletedReports = deletedReportsResult.length
+    const deletedDossiers = deletedDossiersResult.length
+    const deletedJobs = deletedJobsResult.length
+
+    await logAudit({
+      actorId: currentUser.id,
+      actorEmail: currentUser.email,
+      action: 'settings.updated',
+      entityType: 'integration_secrets',
+      metadata: {
+        service: 'n8n',
+        action: 'integration.test_data_cleaned',
+        deletedReports,
+        deletedDossiers,
+        deletedJobs,
+      },
+    })
+
+    revalidatePath('/admin/integrations')
+    return { success: true, deletedDossiers, deletedJobs, deletedReports }
+  } catch {
+    return { success: false, error: 'Failed to cleanup test data' }
   }
 }
 

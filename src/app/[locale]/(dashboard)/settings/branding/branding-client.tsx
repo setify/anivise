@@ -287,53 +287,54 @@ export function BrandingClient({ data, orgName }: Props) {
         <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
           {/* LEFT: Settings */}
           <div className="space-y-5">
-            {/* Logo */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{t('logo')}</CardTitle>
-                <CardDescription>{t('logoHint')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <UploadZone
-                  label={t('logo')}
-                  hint={t('logoSizeHint')}
-                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                  maxBytes={2 * 1024 * 1024}
-                  currentUrl={data.logoPublicUrl}
-                  previewMode="logo"
-                  onFileSelect={(f) => { setLogoFile(f); setLogoUrl(null); setRemoveLogo(false) }}
-                  onUrlSelect={(url) => { setLogoUrl(url); setLogoFile(null); setRemoveLogo(false) }}
-                  onRemove={() => { setLogoFile(null); setLogoUrl(null); setRemoveLogo(true) }}
-                  removed={removeLogo}
-                  fileSelected={logoFile}
-                  selectedUrl={logoUrl}
-                />
-              </CardContent>
-            </Card>
+            {/* Logo + Favicon side by side */}
+            <div className="grid gap-5 lg:grid-cols-2">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">{t('logo')}</CardTitle>
+                  <CardDescription>{t('logoHint')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <UploadZone
+                    label={t('logo')}
+                    hint={t('logoSizeHint')}
+                    accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                    maxBytes={2 * 1024 * 1024}
+                    currentUrl={data.logoPublicUrl}
+                    previewMode="logo"
+                    onFileSelect={(f) => { setLogoFile(f); setLogoUrl(null); setRemoveLogo(false) }}
+                    onUrlSelect={(url) => { setLogoUrl(url); setLogoFile(null); setRemoveLogo(false) }}
+                    onRemove={() => { setLogoFile(null); setLogoUrl(null); setRemoveLogo(true) }}
+                    removed={removeLogo}
+                    fileSelected={logoFile}
+                    selectedUrl={logoUrl}
+                  />
+                </CardContent>
+              </Card>
 
-            {/* Favicon */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{t('favicon')}</CardTitle>
-                <CardDescription>{t('faviconHint')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <UploadZone
-                  label={t('favicon')}
-                  hint={t('faviconSizeHint')}
-                  accept="image/x-icon,image/png,image/svg+xml"
-                  maxBytes={500 * 1024}
-                  currentUrl={data.faviconPublicUrl}
-                  previewMode="favicon"
-                  onFileSelect={(f) => { setFaviconFile(f); setFaviconUrl(null); setRemoveFavicon(false) }}
-                  onUrlSelect={(url) => { setFaviconUrl(url); setFaviconFile(null); setRemoveFavicon(false) }}
-                  onRemove={() => { setFaviconFile(null); setFaviconUrl(null); setRemoveFavicon(true) }}
-                  removed={removeFavicon}
-                  fileSelected={faviconFile}
-                  selectedUrl={faviconUrl}
-                />
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">{t('favicon')}</CardTitle>
+                  <CardDescription>{t('faviconHint')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <UploadZone
+                    label={t('favicon')}
+                    hint={t('faviconSizeHint')}
+                    accept="image/x-icon,image/png,image/svg+xml"
+                    maxBytes={500 * 1024}
+                    currentUrl={data.faviconPublicUrl}
+                    previewMode="favicon"
+                    onFileSelect={(f) => { setFaviconFile(f); setFaviconUrl(null); setRemoveFavicon(false) }}
+                    onUrlSelect={(url) => { setFaviconUrl(url); setFaviconFile(null); setRemoveFavicon(false) }}
+                    onRemove={() => { setFaviconFile(null); setFaviconUrl(null); setRemoveFavicon(true) }}
+                    removed={removeFavicon}
+                    fileSelected={faviconFile}
+                    selectedUrl={faviconUrl}
+                  />
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Colors */}
             <Card>

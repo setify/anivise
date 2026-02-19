@@ -20,6 +20,8 @@ import {
   EyeOff,
   Info,
   Copy,
+  Play,
+  Trash2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -28,15 +30,30 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import {
   saveIntegrationSecrets,
   getIntegrationSecretsForUI,
   testSupabaseConnection,
   testResendConnection,
   testN8nConnection,
+  testN8nApiConnection,
   testDeepgramConnection,
   sendTestEmail,
   rotateN8nSecret,
   loadFromEnv,
+  setWebhookEnvironment,
+  dryRunWebhook,
+  cleanupTestData,
 } from './actions'
 import { toast } from 'sonner'
 
@@ -361,16 +378,30 @@ function ResendCard({ t }: { t: ReturnType<typeof useTranslations> }) {
 // ─── n8n Card ───
 
 function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
+  const [apiUrl, setApiUrl] = useState('')
+  const [apiKey, setApiKey] = useState('')
   const [webhookUrl, setWebhookUrl] = useState('')
+  const [dossierWebhookUrl, setDossierWebhookUrl] = useState('')
+  const [webhookUrlTest, setWebhookUrlTest] = useState('')
+  const [dossierWebhookUrlTest, setDossierWebhookUrlTest] = useState('')
   const [healthUrl, setHealthUrl] = useState('')
   const [authHeaderName, setAuthHeaderName] = useState('X-Anivise-Secret')
   const [authHeaderValue, setAuthHeaderValue] = useState('')
   const [status, setStatus] = useState<ConnectionStatus>('idle')
+  const [apiStatus, setApiStatus] = useState<ConnectionStatus>('idle')
   const [latency, setLatency] = useState<number | null>(null)
+  const [apiLatency, setApiLatency] = useState<number | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const [showSecret, setShowSecret] = useState(false)
+  const [showApiKey, setShowApiKey] = useState(false)
   const [rotatedSecret, setRotatedSecret] = useState<string | null>(null)
+
+  // Environment toggle state
+  const [analysisEnv, setAnalysisEnv] = useState<'production' | 'test'>('production')
+  const [dossierEnv, setDossierEnv] = useState<'production' | 'test'>('production')
+  const [dryRunLoading, setDryRunLoading] = useState<'analysis' | 'dossier' | null>(null)
+  const [cleanupLoading, setCleanupLoading] = useState(false)
 
   useEffect(() => {
     loadSaved()
@@ -379,17 +410,29 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
   async function loadSaved() {
     const secrets = await getIntegrationSecretsForUI('n8n')
     for (const s of secrets) {
+      if (s.key === 'api_url') setApiUrl(s.maskedValue || '')
+      if (s.key === 'api_key') setApiKey(s.maskedValue || '')
       if (s.key === 'webhook_url') setWebhookUrl(s.maskedValue || '')
+      if (s.key === 'dossier_webhook_url') setDossierWebhookUrl(s.maskedValue || '')
+      if (s.key === 'webhook_url_test') setWebhookUrlTest(s.maskedValue || '')
+      if (s.key === 'dossier_webhook_url_test') setDossierWebhookUrlTest(s.maskedValue || '')
       if (s.key === 'health_url') setHealthUrl(s.maskedValue || '')
       if (s.key === 'auth_header_name') setAuthHeaderName(s.maskedValue || 'X-Anivise-Secret')
       if (s.key === 'auth_header_value') setAuthHeaderValue(s.maskedValue || '')
+      if (s.key === 'webhook_env_analysis') setAnalysisEnv((s.maskedValue as 'test' | 'production') || 'production')
+      if (s.key === 'webhook_env_dossier') setDossierEnv((s.maskedValue as 'test' | 'production') || 'production')
     }
   }
 
   async function handleSave() {
     startTransition(async () => {
       const result = await saveIntegrationSecrets('n8n', [
+        { key: 'api_url', value: apiUrl, isSensitive: false },
+        { key: 'api_key', value: apiKey, isSensitive: true },
         { key: 'webhook_url', value: webhookUrl, isSensitive: false },
+        { key: 'dossier_webhook_url', value: dossierWebhookUrl, isSensitive: false },
+        { key: 'webhook_url_test', value: webhookUrlTest, isSensitive: false },
+        { key: 'dossier_webhook_url_test', value: dossierWebhookUrlTest, isSensitive: false },
         { key: 'health_url', value: healthUrl, isSensitive: false },
         { key: 'auth_header_name', value: authHeaderName, isSensitive: false },
         { key: 'auth_header_value', value: authHeaderValue, isSensitive: true },
@@ -417,6 +460,18 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
     }
   }
 
+  async function handleTestApi() {
+    setApiStatus('testing')
+    const result = await testN8nApiConnection()
+    setApiLatency(result.latency ?? null)
+    if (result.success) {
+      setApiStatus('connected')
+    } else {
+      setApiStatus('error')
+      setErrorMsg(result.error ?? null)
+    }
+  }
+
   async function handleRotate() {
     startTransition(async () => {
       const result = await rotateN8nSecret()
@@ -440,6 +495,113 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
     })
   }
 
+  async function handleEnvToggle(type: 'analysis' | 'dossier', env: 'production' | 'test') {
+    startTransition(async () => {
+      const result = await setWebhookEnvironment(type, env)
+      if (result.success) {
+        if (type === 'analysis') setAnalysisEnv(env)
+        else setDossierEnv(env)
+        toast.success(t('saved'), { className: 'rounded-full', position: 'top-center' })
+      } else {
+        toast.error(result.error, { className: 'rounded-full', position: 'top-center' })
+      }
+    })
+  }
+
+  async function handleDryRun(type: 'analysis' | 'dossier') {
+    setDryRunLoading(type)
+    try {
+      const result = await dryRunWebhook(type)
+      if (result.success) {
+        toast.success(t('n8n.dryRunSuccess', { statusCode: result.statusCode ?? 0 }), {
+          className: 'rounded-full',
+          position: 'top-center',
+          description: result.responseBody ? `${t('n8n.dryRunResponse')}: ${result.responseBody.slice(0, 200)}` : undefined,
+        })
+      } else {
+        toast.error(
+          result.statusCode
+            ? t('n8n.dryRunFailed', { statusCode: result.statusCode })
+            : result.error ?? 'Dry run failed',
+          {
+            className: 'rounded-full',
+            position: 'top-center',
+            description: result.responseBody ? result.responseBody.slice(0, 200) : undefined,
+          }
+        )
+      }
+    } finally {
+      setDryRunLoading(null)
+    }
+  }
+
+  async function handleCleanup() {
+    setCleanupLoading(true)
+    try {
+      const result = await cleanupTestData()
+      if (result.success) {
+        toast.success(t('n8n.cleanupSuccess'), {
+          className: 'rounded-full',
+          position: 'top-center',
+          description: t('n8n.cleanupDeleted', {
+            dossiers: result.deletedDossiers ?? 0,
+            jobs: result.deletedJobs ?? 0,
+            reports: result.deletedReports ?? 0,
+          }),
+        })
+      } else {
+        toast.error(result.error, { className: 'rounded-full', position: 'top-center' })
+      }
+    } finally {
+      setCleanupLoading(false)
+    }
+  }
+
+  function EnvToggle({
+    type,
+    currentEnv,
+  }: {
+    type: 'analysis' | 'dossier'
+    currentEnv: 'production' | 'test'
+  }) {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-muted-foreground text-xs">{t('n8n.webhookEnvironment')}:</span>
+        <div className="inline-flex rounded-md border">
+          <button
+            type="button"
+            onClick={() => handleEnvToggle(type, 'production')}
+            disabled={isPending}
+            className={`rounded-l-md px-3 py-1 text-xs font-medium transition-colors ${
+              currentEnv === 'production'
+                ? 'bg-primary text-primary-foreground'
+                : 'hover:bg-muted'
+            }`}
+          >
+            {t('n8n.production')}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleEnvToggle(type, 'test')}
+            disabled={isPending}
+            className={`rounded-r-md px-3 py-1 text-xs font-medium transition-colors ${
+              currentEnv === 'test'
+                ? 'bg-amber-500 text-white'
+                : 'hover:bg-muted'
+            }`}
+          >
+            {t('n8n.test')}
+          </button>
+        </div>
+        {currentEnv === 'test' && (
+          <Badge variant="outline" className="border-amber-400 text-amber-600 dark:text-amber-400">
+            {t('n8n.test')}
+          </Badge>
+        )}
+      </div>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -451,15 +613,107 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
               <CardDescription>{t('n8n.description')}</CardDescription>
             </div>
           </div>
-          <StatusBadge status={status} latency={latency} t={t} />
+          <div className="flex gap-2">
+            {apiStatus !== 'idle' && <StatusBadge status={apiStatus} latency={apiLatency} t={t} />}
+            <StatusBadge status={status} latency={latency} t={t} />
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
+          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">{t('n8n.apiSection')}</p>
           <div>
-            <Label>Webhook URL</Label>
-            <Input value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://n8n.example.com/webhook/..." />
+            <Label>{t('n8n.apiUrl')}</Label>
+            <Input value={apiUrl} onChange={(e) => setApiUrl(e.target.value)} placeholder="https://n8n.example.com" />
           </div>
+          <div>
+            <Label>{t('n8n.apiKey')}</Label>
+            <div className="flex gap-2">
+              <Input
+                type={showApiKey ? 'text' : 'password'}
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="n8n_api_..."
+              />
+              <Button variant="ghost" size="icon" onClick={() => setShowApiKey(!showApiKey)}>
+                {showApiKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </Button>
+            </div>
+            <p className="text-muted-foreground mt-1 text-xs">{t('n8n.apiKeyHint')}</p>
+          </div>
+
+          <Separator />
+          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">{t('n8n.webhookSection')}</p>
+
+          {/* Analysis Webhook */}
+          <div className="space-y-2 rounded-lg border p-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium">Webhook URL (Analysis)</Label>
+              <EnvToggle type="analysis" currentEnv={analysisEnv} />
+            </div>
+            <Input value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://n8n.example.com/webhook/..." />
+            {analysisEnv === 'test' && (
+              <div>
+                <Label className="text-xs">{t('n8n.webhookUrlTest')}</Label>
+                <Input
+                  value={webhookUrlTest}
+                  onChange={(e) => setWebhookUrlTest(e.target.value)}
+                  placeholder="https://n8n.example.com/webhook-test/..."
+                  className="border-amber-300 dark:border-amber-700"
+                />
+                <p className="text-muted-foreground mt-1 text-xs">{t('n8n.webhookUrlTestHint')}</p>
+              </div>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleDryRun('analysis')}
+              disabled={dryRunLoading === 'analysis'}
+            >
+              {dryRunLoading === 'analysis' ? (
+                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+              ) : (
+                <Play className="mr-1.5 size-3.5" />
+              )}
+              {t('n8n.dryRun')}
+            </Button>
+          </div>
+
+          {/* Dossier Webhook */}
+          <div className="space-y-2 rounded-lg border p-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium">{t('n8n.dossierWebhookUrl')}</Label>
+              <EnvToggle type="dossier" currentEnv={dossierEnv} />
+            </div>
+            <Input value={dossierWebhookUrl} onChange={(e) => setDossierWebhookUrl(e.target.value)} placeholder="https://n8n.example.com/webhook/..." />
+            <p className="text-muted-foreground text-xs">{t('n8n.dossierWebhookUrlHint')}</p>
+            {dossierEnv === 'test' && (
+              <div>
+                <Label className="text-xs">{t('n8n.dossierWebhookUrlTest')}</Label>
+                <Input
+                  value={dossierWebhookUrlTest}
+                  onChange={(e) => setDossierWebhookUrlTest(e.target.value)}
+                  placeholder="https://n8n.example.com/webhook-test/..."
+                  className="border-amber-300 dark:border-amber-700"
+                />
+                <p className="text-muted-foreground mt-1 text-xs">{t('n8n.webhookUrlTestHint')}</p>
+              </div>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleDryRun('dossier')}
+              disabled={dryRunLoading === 'dossier'}
+            >
+              {dryRunLoading === 'dossier' ? (
+                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+              ) : (
+                <Play className="mr-1.5 size-3.5" />
+              )}
+              {t('n8n.dryRun')}
+            </Button>
+          </div>
+
           <div>
             <Label>{t('n8n.healthUrl')}</Label>
             <Input value={healthUrl} onChange={(e) => setHealthUrl(e.target.value)} placeholder="https://n8n.example.com/healthz" />
@@ -510,18 +764,63 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
 
         <div className="bg-muted/50 flex items-start gap-2 rounded-lg p-3">
           <Info className="text-muted-foreground mt-0.5 size-4 shrink-0" />
+          <p className="text-muted-foreground text-xs">{t('n8n.webhookEnvironmentHint')}</p>
+        </div>
+
+        <div className="bg-muted/50 flex items-start gap-2 rounded-lg p-3">
+          <Info className="text-muted-foreground mt-0.5 size-4 shrink-0" />
           <p className="text-muted-foreground text-xs">{t('n8n.hint')}</p>
         </div>
 
         <Separator />
+
+        {/* Cleanup test data section */}
+        <div className="rounded-lg border border-dashed border-amber-300 p-3 dark:border-amber-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">{t('n8n.cleanupTestData')}</p>
+              <p className="text-muted-foreground text-xs">{t('n8n.cleanupTestDataDescription')}</p>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950/30" disabled={cleanupLoading}>
+                  {cleanupLoading ? (
+                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="mr-1.5 size-3.5" />
+                  )}
+                  {t('n8n.cleanupTestData')}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t('n8n.cleanupTestDataConfirm')}</AlertDialogTitle>
+                  <AlertDialogDescription>{t('n8n.cleanupTestDataDescription')}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleCleanup} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    <Trash2 className="mr-1.5 size-4" />
+                    {t('n8n.cleanupTestData')}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+
         <div className="flex flex-wrap gap-2">
           <Button onClick={handleSave} disabled={isPending} size="sm">
             {isPending ? <Loader2 className="mr-1.5 size-4 animate-spin" /> : null}
             {t('save')}
           </Button>
+          <Button variant="outline" size="sm" onClick={handleTestApi} disabled={apiStatus === 'testing'}>
+            {apiStatus === 'testing' ? <Loader2 className="mr-1.5 size-4 animate-spin" /> : <RefreshCw className="mr-1.5 size-4" />}
+            {t('n8n.testApi')}
+          </Button>
           <Button variant="outline" size="sm" onClick={handleTest} disabled={status === 'testing'}>
             {status === 'testing' ? <Loader2 className="mr-1.5 size-4 animate-spin" /> : <RefreshCw className="mr-1.5 size-4" />}
-            {t('testConnection')}
+            {t('n8n.testWebhook')}
           </Button>
           <Button variant="outline" size="sm" onClick={handleRotate} disabled={isPending}>
             <RotateCcw className="mr-1.5 size-4" />

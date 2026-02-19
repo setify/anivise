@@ -53,6 +53,7 @@ import { RecordingsList } from '../_components/recordings-list'
 import { UploadAudioDialog } from '../_components/upload-audio-dialog'
 import { DocumentsSection } from '../_components/documents-section'
 import { FormsSection } from '../_components/forms-section'
+import { DossierSection } from '../_components/dossier-section'
 import {
   updateAnalysis,
   changeAnalysisStatus,
@@ -69,6 +70,7 @@ import type {
   DocumentRow,
 } from '../actions'
 import type { FormAssignmentRow } from '../form-assignment-actions'
+import type { DossierRow } from '../dossier-actions'
 import type { AnalysisStatus } from '@/types/database'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -84,6 +86,7 @@ interface AnalysisDetailClientProps {
   recordings: RecordingRow[]
   documents: DocumentRow[]
   formAssignments: FormAssignmentRow[]
+  dossiers: DossierRow[]
   managers: OrgManager[]
   isAdmin: boolean
   currentUserId: string
@@ -96,6 +99,7 @@ export function AnalysisDetailClient({
   recordings,
   documents,
   formAssignments,
+  dossiers,
   managers,
   isAdmin,
   currentUserId,
@@ -304,6 +308,12 @@ export function AnalysisDetailClient({
           <FormsSection
             analysisId={analysis.id}
             formAssignments={formAssignments}
+          />
+
+          {/* Dossier section */}
+          <DossierSection
+            analysisId={analysis.id}
+            initialDossiers={dossiers}
           />
         </div>
 

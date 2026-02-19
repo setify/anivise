@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, jsonb, timestamp, index } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, jsonb, boolean, timestamp, index } from 'drizzle-orm/pg-core'
 import { jobStatusEnum } from './enums'
 import { organizations } from './organizations'
 import { analysisSubjects } from './analysis-subjects'
@@ -31,6 +31,7 @@ export const analysisJobs = pgTable(
     }),
     errorMessage: text('error_message'),
     metadata: jsonb('metadata'),
+    isTest: boolean('is_test').notNull().default(false),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),

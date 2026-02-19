@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Combobox } from '@/components/ui/combobox'
+import Link from 'next/link'
 import { inviteUser, createUserDirect } from '../actions'
 import type { OrgDepartment, OrgLocation } from '../actions'
 import type { OrganizationLimits, OrganizationUsage } from '@/lib/products/limits'
@@ -31,8 +32,6 @@ interface AddUserDialogProps {
   departments: OrgDepartment[]
   locations: OrgLocation[]
   seats: { limits: OrganizationLimits; usage: OrganizationUsage } | null
-  onManageDepartments: () => void
-  onManageLocations: () => void
 }
 
 function generatePassword(length = 12): string {
@@ -50,8 +49,6 @@ export function AddUserDialog({
   departments,
   locations,
   seats,
-  onManageDepartments,
-  onManageLocations,
 }: AddUserDialogProps) {
   const t = useTranslations('org.users.addDialog')
   const [loading, setLoading] = useState(false)
@@ -134,13 +131,12 @@ export function AddUserDialog({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label>{t('department')}</Label>
-            <button
-              type="button"
+            <Link
+              href="/users/departments"
               className="text-primary text-xs hover:underline"
-              onClick={onManageDepartments}
             >
               {t('manageDepartments')}
-            </button>
+            </Link>
           </div>
           <Combobox
             value={departmentId}
@@ -152,13 +148,12 @@ export function AddUserDialog({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label>{t('location')}</Label>
-            <button
-              type="button"
+            <Link
+              href="/users/locations"
               className="text-primary text-xs hover:underline"
-              onClick={onManageLocations}
             >
               {t('manageLocations')}
-            </button>
+            </Link>
           </div>
           <Combobox
             value={locationId}
