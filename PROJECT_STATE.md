@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.10.0
-**Last Updated:** 2026-02-18
-**Last Commit:** feat(org): add user management with invite, direct create, role management, departments and locations
+**Version:** 1.11.0
+**Last Updated:** 2026-02-19
+**Last Commit:** feat(org): add form assignment to analyses with token-based filling
 
 ## What's Implemented
 
@@ -19,7 +19,7 @@
 ### Database
 - [x] Drizzle ORM configured with PostgreSQL (postgres.js driver)
 - [x] drizzle.config.ts with schema path and migrations output
-- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode, product_status, media_context)
+- [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode, product_status, media_context, analysis_form_assignment_status)
 - [x] Schema: organizations (name, slug, settings, subscription tier/status [deprecated], default_locale, internal_notes, soft-delete)
 - [x] Schema: products (name, slug, description, status, is_default, sort_order, seat limits [max_org_admins/managers/members], feature limits [max_analyses/forms/submissions/storage])
 - [x] Schema: organization_products (1:1 org-plan junction, override columns for custom plans, assigned_by/at, notes, unique on organization_id)
@@ -42,8 +42,9 @@
 - [x] Schema: form_organization_assignments (formId, organizationId, assignedBy, unique constraint)
 - [x] Schema: form_submissions (formId, formVersionId, organizationId, submittedBy, jsonb data/metadata)
 - [x] Schema: media_files (bucket, path, filename, mime_type, size, context, context_entity_id, uploaded_by, alt_text)
+- [x] Schema: analysis_form_assignments (analysis_id, form_id, form_version_id, employee_id, token, token_expires_at, status lifecycle, due_date, submission_id, reminder_count, unique on analysis_id+form_id)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions, products, organization_products, media_files)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions, products, organization_products, media_files, analysis_form_assignments)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -115,6 +116,22 @@
 - [x] Publish validation dialog (schema validation before publish, version management)
 - [x] Status transitions: publish, unpublish, archive, reactivate
 - [x] Builder wired to settings dialog and publish validation dialog
+
+### Form Assignment (Analyses)
+- [x] Assign published forms to analysis employees via token-based email link
+- [x] Status lifecycle: pending → sent → opened → completed
+- [x] Token generation (32 bytes, 30-day expiry) with public fill route
+- [x] Public form-fill page (`/form-fill/[token]`) with org branding (logo, colors), no login required
+- [x] Public layout (`src/app/[locale]/(public)/layout.tsx`) for unauthenticated routes
+- [x] Middleware updated: `/form-fill/` added to public patterns
+- [x] FormsSection component on analysis detail page (status badges, due dates, overdue warnings, reminder/remove actions, expandable timeline/responses)
+- [x] AssignFormDialog component (form select, optional deadline, sends email on confirm)
+- [x] FormResponsesView component (renders submission data with field type-specific formatting)
+- [x] Server actions: `getAnalysisFormAssignments`, `getAvailableFormsForAssignment`, `assignFormToAnalysis`, `sendFormReminder`, `removeFormAssignment`
+- [x] Public server actions: `getFormByToken`, `submitFormViaToken`
+- [x] Email templates seeded: `form-assignment` (invitation), `form-assignment-reminder` (reminder)
+- [x] Audit actions: `analysis.form_assigned`, `analysis.form_unassigned`
+- [x] i18n: `analyses.detail.forms` + `formFill` namespaces (DE + EN)
 
 ### Plans / Products (Tarife)
 - [x] DB schema: `products` table with seat limits and feature limits
@@ -263,7 +280,14 @@
 - [x] createDepartment / updateDepartment / deleteDepartment (with usage check)
 - [x] createLocation / updateLocation / deleteLocation (with usage check)
 - [x] cancelOrgInvitation - cancel an org invitation
-- [x] logAudit - append audit log entry (20 action types)
+- [x] getAnalysisFormAssignments - list form assignments for an analysis with form/employee/submission data
+- [x] getAvailableFormsForAssignment - published forms accessible to org minus already-assigned
+- [x] assignFormToAnalysis - create assignment, generate token, send email, set status to sent
+- [x] sendFormReminder - send reminder email, increment reminder count
+- [x] removeFormAssignment - delete assignment (blocked if completed)
+- [x] getFormByToken - validate token, update status to opened, load branding (public)
+- [x] submitFormViaToken - create submission, mark assignment completed (public)
+- [x] logAudit - append audit log entry (22 action types)
 - [x] getAuditLogs - list audit logs with action/period filters and pagination
 - [x] updatePlatformSettings - update platform settings with audit logging
 - [x] getSetting / setSetting / getAllSettings - typed platform settings helpers
@@ -503,8 +527,17 @@
 - `src/components/admin/forms/form-builder/form-settings-dialog.tsx` - Form settings dialog (3 tabs)
 - `src/components/admin/forms/form-builder/org-assignment-panel.tsx` - Organization assignment UI
 - `src/components/admin/forms/form-builder/publish-validation-dialog.tsx` - Publish validation dialog
+- `src/app/[locale]/(dashboard)/analyses/form-assignment-actions.ts` - Form assignment server actions
+- `src/app/[locale]/(dashboard)/analyses/_components/forms-section.tsx` - Form assignments card on analysis detail
+- `src/app/[locale]/(dashboard)/analyses/_components/assign-form-dialog.tsx` - Assign form dialog
+- `src/app/[locale]/(dashboard)/analyses/_components/form-responses-view.tsx` - Submission data display
+- `src/app/[locale]/(public)/layout.tsx` - Public layout (no auth)
+- `src/app/[locale]/(public)/form-fill/[token]/page.tsx` - Token form-fill page (server)
+- `src/app/[locale]/(public)/form-fill/[token]/form-fill-client.tsx` - Token form-fill UI (client)
+- `src/app/[locale]/(public)/form-fill/[token]/actions.ts` - Token validation and submission actions
 - `src/lib/db/schema/forms.ts` - Drizzle schema for forms, form_versions, form_organization_assignments, form_submissions
-- `src/lib/db/schema/enums.ts` - All PostgreSQL enums (incl. platform_role, invitation_status, form_status, form_visibility)
+- `src/lib/db/schema/analysis-form-assignments.ts` - Analysis form assignments table schema
+- `src/lib/db/schema/enums.ts` - All PostgreSQL enums (incl. platform_role, invitation_status, form_status, form_visibility, analysis_form_assignment_status)
 - `src/lib/db/schema/organizations.ts` - Organizations table
 - `src/lib/db/schema/users.ts` - Users table (with platform_role, extended profile fields)
 - `src/lib/db/schema/organization-members.ts` - Org members junction table

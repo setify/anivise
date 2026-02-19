@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.11.0] - 2026-02-19
+### Added
+- **Form Assignment to Analyses**: Assign forms from the form builder to employees (analysis subjects) directly from the analysis detail page. Employees receive a token-based email link to fill out the form without login.
+- **`analysis_form_assignments` DB table**: Tracks form assignments with token, expiry, status lifecycle (pending → sent → opened → completed), due date, reminder count, and submission reference.
+- **`analysis_form_assignment_status` enum**: pending, sent, opened, completed.
+- **Public form-fill route** (`/form-fill/[token]`): Token-authenticated page for employees to fill out assigned forms with org branding (logo, colors). No login required.
+- **FormsSection component**: Card on analysis detail page showing assigned forms with status badges (color-coded), due date with overdue warnings, reminder/remove actions, and expandable content (status timeline or completed responses).
+- **AssignFormDialog component**: Modal to select a published form and optional deadline, sends assignment email on confirm.
+- **FormResponsesView component**: Renders submission data by mapping field IDs to labels from form schema, with special rendering for rating (stars), CSAT (X/10), radio/checkbox (option labels), date (formatted), hidden (excluded).
+- **Form assignment server actions**: `getAnalysisFormAssignments`, `getAvailableFormsForAssignment`, `assignFormToAnalysis` (with token generation + email), `sendFormReminder`, `removeFormAssignment`.
+- **Public form-fill server actions**: `getFormByToken` (validates token, updates status to opened, loads branding), `submitFormViaToken` (creates submission, marks completed).
+- **Email templates**: `form-assignment` (invitation) and `form-assignment-reminder` (reminder) seeded via `scripts/seed-form-assignment-templates.mjs`.
+- **2 new audit actions**: `analysis.form_assigned`, `analysis.form_unassigned`.
+- **Middleware update**: `/form-fill/` added to public patterns (no auth required).
+- **Public layout** (`src/app/[locale]/(public)/layout.tsx`): Minimal layout for unauthenticated routes.
+- DB migration `0011_luxuriant_makkari.sql`.
+- i18n: `analyses.detail.forms` namespace (~40 keys) and `formFill` namespace for public token page (DE + EN).
+
 ## [1.10.0] - 2026-02-18
 ### Added
 - **Org User Management** (`/users`): Full user management for org admins — invite by email, direct create with password, edit profile/position, change role, deactivate/reactivate, remove with name confirmation.
