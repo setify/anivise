@@ -250,6 +250,17 @@
         "saved": "Recording has been saved.",
         "errorStart": "Failed to start recording.",
         "errorMicrophone": "Microphone access was denied.",
+        "uploadTitle": "Upload Audio File",
+        "uploadDescription": "Upload an existing conversation recording. Transcription happens automatically.",
+        "uploadDropzone": "Click here or drag a file",
+        "uploadButton": "Upload & Transcribe",
+        "uploadTooLarge": "File is too large (max 200 MB).",
+        "uploadSuccess": "File uploaded and transcribed successfully.",
+        "uploadError": "Failed to upload file.",
+        "uploadProgress": {
+          "uploading": "Uploading...",
+          "transcribing": "Transcribing..."
+        },
         "existingRecordings": "Previous Recordings",
         "duration": "Duration",
         "noRecordings": "No recordings yet.",

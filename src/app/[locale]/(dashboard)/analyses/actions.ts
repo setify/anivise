@@ -875,6 +875,100 @@ export async function getRecordingAudioUrl(recordingId: string): Promise<string 
   return data.publicUrl
 }
 
+/** Upload an audio file and auto-transcribe via Deepgram. */
+export async function uploadAudioFile(params: {
+  analysisId: string
+  filename: string
+  mimeType: string
+  fileSize: number
+  language: string
+  base64: string
+}) {
+  const ctx = await getCurrentOrgContext()
+  if (!ctx) return { success: false, error: 'unauthorized' }
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const adminSupabase = createAdminClient()
+
+  const storagePath = `${ctx.organizationId}/recordings/${params.analysisId}/${Date.now()}`
+  const ext = params.filename.split('.').pop() ?? 'mp3'
+  const filePath = `${storagePath}/uploaded.${ext}`
+
+  // Upload to storage
+  const bytes = Buffer.from(params.base64, 'base64')
+  const { error: uploadError } = await adminSupabase.storage
+    .from('org-assets')
+    .upload(filePath, bytes, { contentType: params.mimeType, upsert: false })
+
+  if (uploadError) {
+    return { success: false, error: 'upload_failed' }
+  }
+
+  // Create recording entry
+  const [recording] = await db
+    .insert(analysisRecordings)
+    .values({
+      analysisId: params.analysisId,
+      language: params.language,
+      storagePath,
+      filename: params.filename,
+      mimeType: params.mimeType,
+      fileSize: params.fileSize,
+      status: 'processing',
+      recordedBy: ctx.userId,
+    })
+    .returning()
+
+  // Transcribe via Deepgram REST API
+  const apiKey = await getIntegrationSecret('deepgram', 'api_key')
+  let transcript: string | null = null
+
+  if (apiKey) {
+    try {
+      const dgParams = new URLSearchParams({
+        model: 'nova-3',
+        language: params.language,
+        smart_format: 'true',
+        punctuate: 'true',
+      })
+
+      const response = await fetch(
+        `https://api.deepgram.com/v1/listen?${dgParams}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Token ${apiKey}`,
+            'Content-Type': params.mimeType,
+          },
+          body: bytes,
+        }
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        transcript =
+          data.results?.channels?.[0]?.alternatives?.[0]?.transcript ?? null
+      }
+    } catch {
+      // Transcription failed — file is still saved
+    }
+  }
+
+  // Update recording with transcript
+  await db
+    .update(analysisRecordings)
+    .set({
+      status: 'completed',
+      finalTranscript: transcript,
+      liveTranscript: transcript,
+      updatedAt: new Date(),
+    })
+    .where(eq(analysisRecordings.id, recording.id))
+
+  revalidatePath(`/analyses/${params.analysisId}`)
+  return { success: true }
+}
+
 /** Check if Deepgram is configured (platform-wide secret). */
 export async function checkDeepgramAvailable(): Promise<boolean> {
   const ctx = await getCurrentOrgContext()

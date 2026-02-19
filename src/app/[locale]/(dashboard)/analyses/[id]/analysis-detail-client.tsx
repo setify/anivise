@@ -51,6 +51,7 @@ import { CommentFeed } from '../_components/comment-feed'
 import { ShareDialog } from '../_components/share-dialog'
 import { RecordingModal } from '../_components/recording-modal'
 import { RecordingsList } from '../_components/recordings-list'
+import { UploadAudioDialog } from '../_components/upload-audio-dialog'
 import {
   updateAnalysis,
   changeAnalysisStatus,
@@ -104,6 +105,7 @@ export function AnalysisDetailClient({
   const [shareOpen, setShareOpen] = useState(false)
   const [managerOpen, setManagerOpen] = useState(false)
   const [recordingOpen, setRecordingOpen] = useState(false)
+  const [uploadAudioOpen, setUploadAudioOpen] = useState(false)
   const [managerLoading, setManagerLoading] = useState(false)
   const [newManagerId, setNewManagerId] = useState(analysis.managerId)
 
@@ -265,7 +267,11 @@ export function AnalysisDetailClient({
               {t('detail.recording.description')}
             </p>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setUploadAudioOpen(true)}
+              >
                 <Upload className="mr-2 size-3.5" />
                 {t('detail.recording.upload')}
               </Button>
@@ -455,6 +461,14 @@ export function AnalysisDetailClient({
         managers={managers}
         open={shareOpen}
         onOpenChange={setShareOpen}
+      />
+
+      {/* Upload Audio Dialog */}
+      <UploadAudioDialog
+        analysisId={analysis.id}
+        open={uploadAudioOpen}
+        onOpenChange={setUploadAudioOpen}
+        onUploadComplete={() => router.refresh()}
       />
 
       {/* Recording Modal */}

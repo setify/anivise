@@ -250,6 +250,17 @@
         "saved": "Aufnahme wurde gespeichert.",
         "errorStart": "Aufnahme konnte nicht gestartet werden.",
         "errorMicrophone": "Zugriff auf das Mikrofon wurde verweigert.",
+        "uploadTitle": "Audio-Datei hochladen",
+        "uploadDescription": "Laden Sie eine bestehende Gesprächsaufzeichnung hoch. Die Transkription erfolgt automatisch.",
+        "uploadDropzone": "Klicken Sie hier oder ziehen Sie eine Datei hierher",
+        "uploadButton": "Hochladen & Transkribieren",
+        "uploadTooLarge": "Die Datei ist zu groß (max. 200 MB).",
+        "uploadSuccess": "Datei wurde hochgeladen und transkribiert.",
+        "uploadError": "Fehler beim Hochladen der Datei.",
+        "uploadProgress": {
+          "uploading": "Wird hochgeladen...",
+          "transcribing": "Wird transkribiert..."
+        },
         "existingRecordings": "Bisherige Aufnahmen",
         "duration": "Dauer",
         "noRecordings": "Noch keine Aufnahmen.",
