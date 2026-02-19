@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.12.0] - 2026-02-19
+### Added
+- **Org-Level Email Template Management** (`/settings/emails`): Org admins can override the 6 org-relevant email templates with custom content per organization. Templates automatically use org branding (logo, colors) and fall back to platform defaults when no override exists.
+- **`org_email_template_overrides` DB table**: Stores per-org overrides with unique constraint on (organization_id, template_slug), subject/body in DE+EN, updated_by tracking.
+- **Org override in email pipeline**: `sendTemplatedEmail` extended with optional `organizationId` parameter — checks for org override first, falls back to global template. `getOrgEmailLayoutConfig(orgId)` merges org branding with platform email layout.
+- **Template editor**: DE/EN tabs with RichTextEditor, variable sidebar with copy-to-clipboard, live preview with org branding (logo, colors), status badges ("Angepasst"/"Standard").
+- **Template actions**: Save (upsert override), Reset to default (delete override), Send test email with org branding to current user.
+- **All `sendTemplatedEmail` callers updated**: `inviteUser`, `createUserDirect`, `resendInvitation`, `shareAnalysis`, `assignFormToAnalysis`, `sendFormReminder` now pass `organizationId`.
+- **Copywriting optimization**: All 9 email templates rewritten with professional-warm, neutral tone (no Du/Sie, passive constructions), topic-based headers, American English. Security note added to password-reset, purpose explanation added to form-assignment mails.
+- **Seed scripts**: `seed-missing-templates.mjs` (direct-create-welcome, analysis-shared), `update-all-email-templates.mjs` (all 9 templates).
+- **Superadmin reset defaults** updated with new copy for all 9 templates.
+- **Sidebar nav item**: Settings > E-Mails (Mail icon, `org_admin` only).
+- DB migration `0012_same_valeria_richards.sql`.
+- Server actions: `getOrgEmailTemplates`, `getOrgEmailLayoutConfigAction`, `saveOrgEmailTemplate`, `resetOrgEmailTemplate`, `sendOrgTestEmail`.
+- i18n: `org.settings.emails` namespace (~25 keys, DE + EN).
+
 ## [1.11.0] - 2026-02-19
 ### Added
 - **Form Assignment to Analyses**: Assign forms from the form builder to employees (analysis subjects) directly from the analysis detail page. Employees receive a token-based email link to fill out the form without login.

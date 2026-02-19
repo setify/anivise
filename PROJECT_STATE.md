@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.11.0
+**Version:** 1.12.0
 **Last Updated:** 2026-02-19
-**Last Commit:** feat(org): add form assignment to analyses with token-based filling
+**Last Commit:** feat(org): add org-level email template management with copywriting
 
 ## What's Implemented
 
@@ -35,6 +35,7 @@
 - [x] Schema: audit_logs (append-only, actor, action, entity, metadata, IP, indexed)
 - [x] Schema: platform_settings (key-value store with typed defaults)
 - [x] Schema: email_templates (slug, de/en subject+body, variables, system flag)
+- [x] Schema: org_email_template_overrides (organization_id + template_slug unique, subject/body de/en, updated_by)
 - [x] Schema: notifications (recipientId, type, title, body, link, isRead, metadata, indexed)
 - [x] Schema: integration_secrets (service, key, encrypted_value, iv, is_sensitive, AES-256-GCM encryption)
 - [x] Schema: forms (title, slug, status, visibility, step display mode, completion config, versioning, soft-delete)
@@ -44,7 +45,7 @@
 - [x] Schema: media_files (bucket, path, filename, mime_type, size, context, context_entity_id, uploaded_by, alt_text)
 - [x] Schema: analysis_form_assignments (analysis_id, form_id, form_version_id, employee_id, token, token_expires_at, status lifecycle, due_date, submission_id, reminder_count, unique on analysis_id+form_id)
 - [x] Drizzle DB client instance
-- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions, products, organization_products, media_files, analysis_form_assignments)
+- [x] TypeScript inferred types (Select + Insert for all tables including team_invitations, audit_logs, platform_settings, email_templates, notifications, integration_secrets, forms, form_versions, form_organization_assignments, form_submissions, products, organization_products, media_files, analysis_form_assignments, org_email_template_overrides)
 - [x] Supabase browser client (@supabase/ssr)
 - [x] Supabase server client (cookie-based auth)
 - [x] Supabase admin client (service role, superadmin only)
@@ -177,6 +178,22 @@
 - [x] `src/lib/notifications/should-notify.ts`: shouldNotifyOrg() + getNotificationSettings() mit Defaults
 - [x] i18n: org.settings.media/notifications/integrations Namespaces (DE + EN)
 
+### Org Email Templates
+- [x] `org_email_template_overrides` DB table with unique(organization_id, template_slug)
+- [x] Org-level override for 6 templates: org-invitation, direct-create-welcome, analysis-complete, analysis-shared, form-assignment, form-assignment-reminder
+- [x] `sendTemplatedEmail` extended with optional `organizationId` — checks org override first, falls back to global template
+- [x] `getOrgEmailLayoutConfig(orgId)` — merges org branding (logo, colors) with platform email layout
+- [x] Settings > E-Mails page (`/settings/emails`) with template list, status badges (Angepasst/Standard), edit/test/reset
+- [x] Template editor with DE/EN tabs, RichTextEditor, variable sidebar, live preview with org branding
+- [x] Test send with org branding to current user
+- [x] Reset to default (deletes org override, falls back to global template)
+- [x] All existing `sendTemplatedEmail` callers updated to pass `organizationId`
+- [x] Professional-warm, neutral copy for all 9 email templates (DE + EN), American English
+- [x] Seed scripts: `seed-missing-templates.mjs` (direct-create-welcome, analysis-shared), `update-all-email-templates.mjs` (all 9)
+- [x] Superadmin reset defaults updated with new copy for all 9 templates
+- [x] Sidebar nav item: Settings > E-Mails (Mail icon, org_admin only)
+- [x] i18n: org.settings.emails namespace (DE + EN)
+
 ### UX Polish
 - [x] Skeleton loading system (5 composites: Table, Card, Form, Detail, Stats) with shimmer animation
 - [x] 21 loading.tsx files (15 admin + 6 dashboard) for Suspense-based skeleton screens
@@ -287,6 +304,11 @@
 - [x] removeFormAssignment - delete assignment (blocked if completed)
 - [x] getFormByToken - validate token, update status to opened, load branding (public)
 - [x] submitFormViaToken - create submission, mark assignment completed (public)
+- [x] getOrgEmailTemplates - load 6 org-relevant templates with override status
+- [x] getOrgEmailLayoutConfigAction - get org email layout config for preview
+- [x] saveOrgEmailTemplate - upsert org email template override
+- [x] resetOrgEmailTemplate - delete org override, return global template values
+- [x] sendOrgTestEmail - send test email with org branding to current user
 - [x] logAudit - append audit log entry (22 action types)
 - [x] getAuditLogs - list audit logs with action/period filters and pagination
 - [x] updatePlatformSettings - update platform settings with audit logging
@@ -444,7 +466,10 @@
 - `src/lib/db/schema/email-templates.ts` - Email templates table schema
 - `src/app/[locale]/(superadmin)/admin/settings/emails/page.tsx` - Email templates page (server)
 - `src/app/[locale]/(superadmin)/admin/settings/emails/email-templates-client.tsx` - Email templates editor (client)
-- `src/lib/email/send.ts` - Email send helper with DB template rendering and configurable layout
+- `src/lib/email/send.ts` - Email send helper with DB template rendering, configurable layout, and org override support
+- `src/app/[locale]/(dashboard)/settings/emails/page.tsx` - Org email templates page (server)
+- `src/app/[locale]/(dashboard)/settings/emails/org-email-templates-client.tsx` - Org email templates editor (client)
+- `src/app/[locale]/(dashboard)/settings/emails/actions.ts` - Org email template server actions
 - `src/app/[locale]/(superadmin)/admin/settings/email-layout/page.tsx` - Email layout page (server)
 - `src/app/[locale]/(superadmin)/admin/settings/email-layout/email-layout-client.tsx` - Email layout config (client)
 - `src/app/[locale]/(superadmin)/admin/settings/email-layout/actions.ts` - Email layout server actions
@@ -537,6 +562,7 @@
 - `src/app/[locale]/(public)/form-fill/[token]/actions.ts` - Token validation and submission actions
 - `src/lib/db/schema/forms.ts` - Drizzle schema for forms, form_versions, form_organization_assignments, form_submissions
 - `src/lib/db/schema/analysis-form-assignments.ts` - Analysis form assignments table schema
+- `src/lib/db/schema/org-email-template-overrides.ts` - Org email template overrides table schema
 - `src/lib/db/schema/enums.ts` - All PostgreSQL enums (incl. platform_role, invitation_status, form_status, form_visibility, analysis_form_assignment_status)
 - `src/lib/db/schema/organizations.ts` - Organizations table
 - `src/lib/db/schema/users.ts` - Users table (with platform_role, extended profile fields)
