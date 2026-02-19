@@ -8,8 +8,9 @@ import {
   orgDepartments,
   orgLocations,
   users,
+  analyses,
 } from '@/lib/db/schema'
-import { eq, and, count, desc, sql } from 'drizzle-orm'
+import { eq, and, count, desc, sql, isNull } from 'drizzle-orm'
 import { getCurrentOrgContext } from '@/lib/auth/org-context'
 import { logAudit } from '@/lib/audit/log'
 import { canAddEmployee } from '@/lib/products/limits'
@@ -47,6 +48,23 @@ export async function getEmployees() {
     .where(eq(employees.organizationId, ctx.organizationId))
     .orderBy(desc(employees.createdAt))
 
+  // Get analysis counts per employee
+  const analysisCounts = await db
+    .select({
+      employeeId: analyses.employeeId,
+      count: count(),
+    })
+    .from(analyses)
+    .where(
+      and(
+        eq(analyses.organizationId, ctx.organizationId),
+        isNull(analyses.deletedAt)
+      )
+    )
+    .groupBy(analyses.employeeId)
+
+  const analysisCountMap = new Map(analysisCounts.map((r) => [r.employeeId, r.count]))
+
   return rows.map((r) => ({
     id: r.employee.id,
     firstName: r.employee.firstName,
@@ -65,6 +83,7 @@ export async function getEmployees() {
     manager: r.manager?.memberId
       ? { memberId: r.manager.memberId, userId: r.manager.userId, fullName: r.manager.fullName }
       : null,
+    analysisCount: analysisCountMap.get(r.employee.id) ?? 0,
   }))
 }
 
@@ -106,6 +125,18 @@ export async function getEmployeeById(id: string) {
 
   if (!row) return null
 
+  // Get analysis count for this employee
+  const [acRow] = await db
+    .select({ value: count() })
+    .from(analyses)
+    .where(
+      and(
+        eq(analyses.employeeId, id),
+        eq(analyses.organizationId, ctx!.organizationId),
+        isNull(analyses.deletedAt)
+      )
+    )
+
   return {
     id: row.employee.id,
     firstName: row.employee.firstName,
@@ -124,6 +155,7 @@ export async function getEmployeeById(id: string) {
     manager: row.manager?.memberId
       ? { memberId: row.manager.memberId, userId: row.manager.userId, fullName: row.manager.fullName }
       : null,
+    analysisCount: acRow?.value ?? 0,
   }
 }
 
