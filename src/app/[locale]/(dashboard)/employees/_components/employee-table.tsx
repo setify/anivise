@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { MoreHorizontal } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -47,7 +48,8 @@ export function EmployeeTable({
   const router = useRouter()
 
   return (
-    <div className="rounded-lg border">
+    <Card>
+      <CardContent className="p-0">
       <Table>
         <TableHeader>
           <TableRow>
@@ -131,6 +133,7 @@ export function EmployeeTable({
           ))}
         </TableBody>
       </Table>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
