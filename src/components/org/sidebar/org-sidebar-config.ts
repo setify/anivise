@@ -1,4 +1,5 @@
 import {
+  Activity,
   AudioWaveform,
   Bell,
   BookOpen,
@@ -176,6 +177,13 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
             labelKey: 'org.sidebar.settingsIntegrations',
             href: '/settings/integrations',
             icon: Link2,
+          },
+          {
+            key: 'settings-activity-log',
+            labelKey: 'org.sidebar.settingsActivityLog',
+            href: '/settings/activity-log',
+            icon: Activity,
+            minRole: 'org_admin',
           },
         ],
       },

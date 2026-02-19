@@ -122,6 +122,7 @@
     "welcome": "Welcome to Anivise",
     "recentActivity": "Recent Activity",
     "noActivity": "No activity yet.",
+    "viewAll": "View all",
     "stats": {
       "totalAnalyses": "Total Analyses",
       "activeJobs": "Active Jobs",
@@ -1371,6 +1372,7 @@
       "settingsMedia": "Media Library",
       "settingsNotifications": "Notifications",
       "settingsIntegrations": "Integrations",
+      "settingsActivityLog": "Activity Log",
       "userFooter": {
         "profile": "Profile",
         "logout": "Sign Out",
@@ -1779,6 +1781,35 @@
       "title": "Integrations",
       "description": "Connect external services",
       "comingSoon": "This section will be available soon."
+    },
+    "settings": {
+      "activityLog": {
+        "title": "Activity Log",
+        "description": "Overview of all actions in your organization.",
+        "empty": "No activities yet.",
+        "totalEntries": "{count} entries",
+        "page": "Page {current} of {total}",
+        "prev": "Previous",
+        "next": "Next",
+        "table": {
+          "date": "Date",
+          "user": "User",
+          "action": "Action",
+          "entity": "Entity"
+        },
+        "categories": {
+          "all": "All actions",
+          "analyses": "Analyses",
+          "employees": "Employees",
+          "guides": "Guides",
+          "guideCategories": "Guide categories",
+          "members": "Members",
+          "departments": "Departments",
+          "locations": "Locations",
+          "settings": "Settings",
+          "invitations": "Invitations"
+        }
+      }
     },
     "guides": {
       "title": "Guides",

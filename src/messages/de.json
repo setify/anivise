@@ -122,6 +122,7 @@
     "welcome": "Willkommen bei Anivise",
     "recentActivity": "Letzte Aktivitäten",
     "noActivity": "Noch keine Aktivitäten vorhanden.",
+    "viewAll": "Alle anzeigen",
     "stats": {
       "totalAnalyses": "Analysen gesamt",
       "activeJobs": "Aktive Aufträge",
@@ -1371,6 +1372,7 @@
       "settingsMedia": "Mediathek",
       "settingsNotifications": "Benachrichtigungen",
       "settingsIntegrations": "Integrationen",
+      "settingsActivityLog": "Aktivitäts-Log",
       "userFooter": {
         "profile": "Profil",
         "logout": "Abmelden",
@@ -1779,6 +1781,35 @@
       "title": "Integrationen",
       "description": "Externe Dienste verbinden",
       "comingSoon": "Dieser Bereich wird in Kürze verfügbar sein."
+    },
+    "settings": {
+      "activityLog": {
+        "title": "Aktivitäts-Log",
+        "description": "Alle Aktionen in Ihrer Organisation im Überblick.",
+        "empty": "Noch keine Aktivitäten.",
+        "totalEntries": "{count} Einträge",
+        "page": "Seite {current} von {total}",
+        "prev": "Zurück",
+        "next": "Weiter",
+        "table": {
+          "date": "Zeitpunkt",
+          "user": "Benutzer",
+          "action": "Aktion",
+          "entity": "Objekt"
+        },
+        "categories": {
+          "all": "Alle Aktionen",
+          "analyses": "Analysen",
+          "employees": "Mitarbeiter",
+          "guides": "Guides",
+          "guideCategories": "Guide-Kategorien",
+          "members": "Benutzer",
+          "departments": "Abteilungen",
+          "locations": "Standorte",
+          "settings": "Einstellungen",
+          "invitations": "Einladungen"
+        }
+      }
     },
     "guides": {
       "title": "Guides",
