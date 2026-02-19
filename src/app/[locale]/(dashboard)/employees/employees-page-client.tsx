@@ -121,17 +121,19 @@ export function EmployeesPageClient({
     }
 
     return (
-      <div className="space-y-3">
-        {list.map((emp) => (
-          <EmployeeCard
-            key={emp.id}
-            employee={emp}
-            onEdit={() => setEditEmployee(emp)}
-            onChangeStatus={() => setStatusEmployee(emp)}
-            onDelete={() => setDeleteEmp(emp)}
-          />
-        ))}
-      </div>
+      <Card>
+        <CardContent className="divide-y p-0">
+          {list.map((emp) => (
+            <EmployeeCard
+              key={emp.id}
+              employee={emp}
+              onEdit={() => setEditEmployee(emp)}
+              onChangeStatus={() => setStatusEmployee(emp)}
+              onDelete={() => setDeleteEmp(emp)}
+            />
+          ))}
+        </CardContent>
+      </Card>
     )
   }
 

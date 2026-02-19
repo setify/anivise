@@ -41,7 +41,7 @@ export function EmployeeCard({
   return (
     <div
       className={cn(
-        'flex cursor-pointer items-center gap-4 rounded-lg border p-4 transition-colors hover:bg-muted/50',
+        'flex cursor-pointer items-center gap-4 p-4 transition-colors hover:bg-muted/50',
         employee.status !== 'active' && 'opacity-60'
       )}
       onClick={() => router.push(`/employees/${employee.id}`)}
