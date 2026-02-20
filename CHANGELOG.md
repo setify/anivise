@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.1] - 2026-02-20
+### Added
+- **Dashboard Error Boundaries**: 11 granular `error.tsx` files covering all dashboard sub-routes and dynamic routes (analyses, analyses/[id], employees, employees/[id], forms, forms/[slug], guides, users, settings, plan, dashboard). Detail pages include `error.message` display.
+- **Analysis Types** (`src/types/analysis.ts`): Application-level type definitions for all analysis features — `AnalysisRow`, `AnalysisDetail`, `AnalysisCommentRow`, `AnalysisShareRow`, `RecordingRow`, `DocumentRow`, `DossierRow`, `FormAssignmentRow`, `OrgManager`, `ActiveEmployee`, n8n webhook payloads (`N8nAnalysisCompletePayload`, `N8nDossierCompletePayload`), and mutation result types. Re-exported from `src/types/index.ts`.
+
+### Changed
+- **PROJECT_STATE.md**: Removed 7 resolved "Known Issues" entries, removed completed items from "Not Implemented" section (n8n, Resend, avatar, invitation email), updated RBAC checkbox for UI-level permission checks.
+
 ## [1.16.0] - 2026-02-20
 ### Added
 - **UserContext Provider**: New `UserContextProvider` wraps the dashboard layout, providing `orgRole` and `platformRole` via React context. `useRole()` hook now reads from context first (instant, no loading flicker) with Supabase client query fallback for pages outside the provider.

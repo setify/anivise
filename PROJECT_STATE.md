@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.16.0
+**Version:** 1.16.1
 **Last Updated:** 2026-02-20
-**Last Commit:** feat: useRole context, dashboard profile, invitation email, E2E tests
+**Last Commit:** chore: error boundaries, PROJECT_STATE cleanup, analysis types
 
 ## What's Implemented
 
@@ -80,7 +80,7 @@
 - [x] Role-based middleware guards (auth redirect for protected routes)
 - [x] requirePlatformRole server-side guard for admin pages
 - [x] Staff/superadmin filtering on admin sidebar nav items
-- [ ] UI-level permission checks in dashboard components (hooks available, not yet wired)
+- [x] UI-level permission checks in dashboard components (OrgSidebar uses `minRole` + `hasMinRole()`, UserContextProvider provides orgRole)
 
 ### Hooks
 - [x] useTenant - client-side organization context (subdomain or dev query param)
@@ -204,6 +204,7 @@
 - [x] Skeleton loading system (5 composites: Table, Card, Form, Detail, Stats) with shimmer animation
 - [x] 31 loading.tsx files (25 admin + 6 dashboard) for Suspense-based skeleton screens
 - [x] 6 error.tsx files in admin routes (admin root, jobs/[id], organizations/[id], plans/[id], forms/[formId], integrations)
+- [x] 11 error.tsx files in dashboard routes (dashboard, analyses, analyses/[id], employees, employees/[id], forms, forms/[slug], guides, users, settings, plan)
 - [x] Page transitions (fade-in + slide-up, 200ms) via PageTransition component in both layouts
 - [x] Navigation progress bar (3px top-fixed, z-100, captures link clicks)
 - [x] Dashboard breadcrumbs in header (auto-generated from URL path, matching admin breadcrumbs)
@@ -428,27 +429,17 @@
 - [x] Supabase Storage upload flow (media library + email logo)
 
 ## What's NOT Implemented Yet
-- Analysis upload + job creation flow
-- n8n integration (webhook trigger + callback)
-- Report generation + viewer
-- Resend email (magic link, notifications, team invitations)
-
-- OAuth providers (Google, Microsoft)
+- Analysis upload flow: transcript/recording upload with progress and n8n trigger wiring (infrastructure exists, UI flow incomplete)
+- Report content rendering: dossier generation/polling works, but actual report result display is incomplete
+- Report PDF export
+- Consent management UI (DB schema exists, no dashboard/admin UI)
+- OAuth providers (Google, Microsoft) — login buttons exist as disabled placeholders
 - SSO/SAML for Enterprise
-- Consent management UI
-- Playwright E2E tests beyond smoke tests (auth flows, CRUD operations)
-- ~~Avatar upload in org-level profile page~~ **RESOLVED**: Dashboard profile page at `/settings/profile` with avatar upload
-- Invitation acceptance email notification (currently uses in-app notification only)
+- E2E tests for dashboard flows, form submission, analysis creation, multi-tenancy isolation
 
 ## Known Issues / Tech Debt
-- Admin sidebar user footer now shows real user data (name, avatar, role) from server layout
-- Sidebar organization label is placeholder - useTenant hook available but not yet wired
-- Dashboard stats are live from DB queries (resolved in v1.13.0)
 - Next.js 16 shows deprecation warning for middleware convention (will be renamed to "proxy" in future)
-- ~~useRole hook queries Supabase directly from client~~ **RESOLVED**: UserContextProvider now provides server-side data, useRole reads from context first
-- Profile form uses toast in render (should use useEffect for toast side effects)
-- Team invitations and org creation invitations now send emails (Resend configured)
-- Invitation acceptance now sends `invitation-accepted` email to inviter (both accept + register-and-accept paths)
+- `src/types/analysis.ts` contains application-level types; server actions still export their own inferred types via `Awaited<ReturnType<...>>` — consider migrating to shared imports
 
 ## File Map (Key Files)
 - `src/app/layout.tsx` - Root layout with fonts, metadata, ThemeProvider
@@ -621,6 +612,7 @@
 - `src/lib/auth/require-platform-role.ts` - Server-side platform role guard
 - `src/lib/validations/admin.ts` - Zod schemas for admin forms
 - `src/types/database.ts` - Drizzle inferred types
+- `src/types/analysis.ts` - Application-level analysis types (rows, details, n8n payloads, mutation results)
 - `src/types/index.ts` - Type re-exports
 - `supabase/migrations/001_enable_rls.sql` - Enable RLS on all tables
 - `supabase/migrations/002_tenant_isolation_policies.sql` - Tenant isolation policies
