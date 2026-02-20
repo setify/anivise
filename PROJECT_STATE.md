@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.12.0
-**Last Updated:** 2026-02-19
-**Last Commit:** feat(org): add org-level email template management with copywriting
+**Version:** 1.13.0
+**Last Updated:** 2026-02-20
+**Last Commit:** feat(admin): add user management, system health, global search + rename Dossier to KI-Analyse
 
 ## What's Implemented
 
@@ -222,8 +222,11 @@
 - [x] Settings page with profile/org/notifications sections
 - [x] Superadmin layout with grouped admin sidebar v2 (5 groups: Main, Content, Customers, Platform, System; 10 nav items + collapsible Settings with 3 children; user footer with avatar, name, role, profile link, sign-out)
 - [x] Dashboard sidebar with 6 nav items (Dashboard, Analyses, Forms, Team, Plan, Settings)
-- [x] Superadmin dashboard page with 6 placeholder stat cards (StatCard component)
+- [x] Superadmin dashboard page with live stats, system health, quick actions, recent activity
 - [x] Reusable StatCard component (`src/components/admin/stat-card.tsx`)
+- [x] Platform-wide User Management page (`/admin/users`) with search, org memberships
+- [x] System Health Dashboard on admin dashboard (Supabase, Resend, n8n, Deepgram)
+- [x] Global Search (Cmd+K) in admin header (orgs, users, jobs)
 - [x] Superadmin Profile page with editable form
 - [x] Superadmin Team management page (members table, invite dialog, role change, remove, invitations tab)
 - [x] Superadmin Organizations list page with table
@@ -273,7 +276,11 @@
 - [x] deleteOrganization - soft-delete an organization
 - [x] updateOrganization - update org details with slug validation and audit logging
 - [x] checkSlugAvailability - real-time slug uniqueness and reserved word check
-- [x] getPlatformStats - get platform-wide stats (org count, user count)
+- [x] getPlatformStats - get platform-wide stats (9 metrics with trends)
+- [x] getRecentActivity - get last 8 audit log entries for dashboard
+- [x] getAllPlatformUsers - list all users with org memberships and search
+- [x] getSystemHealth - parallel health checks for all integrations
+- [x] globalSearch - search orgs, users, jobs across platform
 - [x] validateInviteToken - validate invitation token and return invitation info
 - [x] acceptInvitation - accept invitation for logged-in users (platform role or org membership)
 - [x] registerAndAcceptInvitation - register new account and accept invitation in one step
@@ -421,7 +428,7 @@
 ## Known Issues / Tech Debt
 - Admin sidebar user footer now shows real user data (name, avatar, role) from server layout
 - Sidebar organization label is placeholder - useTenant hook available but not yet wired
-- Dashboard stats show "0" as static values until connected to database queries
+- Dashboard stats are live from DB queries (resolved in v1.13.0)
 - RLS policies are defined as SQL files but not yet applied to a live Supabase instance
 - Next.js 16 shows deprecation warning for middleware convention (will be renamed to "proxy" in future)
 - useRole hook queries Supabase directly from client - consider server-side session enrichment for performance
@@ -481,6 +488,13 @@
 - `src/lib/db/schema/notifications.ts` - Notifications table schema
 - `src/app/[locale]/(superadmin)/admin/notifications/page.tsx` - Notifications page (server)
 - `src/app/[locale]/(superadmin)/admin/notifications/notifications-page-client.tsx` - Notifications list (client)
+- `src/app/[locale]/(superadmin)/admin/users/page.tsx` - Platform users page (server)
+- `src/app/[locale]/(superadmin)/admin/users/users-page-client.tsx` - Platform users table (client)
+- `src/app/[locale]/(superadmin)/admin/actions/users.ts` - User management server actions
+- `src/app/[locale]/(superadmin)/admin/actions/health.ts` - System health check server actions
+- `src/app/[locale]/(superadmin)/admin/actions/search.ts` - Global search server action
+- `src/components/admin/admin-search.tsx` - Global search command palette (Cmd+K)
+- `src/lib/n8n/resolve-webhook-url.ts` - Unified webhook URL resolver (with legacy fallbacks)
 - `src/lib/n8n/trigger.ts` - n8n webhook trigger and health check
 - `src/app/api/webhooks/n8n/analysis-complete/route.ts` - n8n callback webhook handler
 - `src/app/[locale]/(superadmin)/admin/jobs/page.tsx` - Analysis jobs page (server)

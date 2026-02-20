@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.13.0] - 2026-02-20
+### Added
+- **"Dossier" → "KI-Analyse" Rename**: All user-facing texts renamed from "Dossier" to "KI-Analyse" (DE) / "AI Analysis" (EN). DB table and internal code names remain unchanged.
+- **Webhook Unification**: Merged two webhook URL fields (Analysis + Dossier) into one unified webhook configuration. Single environment toggle (Test/Production), single dry run button.
+- **Backwards-compatible webhook resolution**: `resolveWebhookUrl()` checks legacy secret keys (`dossier_webhook_url`, `webhook_env_dossier`) as fallback for seamless migration.
+- **Optional n8n auth header**: Webhook triggers no longer block if auth header is not configured — sends request without auth header if not set.
+- **Sidebar text contrast fix**: Added `getContrastForeground()` using WCAG luminance calculation to auto-determine light/dark foreground text when org branding colors are applied.
+- **Admin Dashboard Live Stats**: 6 real-time stat cards (Organizations, Active Users, Running Analyses, New Signups with trend, Open Invitations, Failed Jobs) with parallel DB queries.
+- **Admin Dashboard Quick Actions**: 4 quick action buttons (Create Org, Failed Jobs, Integrations, Activity Log).
+- **Admin Dashboard Recent Activity**: Last 8 audit log entries with action icons and time-ago display.
+- **Platform-wide User Management** (`/admin/users`): New page showing all users across all orgs with search by name/email, avatar, platform role, linked org membership badges, and creation date.
+- **System Health Dashboard**: Integration status cards on admin dashboard checking Supabase, Resend, n8n, and Deepgram in parallel (5s timeout). Shows connected/error/not configured status with latency.
+- **Global Search (Cmd+K)**: Command palette in admin header searching Organizations, Users, and Jobs. Debounced server-side search (300ms) with grouped results and keyboard navigation.
+- **"Benutzer" / "Users" sidebar nav item** in CUSTOMERS group with `UserSearch` icon.
+- Server actions: `getAllPlatformUsers`, `getSystemHealth`, `globalSearch`, `getRecentActivity`, expanded `getPlatformStats`.
+- i18n: `admin.users`, `admin.search`, `admin.dashboard.systemHealth` namespaces (DE + EN).
+
+### Changed
+- `resolveWebhookUrl()` no longer takes a type parameter — unified for all webhook types.
+- `setWebhookEnvironment()` and `dryRunWebhook()` simplified (type parameter removed).
+- Admin integrations page uses single webhook section instead of two.
+
 ## [1.12.0] - 2026-02-19
 ### Added
 - **Org-Level Email Template Management** (`/settings/emails`): Org admins can override the 6 org-relevant email templates with custom content per organization. Templates automatically use org branding (logo, colors) and fall back to platform defaults when no override exists.
