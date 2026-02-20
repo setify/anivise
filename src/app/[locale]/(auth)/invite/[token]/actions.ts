@@ -11,6 +11,7 @@ import { eq, and, gt } from 'drizzle-orm'
 import { createClient } from '@/lib/supabase/server'
 import { createNotification } from '@/lib/notifications/create'
 import { canAddMember } from '@/lib/products/limits'
+import { sendTemplatedEmail } from '@/lib/email/send'
 
 export type InvitationInfo = {
   id: string
@@ -184,6 +185,28 @@ export async function acceptInvitation(
       link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/team`,
     })
 
+    // Send email to inviter
+    const [inviter] = await db
+      .select({ email: users.email, preferredLocale: users.preferredLocale })
+      .from(users)
+      .where(eq(users.id, invitation.invitedBy))
+      .limit(1)
+
+    if (inviter) {
+      await sendTemplatedEmail({
+        to: inviter.email,
+        templateSlug: 'invitation-accepted',
+        locale: (inviter.preferredLocale as 'de' | 'en') || 'de',
+        variables: {
+          acceptorName: acceptor?.fullName || acceptor?.email || invitation.email,
+          acceptorEmail: acceptor?.email || invitation.email,
+          role: invitation.role ?? '',
+          orgName: '',
+          orgLine: '',
+        },
+      })
+    }
+
     return { success: true, redirectTo: '/admin' }
   }
 
@@ -229,6 +252,29 @@ export async function acceptInvitation(
       body: `Role: ${invitation.targetOrgRole}`,
       link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/organizations/${invitation.organizationId}`,
     })
+
+    // Send email to inviter
+    const [orgInviter] = await db
+      .select({ email: users.email, preferredLocale: users.preferredLocale })
+      .from(users)
+      .where(eq(users.id, invitation.invitedBy))
+      .limit(1)
+
+    if (orgInviter) {
+      await sendTemplatedEmail({
+        to: orgInviter.email,
+        templateSlug: 'invitation-accepted',
+        locale: (orgInviter.preferredLocale as 'de' | 'en') || 'de',
+        variables: {
+          acceptorName: acceptor?.fullName || acceptor?.email || invitation.email,
+          acceptorEmail: acceptor?.email || invitation.email,
+          role: invitation.targetOrgRole ?? '',
+          orgName,
+          orgLine: orgName ? `Organisation: ${orgName}` : '',
+        },
+        organizationId: invitation.organizationId ?? undefined,
+      })
+    }
 
     return { success: true, redirectTo: '/dashboard' }
   }
@@ -318,6 +364,28 @@ export async function registerAndAcceptInvitation(
       link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/team`,
     })
 
+    // Send email to inviter
+    const [regPlatformInviter] = await db
+      .select({ email: users.email, preferredLocale: users.preferredLocale })
+      .from(users)
+      .where(eq(users.id, invitation.invitedBy))
+      .limit(1)
+
+    if (regPlatformInviter) {
+      await sendTemplatedEmail({
+        to: regPlatformInviter.email,
+        templateSlug: 'invitation-accepted',
+        locale: (regPlatformInviter.preferredLocale as 'de' | 'en') || 'de',
+        variables: {
+          acceptorName: data.fullName || invitation.email,
+          acceptorEmail: invitation.email,
+          role: invitation.role ?? '',
+          orgName: '',
+          orgLine: '',
+        },
+      })
+    }
+
     return { success: true, redirectTo: '/admin' }
   }
 
@@ -373,6 +441,29 @@ export async function registerAndAcceptInvitation(
       body: `Role: ${invitation.targetOrgRole}`,
       link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/organizations/${invitation.organizationId}`,
     })
+
+    // Send email to inviter
+    const [regOrgInviter] = await db
+      .select({ email: users.email, preferredLocale: users.preferredLocale })
+      .from(users)
+      .where(eq(users.id, invitation.invitedBy))
+      .limit(1)
+
+    if (regOrgInviter) {
+      await sendTemplatedEmail({
+        to: regOrgInviter.email,
+        templateSlug: 'invitation-accepted',
+        locale: (regOrgInviter.preferredLocale as 'de' | 'en') || 'de',
+        variables: {
+          acceptorName: data.fullName || invitation.email,
+          acceptorEmail: invitation.email,
+          role: invitation.targetOrgRole ?? '',
+          orgName,
+          orgLine: orgName ? `Organisation: ${orgName}` : '',
+        },
+        organizationId: invitation.organizationId ?? undefined,
+      })
+    }
 
     return { success: true, redirectTo: '/dashboard' }
   }

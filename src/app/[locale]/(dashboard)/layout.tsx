@@ -25,6 +25,7 @@ export default async function DashboardLayout({
 
   let userData: { displayName: string | null; email: string; avatarUrl: string | null; orgRole: string | null } | null = null
   let isSuperadmin = false
+  let platformRole: string | null = null
 
   if (authUser) {
     const [dbUser] = await db
@@ -41,6 +42,7 @@ export default async function DashboardLayout({
 
     if (dbUser) {
       isSuperadmin = hasPlatformRole(dbUser.platformRole, 'superadmin')
+      platformRole = dbUser.platformRole
       userData = {
         displayName: dbUser.displayName || dbUser.fullName || null,
         email: dbUser.email,
@@ -135,6 +137,7 @@ export default async function DashboardLayout({
           user={userData}
           orgName={orgName}
           logoUrl={orgLogoUrl || logoUrl || undefined}
+          platformRole={platformRole as import('@/lib/auth/roles').PlatformRole | null}
         >
           {children}
         </AppShell>

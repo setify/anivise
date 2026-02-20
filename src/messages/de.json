@@ -1643,7 +1643,8 @@
       "guides": "Guides",
       "guidesOverview": "Übersicht",
       "guidesCategories": "Kategorien",
-      "settingsEmails": "E-Mails"
+      "settingsEmails": "E-Mails",
+      "settingsProfile": "Mein Profil"
     },
     "employees": {
       "title": "Mitarbeiter",
@@ -2064,6 +2065,26 @@
         "industryPlaceholder": "Branche wählen oder eingeben...",
         "notSpecified": "Nicht angegeben",
         "saveSuccess": "Einstellungen gespeichert."
+      },
+      "profile": {
+        "title": "Mein Profil",
+        "description": "Verwalten Sie Ihre persönlichen Informationen",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "displayName": "Anzeigename",
+        "email": "E-Mail-Adresse",
+        "phone": "Telefon",
+        "timezone": "Zeitzone",
+        "locale": "Sprache",
+        "saved": "Profil erfolgreich gespeichert",
+        "error": "Fehler beim Speichern des Profils",
+        "avatarUpload": "Bild hochladen",
+        "avatarUploading": "Wird hochgeladen...",
+        "avatarRemove": "Bild entfernen",
+        "avatarHint": "PNG, JPG oder WebP. Max. 2 MB.",
+        "avatarUpdated": "Profilbild aktualisiert",
+        "avatarRemoved": "Profilbild entfernt",
+        "avatarError": "Fehler beim Hochladen des Profilbilds"
       },
       "plan": {
         "title": "Mein Tarif",

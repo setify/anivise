@@ -1643,7 +1643,8 @@
       "guides": "Guides",
       "guidesOverview": "Overview",
       "guidesCategories": "Categories",
-      "settingsEmails": "Emails"
+      "settingsEmails": "Emails",
+      "settingsProfile": "My Profile"
     },
     "employees": {
       "title": "Employees",
@@ -2064,6 +2065,26 @@
         "industryPlaceholder": "Choose or type an industry...",
         "notSpecified": "Not specified",
         "saveSuccess": "Settings saved."
+      },
+      "profile": {
+        "title": "My Profile",
+        "description": "Manage your personal information",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "displayName": "Display Name",
+        "email": "Email Address",
+        "phone": "Phone",
+        "timezone": "Timezone",
+        "locale": "Language",
+        "saved": "Profile saved successfully",
+        "error": "Failed to save profile",
+        "avatarUpload": "Upload photo",
+        "avatarUploading": "Uploading...",
+        "avatarRemove": "Remove photo",
+        "avatarHint": "PNG, JPG or WebP. Max 2 MB.",
+        "avatarUpdated": "Profile photo updated",
+        "avatarRemoved": "Profile photo removed",
+        "avatarError": "Failed to upload profile photo"
       },
       "plan": {
         "title": "My Plan",

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0] - 2026-02-20
+### Added
+- **UserContext Provider**: New `UserContextProvider` wraps the dashboard layout, providing `orgRole` and `platformRole` via React context. `useRole()` hook now reads from context first (instant, no loading flicker) with Supabase client query fallback for pages outside the provider.
+- **Dashboard Profile Page** (`/settings/profile`): New "Mein Profil" / "My Profile" page in org dashboard settings with avatar upload/remove (PNG, JPG, WebP, max 2 MB), profile form (first name, last name, display name, phone, timezone, language). Sidebar entry added as first settings child.
+- **Invitation Acceptance Email**: New `invitation-accepted` email template. Both `acceptInvitation()` and `registerAndAcceptInvitation()` now send an email notification to the inviter when their invitation is accepted, in addition to the existing in-app notification.
+- **Playwright E2E Test Infrastructure**: Auth setup fixture (`e2e/auth.setup.ts`) with `storageState` persistence. Three test projects: `setup` (auth), `no-auth` (unauthenticated tests), `chromium` (authenticated tests). New test files: `auth.spec.ts` (3 tests), `admin/organizations.spec.ts` (3 tests). E2E env vars documented in `.env.example`.
+
 ## [1.15.1] - 2026-02-20
 ### Added
 - **Org Detail: Members Tab**: New "Benutzer"/"Users" tab on superadmin org detail page listing all organization members with avatar initials, email, role badge, department, status badge, and impersonation link.

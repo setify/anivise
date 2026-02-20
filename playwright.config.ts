@@ -12,9 +12,26 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   projects: [
+    // Auth setup — logs in and saves storageState
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+    // Unauthenticated tests (no storageState, no setup dependency)
+    {
+      name: 'no-auth',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: ['smoke.spec.ts', 'auth.spec.ts'],
+    },
+    // Authenticated tests (uses saved auth state)
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'e2e/.auth/admin.json',
+      },
+      dependencies: ['setup'],
+      testIgnore: ['smoke.spec.ts', 'auth.spec.ts', '*.setup.ts'],
     },
   ],
   webServer: {

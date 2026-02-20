@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.15.1
+**Version:** 1.16.0
 **Last Updated:** 2026-02-20
-**Last Commit:** feat(admin): add members and employees tabs to org detail page
+**Last Commit:** feat: useRole context, dashboard profile, invitation email, E2E tests
 
 ## What's Implemented
 
@@ -16,7 +16,8 @@
 - [x] ESLint configured
 - [x] Vitest configured with jsdom, @testing-library/react, @testing-library/jest-dom
 - [x] 5 test files with 111 unit tests (roles, validations, storage-paths, utils, audit-actions)
-- [x] Playwright E2E configured with Chromium, smoke tests (login/admin redirect)
+- [x] Playwright E2E configured with Chromium, auth setup fixture, storageState-based auth, 3 projects (setup/no-auth/chromium)
+- [x] E2E tests: smoke (3), auth (3), admin/organizations (3)
 - [x] Complete folder structure from CLAUDE.md
 
 ### Database
@@ -83,7 +84,8 @@
 
 ### Hooks
 - [x] useTenant - client-side organization context (subdomain or dev query param)
-- [x] useRole - client-side user role in current org + platform role (UX only, not security)
+- [x] useRole - reads from UserContextProvider first (server-populated, no loading flicker), Supabase client fallback for pages without provider
+- [x] UserContextProvider wraps dashboard layout, provides orgRole + platformRole via React context
 
 ### Validations
 - [x] Zod schemas for admin forms (profile update, team invite/update/remove, org create/delete/update — org schemas updated for plan system)
@@ -225,6 +227,7 @@
 - [x] Analyses page with EmptyState component
 - [x] Team page with EmptyState component
 - [x] Settings page with profile/org/notifications sections
+- [x] Dashboard Profile page (`/settings/profile`) with avatar upload/remove, profile form (name, display name, phone, timezone, language)
 - [x] Superadmin layout with grouped admin sidebar v2 (5 groups: Main, Content, Customers, Platform, System; 10 nav items + collapsible Settings with 3 children; user footer with avatar, name, role, profile link, sign-out)
 - [x] Dashboard sidebar with 6 nav items (Dashboard, Analyses, Forms, Team, Plan, Settings)
 - [x] Superadmin dashboard page with live stats, system health, quick actions, recent activity
@@ -434,7 +437,7 @@
 - SSO/SAML for Enterprise
 - Consent management UI
 - Playwright E2E tests beyond smoke tests (auth flows, CRUD operations)
-- Avatar upload in org-level profile page (admin profile done)
+- ~~Avatar upload in org-level profile page~~ **RESOLVED**: Dashboard profile page at `/settings/profile` with avatar upload
 - Invitation acceptance email notification (currently uses in-app notification only)
 
 ## Known Issues / Tech Debt
@@ -442,15 +445,18 @@
 - Sidebar organization label is placeholder - useTenant hook available but not yet wired
 - Dashboard stats are live from DB queries (resolved in v1.13.0)
 - Next.js 16 shows deprecation warning for middleware convention (will be renamed to "proxy" in future)
-- useRole hook queries Supabase directly from client - consider server-side session enrichment for performance
+- ~~useRole hook queries Supabase directly from client~~ **RESOLVED**: UserContextProvider now provides server-side data, useRole reads from context first
 - Profile form uses toast in render (should use useEffect for toast side effects)
 - Team invitations and org creation invitations now send emails (Resend configured)
+- Invitation acceptance now sends `invitation-accepted` email to inviter (both accept + register-and-accept paths)
 
 ## File Map (Key Files)
 - `src/app/layout.tsx` - Root layout with fonts, metadata, ThemeProvider
 - `src/app/[locale]/layout.tsx` - Locale layout with NextIntlClientProvider
 - `src/app/[locale]/page.tsx` - Redirects to dashboard
-- `src/app/[locale]/(dashboard)/layout.tsx` - Dashboard layout with AppShell
+- `src/app/[locale]/(dashboard)/layout.tsx` - Dashboard layout with AppShell + UserContextProvider
+- `src/app/[locale]/(dashboard)/settings/profile/page.tsx` - Dashboard profile page
+- `src/contexts/user-context.tsx` - UserContextProvider (orgRole + platformRole)
 - `src/app/[locale]/(superadmin)/layout.tsx` - Admin layout with AdminSidebar
 - `src/app/[locale]/(superadmin)/admin/page.tsx` - Admin dashboard with real stats
 - `src/app/[locale]/(superadmin)/admin/actions.ts` - All admin server actions

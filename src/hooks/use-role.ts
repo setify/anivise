@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { OrgRole, PlatformRole } from '@/lib/auth/roles'
+import { useUserContext } from '@/contexts/user-context'
 import { useTenant } from './use-tenant'
 
 interface RoleContext {
@@ -14,16 +15,23 @@ interface RoleContext {
 /**
  * Client-side hook to get the current user's role in the current organization.
  *
+ * Reads from the UserContextProvider first (populated server-side by the dashboard layout).
+ * Falls back to Supabase client queries when used outside the provider (e.g. auth pages).
+ *
  * This is for UX purposes only (e.g., conditionally showing/hiding UI elements).
  * Server-side role checks are used for actual security enforcement.
  */
 export function useRole(): RoleContext {
+  const ctx = useUserContext()
   const { organizationSlug } = useTenant()
-  const [role, setRole] = useState<OrgRole | null>(null)
-  const [platformRole, setPlatformRole] = useState<PlatformRole | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [role, setRole] = useState<OrgRole | null>(ctx?.orgRole ?? null)
+  const [platformRole, setPlatformRole] = useState<PlatformRole | null>(ctx?.platformRole ?? null)
+  const [isLoading, setIsLoading] = useState(!ctx)
 
   useEffect(() => {
+    // If context is available, no need to fetch
+    if (ctx) return
+
     async function fetchRole() {
       const supabase = createClient()
       const {
@@ -72,7 +80,7 @@ export function useRole(): RoleContext {
     }
 
     fetchRole()
-  }, [organizationSlug])
+  }, [ctx, organizationSlug])
 
   return { role, platformRole, isLoading }
 }

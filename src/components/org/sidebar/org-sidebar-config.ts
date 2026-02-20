@@ -14,6 +14,7 @@ import {
   MapPin,
   Palette,
   Settings,
+  UserCircle,
   UserCog,
   UsersRound,
 } from 'lucide-react'
@@ -143,6 +144,12 @@ export const orgSidebarConfig: OrgSidebarGroup[] = [
         href: '/settings',
         icon: Settings,
         children: [
+          {
+            key: 'settings-profile',
+            labelKey: 'org.sidebar.settingsProfile',
+            href: '/settings/profile',
+            icon: UserCircle,
+          },
           {
             key: 'settings-general',
             labelKey: 'org.sidebar.settingsGeneral',
