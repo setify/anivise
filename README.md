@@ -97,8 +97,10 @@ import { useTenant } from '@/hooks/use-tenant'
 import { useRole } from '@/hooks/use-role'
 
 const { organizationSlug, isLoading } = useTenant()
-const { role, isSuperadmin, isLoading } = useRole()
+const { role, platformRole, isLoading } = useRole()
 ```
+
+`useRole()` reads from the `UserContextProvider` first (populated server-side by the dashboard layout — instant, no loading flicker). Falls back to Supabase client queries when used outside the provider (e.g. auth pages).
 
 ### Middleware
 
@@ -338,6 +340,9 @@ The dashboard uses a responsive app shell with:
 | `pnpm db:generate` | Generate Drizzle migration files from schema |
 | `pnpm db:push` | Push schema directly to database (dev only) |
 | `pnpm db:studio` | Open Drizzle Studio (DB browser) |
+| `pnpm test` | Run Vitest unit tests |
+| `pnpm test:e2e` | Run Playwright E2E tests |
+| `pnpm test:e2e:ui` | Run Playwright E2E tests with UI |
 
 ## Project Structure
 
@@ -377,6 +382,7 @@ src/
 │   ├── notifications/         # Notification creation and broadcast
 │   ├── constants.ts           # App-wide constants
 │   └── utils.ts               # Utility functions (cn, etc.)
+├── contexts/                  # React context providers (UserContextProvider)
 ├── hooks/                     # Custom React hooks
 ├── types/                     # TypeScript type definitions
 │   ├── database.ts            # Drizzle inferred types (Select + Insert)
@@ -402,6 +408,9 @@ src/
 | `RESEND_API_KEY` | No | Resend API key for emails |
 | `RESEND_FROM_EMAIL` | No | Sender email address |
 | `NEXT_PUBLIC_DEFAULT_LOCALE` | No | Default locale (`de`) |
+| `IMPERSONATION_SECRET` | No | Cookie signing key for superadmin impersonation |
+| `E2E_ADMIN_EMAIL` | No | Admin email for Playwright E2E auth setup |
+| `E2E_ADMIN_PASSWORD` | No | Admin password for Playwright E2E auth setup |
 
 See `.env.example` for a complete template.
 
