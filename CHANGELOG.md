@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1] - 2026-02-20
+### Added
+- **Org Detail: Members Tab**: New "Benutzer"/"Users" tab on superadmin org detail page listing all organization members with avatar initials, email, role badge, department, status badge, and impersonation link.
+- **Org Detail: Employees Tab**: New "Mitarbeiter"/"Employees" tab on superadmin org detail page listing all organization employees with name, position, department, status badge, and impersonation link to employee detail.
+- Server actions: `getOrgMembers(orgId)`, `getOrgEmployees(orgId)` with `requirePlatformRole('staff')` guard.
+- i18n: `admin.orgs.members` and `admin.orgs.employees` namespaces (DE + EN).
+
 ## [1.15.0] - 2026-02-20
 ### Added
 - **Avatar Upload**: Profile page now supports avatar upload (PNG, JPG, WebP, max 2 MB) with remove functionality. Avatars tracked in `media_files` table, stored in Supabase Storage.

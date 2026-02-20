@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.15.0
+**Version:** 1.15.1
 **Last Updated:** 2026-02-20
-**Last Commit:** feat: avatar upload, invitation emails, storage tracking, Playwright, RLS applied
+**Last Commit:** feat(admin): add members and employees tabs to org detail page
 
 ## What's Implemented
 
@@ -236,7 +236,7 @@
 - [x] Superadmin Team management page (members table, invite dialog, role change, remove, invitations tab)
 - [x] Superadmin Organizations list page with table
 - [x] Superadmin Create Organization page with form
-- [x] Superadmin Organization detail page with danger zone (soft-delete), invitations tab, statistics tab (usage stats), and edit button
+- [x] Superadmin Organization detail page with danger zone (soft-delete), invitations tab, statistics tab (usage stats), members tab, employees tab, and edit button
 - [x] Superadmin Organization edit page with basic data, status & plan, settings, internal notes
 - [x] Org creation form with "First Org-Admin" section and auto-invitation
 - [x] Superadmin Activity page with audit log table, action/period filters, pagination, CSV export
@@ -326,6 +326,8 @@
 - [x] getAuditLogs - list audit logs with action/period filters and pagination
 - [x] exportAuditLogs - export filtered audit logs as CSV (up to 10k entries)
 - [x] getOrgUsageStats - per-org usage stats (members, jobs, dossiers, last activity)
+- [x] getOrgMembers - list org members with user/department/location data (admin)
+- [x] getOrgEmployees - list org employees with department/location data (admin)
 - [x] updatePlatformSettings - update platform settings with audit logging
 - [x] getSetting / setSetting / getAllSettings - typed platform settings helpers
 - [x] updateEmailTemplate - update email template content with audit logging
@@ -512,6 +514,7 @@
 - `src/app/[locale]/(superadmin)/admin/jobs/[id]/job-detail-client.tsx` - Job detail with timeline (client)
 - `src/app/[locale]/(superadmin)/admin/actions/job-detail.ts` - Job detail server action
 - `src/app/[locale]/(superadmin)/admin/actions/org-stats.ts` - Org usage stats server action
+- `src/app/[locale]/(superadmin)/admin/actions/org-members.ts` - Org members and employees server actions
 - `src/app/[locale]/(superadmin)/admin/actions/activity-export.ts` - Audit log CSV export server action
 - `src/app/[locale]/(superadmin)/admin/actions/broadcast.ts` - Notification broadcast server actions
 - `src/app/[locale]/(superadmin)/admin/integrations/page.tsx` - Integrations page (server)
