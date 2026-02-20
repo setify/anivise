@@ -45,7 +45,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { ArrowLeft, Trash2, RefreshCw, X, Copy, Check, Eye, Pencil } from 'lucide-react'
+import {
+  ArrowLeft,
+  Trash2,
+  RefreshCw,
+  X,
+  Copy,
+  Check,
+  Eye,
+  Pencil,
+  Users,
+  BarChart3,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  Brain,
+  Clock,
+} from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { de, enUS } from 'date-fns/locale'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -72,6 +90,16 @@ interface OrgInvitation {
   createdAt: Date
 }
 
+interface OrgUsageStats {
+  members: number
+  totalJobs: number
+  completedJobs: number
+  failedJobs: number
+  processingJobs: number
+  dossiers: number
+  lastActivity: Date | null
+}
+
 const statusVariants: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
   pending: 'default',
   accepted: 'secondary',
@@ -83,17 +111,21 @@ export function OrgDetailClient({
   organization,
   invitations,
   isSuperadmin,
+  usageStats,
 }: {
   organization: Organization
   invitations: OrgInvitation[]
   isSuperadmin: boolean
+  usageStats: OrgUsageStats
 }) {
   const t = useTranslations('admin.orgs')
   const tDetail = useTranslations('admin.orgs.detail')
   const tInvites = useTranslations('admin.orgs.invitations')
+  const tStats = useTranslations('admin.orgs.stats')
   const tCommon = useTranslations('common')
   const locale = useLocale()
   const router = useRouter()
+  const dateLocale = locale === 'de' ? de : enUS
   const tImpersonation = useTranslations('admin.impersonation')
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [resendLink, setResendLink] = useState('')
@@ -203,6 +235,7 @@ export function OrgDetailClient({
         <Tabs defaultValue="details">
           <TabsList>
             <TabsTrigger value="details">{tDetail('title')}</TabsTrigger>
+            <TabsTrigger value="statistics">{tStats('title')}</TabsTrigger>
             <TabsTrigger value="invitations">
               {tInvites('title')}{' '}
               {pendingInvitations.length > 0 && (
@@ -304,6 +337,63 @@ export function OrgDetailClient({
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="statistics">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              <StatMini
+                label={tStats('members')}
+                value={usageStats.members}
+                icon={Users}
+                color="text-foreground"
+              />
+              <StatMini
+                label={tStats('totalJobs')}
+                value={usageStats.totalJobs}
+                icon={BarChart3}
+                color="text-foreground"
+              />
+              <StatMini
+                label={tStats('completedJobs')}
+                value={usageStats.completedJobs}
+                icon={CheckCircle2}
+                color="text-green-600"
+              />
+              <StatMini
+                label={tStats('failedJobs')}
+                value={usageStats.failedJobs}
+                icon={XCircle}
+                color="text-red-600"
+              />
+              <StatMini
+                label={tStats('processingJobs')}
+                value={usageStats.processingJobs}
+                icon={Loader2}
+                color="text-blue-600"
+              />
+              <StatMini
+                label={tStats('dossiers')}
+                value={usageStats.dossiers}
+                icon={Brain}
+                color="text-purple-600"
+              />
+              <Card className="col-span-2">
+                <CardContent className="flex items-center gap-3 p-4">
+                  <Clock className="text-muted-foreground size-5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">
+                      {usageStats.lastActivity
+                        ? formatDistanceToNow(new Date(usageStats.lastActivity), {
+                            addSuffix: true,
+                            locale: dateLocale,
+                          })
+                        : tStats('noActivity')}
+                    </p>
+                    <p className="text-muted-foreground text-xs">{tStats('lastActivity')}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="invitations">
@@ -415,5 +505,29 @@ export function OrgDetailClient({
         </DialogContent>
       </Dialog>
     </>
+  )
+}
+
+function StatMini({
+  label,
+  value,
+  icon: Icon,
+  color,
+}: {
+  label: string
+  value: number
+  icon: typeof Clock
+  color: string
+}) {
+  return (
+    <Card>
+      <CardContent className="flex items-center gap-3 p-4">
+        <Icon className={`size-5 shrink-0 ${color}`} />
+        <div>
+          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-muted-foreground text-xs">{label}</p>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

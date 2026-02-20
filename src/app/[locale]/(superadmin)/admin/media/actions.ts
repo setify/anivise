@@ -2,8 +2,14 @@
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db'
-import { mediaFiles } from '@/lib/db/schema'
-import { eq, desc, inArray, like, and, SQL } from 'drizzle-orm'
+import {
+  mediaFiles,
+  organizations,
+  organizationMembers,
+  organizationProducts,
+  products,
+} from '@/lib/db/schema'
+import { eq, desc, inArray, like, and, sql, count, SQL } from 'drizzle-orm'
 import { requirePlatformRole } from '@/lib/auth/require-platform-role'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { logAudit } from '@/lib/audit/log'
@@ -312,6 +318,102 @@ export async function syncMedia(): Promise<{
       success: false,
       error: err instanceof Error ? err.message : 'Sync failed',
     }
+  }
+}
+
+// ─── Storage Stats ───
+
+export async function getStorageStats(): Promise<{
+  success: boolean
+  data?: {
+    totalSize: number
+    fileCount: number
+    byContext: { context: string; size: number; count: number }[]
+    byOrganization: {
+      orgId: string
+      orgName: string
+      size: number
+      count: number
+      quotaMb: number | null
+    }[]
+  }
+  error?: string
+}> {
+  try {
+    await requirePlatformRole('superadmin')
+
+    // Total stats
+    const [totalResult] = await db
+      .select({
+        totalSize: sql<number>`COALESCE(SUM(${mediaFiles.size}), 0)`,
+        fileCount: count(),
+      })
+      .from(mediaFiles)
+
+    // By context
+    const byContext = await db
+      .select({
+        context: mediaFiles.context,
+        size: sql<number>`COALESCE(SUM(${mediaFiles.size}), 0)`,
+        count: count(),
+      })
+      .from(mediaFiles)
+      .groupBy(mediaFiles.context)
+      .orderBy(sql`SUM(${mediaFiles.size}) DESC`)
+
+    // By organization - join via uploadedBy -> organizationMembers -> organizations
+    const byOrg = await db
+      .select({
+        orgId: organizations.id,
+        orgName: organizations.name,
+        size: sql<number>`COALESCE(SUM(${mediaFiles.size}), 0)`,
+        count: count(),
+      })
+      .from(mediaFiles)
+      .innerJoin(
+        organizationMembers,
+        eq(mediaFiles.uploadedBy, organizationMembers.userId)
+      )
+      .innerJoin(
+        organizations,
+        eq(organizationMembers.organizationId, organizations.id)
+      )
+      .groupBy(organizations.id, organizations.name)
+      .orderBy(sql`SUM(${mediaFiles.size}) DESC`)
+
+    // Get quotas from organization products
+    const orgQuotas = await db
+      .select({
+        orgId: organizationProducts.organizationId,
+        quotaMb: sql<number | null>`COALESCE(${organizationProducts.overrideMaxStorageMb}, ${products.maxStorageMb})`,
+      })
+      .from(organizationProducts)
+      .innerJoin(products, eq(organizationProducts.productId, products.id))
+
+    const quotaMap = new Map(orgQuotas.map((q) => [q.orgId, q.quotaMb]))
+
+    return {
+      success: true,
+      data: {
+        totalSize: Number(totalResult?.totalSize ?? 0),
+        fileCount: totalResult?.fileCount ?? 0,
+        byContext: byContext.map((c) => ({
+          context: c.context,
+          size: Number(c.size),
+          count: c.count,
+        })),
+        byOrganization: byOrg.map((o) => ({
+          orgId: o.orgId,
+          orgName: o.orgName,
+          size: Number(o.size),
+          count: o.count,
+          quotaMb: quotaMap.get(o.orgId) ?? null,
+        })),
+      },
+    }
+  } catch (error) {
+    console.error('Failed to get storage stats:', error)
+    return { success: false, error: 'Failed to get storage stats' }
   }
 }
 

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect, useCallback, useRef } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { formatDistanceToNow, type Locale } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 import { de, enUS } from 'date-fns/locale'
+import Link from 'next/link'
 import {
   ChevronLeft,
   ChevronRight,
@@ -18,10 +19,13 @@ import {
   WifiOff,
   RotateCcw,
   Activity,
+  ExternalLink,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -99,6 +103,8 @@ const STATUS_CONFIG: Record<
   cancelled: { icon: Ban, color: 'text-slate-500', bgColor: 'bg-slate-100 dark:bg-slate-900/30' },
 }
 
+const AUTO_REFRESH_INTERVAL = 10_000
+
 export function JobsPageClient({
   initialJobs,
   initialTotal,
@@ -125,22 +131,71 @@ export function JobsPageClient({
   const [n8nHealth, setN8nHealth] = useState<N8nHealth | null>(null)
   const [checkingHealth, setCheckingHealth] = useState(false)
 
-  function loadJobs(newStatus?: string, newOrg?: string, newOffset?: number) {
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Check if there are active (pending/processing) jobs
+  const hasActiveJobs = jobs.some(
+    (job) => job.status === 'pending' || job.status === 'processing'
+  )
+
+  const loadJobs = useCallback(
+    function loadJobs(newStatus?: string, newOrg?: string, newOffset?: number) {
+      const activeStatus = newStatus ?? statusFilter
+      const activeOrg = newOrg ?? orgFilter
+      const activeOffset = newOffset ?? offset
+
+      startTransition(async () => {
+        const result = await getAnalysisJobs({
+          status: activeStatus,
+          organizationId: activeOrg,
+          offset: activeOffset,
+          limit,
+        })
+        setJobs(result.jobs as Job[])
+        setTotal(result.total)
+        setOffset(activeOffset)
+      })
+    },
+    [statusFilter, orgFilter, offset, limit]
+  )
+
+  // Auto-refresh effect
+  useEffect(() => {
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+
+    // Only set up auto-refresh if enabled AND there are active jobs
+    if (autoRefreshEnabled && hasActiveJobs) {
+      intervalRef.current = setInterval(() => {
+        loadJobs()
+      }, AUTO_REFRESH_INTERVAL)
+    }
+
+    // Auto-disable when no active jobs
+    if (autoRefreshEnabled && !hasActiveJobs) {
+      setAutoRefreshEnabled(false)
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+  }, [autoRefreshEnabled, hasActiveJobs, loadJobs])
+
+  function handleFilterChange(newStatus?: string, newOrg?: string) {
     const activeStatus = newStatus ?? statusFilter
     const activeOrg = newOrg ?? orgFilter
-    const activeOffset = newOffset ?? 0
 
-    startTransition(async () => {
-      const result = await getAnalysisJobs({
-        status: activeStatus,
-        organizationId: activeOrg,
-        offset: activeOffset,
-        limit,
-      })
-      setJobs(result.jobs as Job[])
-      setTotal(result.total)
-      setOffset(activeOffset)
-    })
+    if (newStatus !== undefined) setStatusFilter(activeStatus)
+    if (newOrg !== undefined) setOrgFilter(activeOrg)
+
+    loadJobs(activeStatus, activeOrg, 0)
   }
 
   async function handleCheckHealth() {
@@ -278,19 +333,16 @@ export function JobsPageClient({
         />
       </div>
 
-      {/* Filters */}
+      {/* Filters + Auto-Refresh */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">{t('filters')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Select
               value={statusFilter}
-              onValueChange={(v) => {
-                setStatusFilter(v)
-                loadJobs(v, undefined, 0)
-              }}
+              onValueChange={(v) => handleFilterChange(v, undefined)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue />
@@ -307,10 +359,7 @@ export function JobsPageClient({
 
             <Select
               value={orgFilter}
-              onValueChange={(v) => {
-                setOrgFilter(v)
-                loadJobs(undefined, v, 0)
-              }}
+              onValueChange={(v) => handleFilterChange(undefined, v)}
             >
               <SelectTrigger className="w-[220px]">
                 <SelectValue />
@@ -324,6 +373,29 @@ export function JobsPageClient({
                 ))}
               </SelectContent>
             </Select>
+
+            <div className="ml-auto flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="auto-refresh"
+                  checked={autoRefreshEnabled}
+                  onCheckedChange={setAutoRefreshEnabled}
+                  disabled={!hasActiveJobs}
+                />
+                <Label
+                  htmlFor="auto-refresh"
+                  className="flex items-center gap-1.5 text-sm"
+                >
+                  {t('autoRefresh')}
+                  {autoRefreshEnabled && hasActiveJobs && (
+                    <span className="relative flex size-2">
+                      <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+                    </span>
+                  )}
+                </Label>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -366,12 +438,17 @@ export function JobsPageClient({
                     const StatusIcon = config.icon
 
                     return (
-                      <TableRow key={job.id}>
+                      <TableRow key={job.id} className="group">
                         <TableCell className="font-mono text-xs">
-                          {job.id.slice(0, 8)}...
+                          <Link
+                            href={`/${locale}/admin/jobs/${job.id}`}
+                            className="text-primary hover:underline"
+                          >
+                            {job.id.slice(0, 8)}...
+                          </Link>
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm">{job.orgName ?? '—'}</span>
+                          <span className="text-sm">{job.orgName ?? '\u2014'}</span>
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className={`gap-1 ${config.bgColor} border-0`}>
@@ -391,7 +468,7 @@ export function JobsPageClient({
                                 addSuffix: true,
                                 locale: dateLocale,
                               })
-                            : '—'}
+                            : '\u2014'}
                         </TableCell>
                         <TableCell className="text-muted-foreground text-xs">
                           {job.n8nCallbackReceivedAt
@@ -399,10 +476,21 @@ export function JobsPageClient({
                                 addSuffix: true,
                                 locale: dateLocale,
                               })
-                            : '—'}
+                            : '\u2014'}
                         </TableCell>
                         <TableCell>
-                          <div className="flex gap-1">
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-xs"
+                              asChild
+                            >
+                              <Link href={`/${locale}/admin/jobs/${job.id}`}>
+                                <ExternalLink className="mr-1 size-3" />
+                                {t('viewDetail')}
+                              </Link>
+                            </Button>
                             {(job.status === 'failed' || job.status === 'cancelled') && (
                               <Button
                                 variant="ghost"

@@ -60,6 +60,7 @@ export type AuditAction =
   | 'analysis.manager_changed'
   | 'analysis.form_assigned'
   | 'analysis.form_unassigned'
+  | 'notification.broadcast'
 
 export async function logAudit(params: {
   actorId: string

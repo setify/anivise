@@ -3,7 +3,7 @@ import { getAllNotifications } from '../actions'
 import { NotificationsPageClient } from './notifications-page-client'
 
 export default async function NotificationsPage() {
-  await requirePlatformRole('staff')
+  const currentUser = await requirePlatformRole('staff')
 
   const { items, total } = await getAllNotifications({ limit: 50, offset: 0 })
 
@@ -11,6 +11,7 @@ export default async function NotificationsPage() {
     <NotificationsPageClient
       initialNotifications={items}
       initialTotal={total}
+      isSuperadmin={currentUser.platformRole === 'superadmin'}
     />
   )
 }

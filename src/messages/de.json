@@ -634,7 +634,18 @@
         "internalNotesPlaceholder": "Interne Notizen zu dieser Organisation hinzufügen...",
         "saved": "Organisation erfolgreich aktualisiert"
       },
-      "error": "Ein Fehler ist aufgetreten"
+      "error": "Ein Fehler ist aufgetreten",
+      "stats": {
+        "title": "Nutzungsstatistiken",
+        "members": "Mitglieder",
+        "totalJobs": "Jobs gesamt",
+        "completedJobs": "Abgeschlossen",
+        "failedJobs": "Fehlgeschlagen",
+        "processingJobs": "In Bearbeitung",
+        "dossiers": "KI-Analysen",
+        "lastActivity": "Letzte Aktivität",
+        "noActivity": "Noch keine Aktivität"
+      }
     },
     "plans": {
       "title": "Tarife",
@@ -694,7 +705,20 @@
       "noAssignedOrgs": "Noch keine Organisationen diesem Tarif zugewiesen.",
       "orgName": "Organisation",
       "orgSlug": "Slug",
-      "assignedAt": "Zugewiesen am"
+      "assignedAt": "Zugewiesen am",
+      "features": "Features",
+      "featureFlags": "Feature-Flags",
+      "featureFlagsDescription": "Features für diesen Tarif aktivieren oder deaktivieren",
+      "allowForms": "Formulare",
+      "allowFormsHint": "Organisationen können Formulare erstellen und nutzen",
+      "allowApiAccess": "API-Zugang",
+      "allowApiAccessHint": "Organisationen können die API nutzen",
+      "allowCustomBranding": "Eigenes Branding",
+      "allowCustomBrandingHint": "Organisationen können ihr Branding anpassen",
+      "allowEmailTemplates": "E-Mail-Templates",
+      "allowEmailTemplatesHint": "Organisationen können E-Mail-Templates anpassen",
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
     },
     "platformSettings": {
       "title": "Einstellungen",
@@ -836,7 +860,30 @@
       "jobRetried": "Job zur Wiederholung eingereiht",
       "pageInfo": "{from}–{to} von {total}",
       "previous": "Zurück",
-      "nextPage": "Weiter"
+      "nextPage": "Weiter",
+      "autoRefresh": "Auto-Aktualisierung",
+      "autoRefreshOn": "Ein",
+      "autoRefreshOff": "Aus",
+      "viewDetail": "Details anzeigen",
+      "detail": {
+        "title": "Job-Details",
+        "back": "Zurück zu Jobs",
+        "jobInfo": "Job-Informationen",
+        "organization": "Organisation",
+        "subject": "Proband",
+        "requestedBy": "Angefordert von",
+        "pipeline": "n8n Pipeline",
+        "timeline": "Zeitverlauf",
+        "payload": "Metadaten / Payload",
+        "error": "Fehlerdetails",
+        "transcript": "Transkript-Pfad",
+        "testMode": "Testmodus",
+        "noMetadata": "Keine Metadaten vorhanden.",
+        "created": "Erstellt",
+        "triggered": "n8n ausgelöst",
+        "callbackReceived": "Callback empfangen",
+        "statusChanged": "Status geändert"
+      }
     },
     "integrations": {
       "title": "Integrationen",
@@ -935,7 +982,26 @@
       "viewAll": "Alle Benachrichtigungen anzeigen",
       "pageInfo": "{from}–{to} von {total}",
       "previous": "Zurück",
-      "nextPage": "Weiter"
+      "nextPage": "Weiter",
+      "broadcast": "Broadcast senden",
+      "broadcastTitle": "Broadcast-Nachricht senden",
+      "broadcastDescription": "Senden Sie eine Benachrichtigung an mehrere Benutzer gleichzeitig.",
+      "broadcastMessageTitle": "Titel",
+      "broadcastMessageTitlePlaceholder": "z.B. Geplante Wartung",
+      "broadcastBody": "Nachricht",
+      "broadcastBodyPlaceholder": "Ihre Nachricht eingeben...",
+      "broadcastTarget": "Empfänger",
+      "broadcastAllOrgAdmins": "Alle Org-Admins",
+      "broadcastOrgUsers": "Benutzer einer Organisation",
+      "broadcastOrganization": "Organisation",
+      "broadcastSelectOrg": "Organisation auswählen...",
+      "broadcastLink": "Link (optional)",
+      "broadcastLinkPlaceholder": "https://...",
+      "broadcastSend": "Senden",
+      "broadcastSending": "Wird gesendet...",
+      "broadcastSuccess": "{count} Benachrichtigungen gesendet.",
+      "broadcastNoRecipients": "Keine Empfänger gefunden.",
+      "broadcastError": "Fehler beim Senden des Broadcasts."
     },
     "emailLayout": {
       "title": "E-Mail-Layout",
@@ -1327,7 +1393,20 @@
       "viewGrid": "Rasteransicht",
       "viewList": "Listenansicht",
       "invalidType": "Ungültiger Dateityp",
-      "fileTooLarge": "Datei zu groß (max. 5 MB)"
+      "fileTooLarge": "Datei zu groß (max. 5 MB)",
+      "storageOverview": "Speicherübersicht",
+      "totalStorage": "Gesamtspeicher",
+      "totalFiles": "Dateien gesamt",
+      "organizationsUsing": "Organisationen",
+      "storageByOrg": "Speicher nach Organisation",
+      "orgName": "Organisation",
+      "files": "Dateien",
+      "storageUsed": "Belegt",
+      "quota": "Kontingent",
+      "usage": "Nutzung",
+      "unlimited": "Unbegrenzt",
+      "noStorageData": "Keine Speicherdaten vorhanden.",
+      "byContext": "Nach Kontext"
     },
     "activity": {
       "title": "Aktivität",
@@ -1360,7 +1439,11 @@
       "columnDetails": "Details",
       "pageInfo": "{from}–{to} von {total}",
       "previous": "Zurück",
-      "nextPage": "Weiter"
+      "nextPage": "Weiter",
+      "exportCSV": "CSV exportieren",
+      "exporting": "Exportiere...",
+      "exportSuccess": "Aktivitätsprotokoll erfolgreich exportiert.",
+      "exportError": "Fehler beim Exportieren des Aktivitätsprotokolls."
     }
   },
   "forms": {

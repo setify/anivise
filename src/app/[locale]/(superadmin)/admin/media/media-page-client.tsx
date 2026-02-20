@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useTransition } from 'react'
+import { useState, useCallback, useRef, useTransition, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   Upload,
@@ -16,6 +16,12 @@ import {
   Eye,
   MoreHorizontal,
   ImageOff,
+  HardDrive,
+  ChevronDown,
+  ChevronUp,
+  Building2,
+  Files,
+  Database,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -51,7 +57,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { formatFileSize, isImage, getExtension } from '@/lib/media/file-utils'
@@ -63,6 +71,7 @@ import {
   bulkDeleteMedia,
   syncMedia,
   getMediaPublicUrl,
+  getStorageStats,
 } from './actions'
 
 const CONTEXTS: MediaContext[] = [
@@ -73,6 +82,19 @@ const CONTEXTS: MediaContext[] = [
   'report_asset',
   'general',
 ]
+
+interface StorageStats {
+  totalSize: number
+  fileCount: number
+  byContext: { context: string; size: number; count: number }[]
+  byOrganization: {
+    orgId: string
+    orgName: string
+    size: number
+    count: number
+    quotaMb: number | null
+  }[]
+}
 
 interface MediaPageClientProps {
   initialFiles: MediaFile[]
@@ -97,6 +119,24 @@ export function MediaPageClient({ initialFiles }: MediaPageClientProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dragRef = useRef<HTMLDivElement>(null)
   const [dragOver, setDragOver] = useState(false)
+
+  // Storage overview state
+  const [showStorageOverview, setShowStorageOverview] = useState(false)
+  const [storageStats, setStorageStats] = useState<StorageStats | null>(null)
+  const [loadingStats, setLoadingStats] = useState(false)
+
+  // Lazy load storage stats when overview is opened
+  useEffect(() => {
+    if (showStorageOverview && !storageStats && !loadingStats) {
+      setLoadingStats(true)
+      getStorageStats().then((result) => {
+        if (result.success && result.data) {
+          setStorageStats(result.data)
+        }
+        setLoadingStats(false)
+      })
+    }
+  }, [showStorageOverview, storageStats, loadingStats])
 
   // ─── Filtering ───
 
@@ -252,10 +292,151 @@ export function MediaPageClient({ initialFiles }: MediaPageClientProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-muted-foreground">{t('description')}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('description')}</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowStorageOverview((prev) => !prev)}
+        >
+          <HardDrive className="mr-1.5 size-3.5" />
+          {t('storageOverview')}
+          {showStorageOverview ? (
+            <ChevronUp className="ml-1.5 size-3.5" />
+          ) : (
+            <ChevronDown className="ml-1.5 size-3.5" />
+          )}
+        </Button>
       </div>
+
+      {/* Storage Overview */}
+      {showStorageOverview && (
+        <div className="space-y-4">
+          {loadingStats ? (
+            <div className="flex items-center justify-center rounded-lg border py-8">
+              <RefreshCw className="text-muted-foreground size-5 animate-spin" />
+            </div>
+          ) : storageStats ? (
+            <>
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Card>
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                      <Database className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-sm">{t('totalStorage')}</p>
+                      <p className="text-2xl font-bold">{formatFileSize(storageStats.totalSize)}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                      <Files className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-sm">{t('totalFiles')}</p>
+                      <p className="text-2xl font-bold">{storageStats.fileCount}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                      <Building2 className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-sm">{t('organizationsUsing')}</p>
+                      <p className="text-2xl font-bold">{storageStats.byOrganization.length}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* By Context Breakdown */}
+              {storageStats.byContext.length > 0 && (
+                <div>
+                  <h3 className="mb-2 text-sm font-medium text-muted-foreground">{t('byContext')}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {storageStats.byContext.map((ctx) => (
+                      <Badge key={ctx.context} variant="secondary" className="gap-1.5 px-2.5 py-1">
+                        {t(`contextLabels.${ctx.context}`)}
+                        <span className="text-muted-foreground font-normal">
+                          {formatFileSize(ctx.size)} ({ctx.count})
+                        </span>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Per-Organization Table */}
+              {storageStats.byOrganization.length > 0 ? (
+                <div>
+                  <h3 className="mb-2 text-sm font-medium text-muted-foreground">{t('storageByOrg')}</h3>
+                  <div className="overflow-hidden rounded-lg border bg-card">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b bg-muted/50">
+                          <th className="p-3 text-left font-medium">{t('orgName')}</th>
+                          <th className="p-3 text-left font-medium">{t('files')}</th>
+                          <th className="p-3 text-left font-medium">{t('storageUsed')}</th>
+                          <th className="p-3 text-left font-medium">{t('quota')}</th>
+                          <th className="p-3 text-left font-medium min-w-[150px]">{t('usage')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {storageStats.byOrganization.map((org) => {
+                          const usedMb = org.size / (1024 * 1024)
+                          const percentage = org.quotaMb ? Math.min((usedMb / org.quotaMb) * 100, 100) : 0
+                          return (
+                            <tr key={org.orgId} className="border-b last:border-0 hover:bg-muted/30">
+                              <td className="p-3 font-medium">{org.orgName}</td>
+                              <td className="text-muted-foreground p-3">{org.count}</td>
+                              <td className="text-muted-foreground p-3">{formatFileSize(org.size)}</td>
+                              <td className="text-muted-foreground p-3">
+                                {org.quotaMb ? `${org.quotaMb} MB` : t('unlimited')}
+                              </td>
+                              <td className="p-3">
+                                {org.quotaMb ? (
+                                  <div className="flex items-center gap-2">
+                                    <Progress
+                                      value={percentage}
+                                      className={cn(
+                                        'h-2',
+                                        percentage > 90 && '[&>[data-slot=progress-indicator]]:bg-destructive',
+                                        percentage > 75 && percentage <= 90 && '[&>[data-slot=progress-indicator]]:bg-yellow-500'
+                                      )}
+                                    />
+                                    <span className="text-muted-foreground text-xs whitespace-nowrap">
+                                      {percentage.toFixed(0)}%
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="text-muted-foreground text-xs">&mdash;</span>
+                                )}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-sm">{t('noStorageData')}</p>
+              )}
+            </>
+          ) : (
+            <p className="text-muted-foreground text-sm">{t('noStorageData')}</p>
+          )}
+        </div>
+      )}
 
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3">

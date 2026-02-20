@@ -77,6 +77,10 @@ export async function createProduct(data: {
   maxForms?: number | null
   maxFormSubmissionsPerMonth?: number | null
   maxStorageMb?: number | null
+  allowForms?: boolean
+  allowApiAccess?: boolean
+  allowCustomBranding?: boolean
+  allowEmailTemplates?: boolean
 }): Promise<{ success: boolean; error?: string; data?: typeof products.$inferSelect }> {
   try {
     const currentUser = await requirePlatformRole('superadmin')
@@ -121,6 +125,10 @@ export async function createProduct(data: {
         maxForms: data.maxForms ?? null,
         maxFormSubmissionsPerMonth: data.maxFormSubmissionsPerMonth ?? null,
         maxStorageMb: data.maxStorageMb ?? null,
+        allowForms: data.allowForms ?? true,
+        allowApiAccess: data.allowApiAccess ?? false,
+        allowCustomBranding: data.allowCustomBranding ?? false,
+        allowEmailTemplates: data.allowEmailTemplates ?? false,
       })
       .returning()
 
@@ -156,6 +164,10 @@ export async function updateProduct(
     maxForms?: number | null
     maxFormSubmissionsPerMonth?: number | null
     maxStorageMb?: number | null
+    allowForms?: boolean
+    allowApiAccess?: boolean
+    allowCustomBranding?: boolean
+    allowEmailTemplates?: boolean
   }
 ): Promise<{ success: boolean; error?: string }> {
   try {
@@ -206,6 +218,10 @@ export async function updateProduct(
         maxForms: data.maxForms ?? null,
         maxFormSubmissionsPerMonth: data.maxFormSubmissionsPerMonth ?? null,
         maxStorageMb: data.maxStorageMb ?? null,
+        allowForms: data.allowForms ?? true,
+        allowApiAccess: data.allowApiAccess ?? false,
+        allowCustomBranding: data.allowCustomBranding ?? false,
+        allowEmailTemplates: data.allowEmailTemplates ?? false,
         updatedAt: new Date(),
       })
       .where(eq(products.id, id))

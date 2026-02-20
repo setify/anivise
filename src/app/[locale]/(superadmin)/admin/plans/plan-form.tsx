@@ -34,6 +34,10 @@ interface PlanData {
   maxForms: number | null
   maxFormSubmissionsPerMonth: number | null
   maxStorageMb: number | null
+  allowForms: boolean
+  allowApiAccess: boolean
+  allowCustomBranding: boolean
+  allowEmailTemplates: boolean
 }
 
 function toNumOrNull(value: string): number | null {
@@ -66,6 +70,12 @@ export function PlanForm({ plan }: { plan?: PlanData }) {
   const [maxForms, setMaxForms] = useState(plan?.maxForms?.toString() ?? '')
   const [maxFormSubmissionsPerMonth, setMaxFormSubmissionsPerMonth] = useState(plan?.maxFormSubmissionsPerMonth?.toString() ?? '')
   const [maxStorageMb, setMaxStorageMb] = useState(plan?.maxStorageMb?.toString() ?? '')
+
+  // Feature flags
+  const [allowForms, setAllowForms] = useState(plan?.allowForms ?? true)
+  const [allowApiAccess, setAllowApiAccess] = useState(plan?.allowApiAccess ?? false)
+  const [allowCustomBranding, setAllowCustomBranding] = useState(plan?.allowCustomBranding ?? false)
+  const [allowEmailTemplates, setAllowEmailTemplates] = useState(plan?.allowEmailTemplates ?? false)
 
   function autoSlug(value: string) {
     return value
@@ -100,6 +110,10 @@ export function PlanForm({ plan }: { plan?: PlanData }) {
         maxForms: toNumOrNull(maxForms),
         maxFormSubmissionsPerMonth: toNumOrNull(maxFormSubmissionsPerMonth),
         maxStorageMb: toNumOrNull(maxStorageMb),
+        allowForms,
+        allowApiAccess,
+        allowCustomBranding,
+        allowEmailTemplates,
       }
 
       const result = isEditing
@@ -322,6 +336,59 @@ export function PlanForm({ plan }: { plan?: PlanData }) {
                 placeholder={t('unlimited')}
               />
               <p className="text-muted-foreground text-xs">{t('storageMbHint')}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Feature Flags */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('featureFlags')}</CardTitle>
+            <CardDescription>{t('featureFlagsDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>{t('allowForms')}</Label>
+                <p className="text-muted-foreground text-xs">{t('allowFormsHint')}</p>
+              </div>
+              <Switch
+                checked={allowForms}
+                onCheckedChange={setAllowForms}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>{t('allowApiAccess')}</Label>
+                <p className="text-muted-foreground text-xs">{t('allowApiAccessHint')}</p>
+              </div>
+              <Switch
+                checked={allowApiAccess}
+                onCheckedChange={setAllowApiAccess}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>{t('allowCustomBranding')}</Label>
+                <p className="text-muted-foreground text-xs">{t('allowCustomBrandingHint')}</p>
+              </div>
+              <Switch
+                checked={allowCustomBranding}
+                onCheckedChange={setAllowCustomBranding}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>{t('allowEmailTemplates')}</Label>
+                <p className="text-muted-foreground text-xs">{t('allowEmailTemplatesHint')}</p>
+              </div>
+              <Switch
+                checked={allowEmailTemplates}
+                onCheckedChange={setAllowEmailTemplates}
+              />
             </div>
           </CardContent>
         </Card>

@@ -1,5 +1,6 @@
 'use client'
 
+import { type ElementType } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -26,7 +27,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Plus, MoreHorizontal, Pencil, Archive, RotateCcw, Star } from 'lucide-react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { Plus, MoreHorizontal, Pencil, Archive, RotateCcw, Star, FileText, Key, Palette, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 import { archiveProduct, reactivateProduct } from '../actions'
 
@@ -45,11 +52,44 @@ interface Plan {
   maxForms: number | null
   maxFormSubmissionsPerMonth: number | null
   maxStorageMb: number | null
+  allowForms: boolean
+  allowApiAccess: boolean
+  allowCustomBranding: boolean
+  allowEmailTemplates: boolean
   createdAt: Date
 }
 
 function formatLimit(value: number | null): string {
   return value === null ? '∞' : String(value)
+}
+
+function FeatureIcon({
+  enabled,
+  icon: Icon,
+  label,
+}: {
+  enabled: boolean
+  icon: ElementType
+  label: string
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={`inline-flex items-center justify-center size-6 rounded ${
+            enabled
+              ? 'text-green-600 dark:text-green-400'
+              : 'text-muted-foreground/40'
+          }`}
+        >
+          <Icon className="size-3.5" />
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>
+        <span>{label}</span>
+      </TooltipContent>
+    </Tooltip>
+  )
 }
 
 export function PlansPageClient({
@@ -119,6 +159,7 @@ export function PlansPageClient({
                   <TableHead className="text-center">{t('analyses')}</TableHead>
                   <TableHead className="text-center">{t('forms')}</TableHead>
                   <TableHead className="text-center">{t('storage')}</TableHead>
+                  <TableHead className="text-center">{t('features')}</TableHead>
                   {isSuperadmin && (
                     <TableHead className="w-[60px]" />
                   )}
@@ -160,6 +201,16 @@ export function PlansPageClient({
                     </TableCell>
                     <TableCell className="text-center text-sm">
                       {formatLimit(plan.maxStorageMb)} MB
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <TooltipProvider delayDuration={200}>
+                        <div className="flex items-center justify-center gap-0.5">
+                          <FeatureIcon enabled={plan.allowForms} icon={FileText} label={t('allowForms')} />
+                          <FeatureIcon enabled={plan.allowApiAccess} icon={Key} label={t('allowApiAccess')} />
+                          <FeatureIcon enabled={plan.allowCustomBranding} icon={Palette} label={t('allowCustomBranding')} />
+                          <FeatureIcon enabled={plan.allowEmailTemplates} icon={Mail} label={t('allowEmailTemplates')} />
+                        </div>
+                      </TooltipProvider>
                     </TableCell>
                     {isSuperadmin && (
                       <TableCell>

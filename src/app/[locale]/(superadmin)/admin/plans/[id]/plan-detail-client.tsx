@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { ArrowLeft, Pencil, Star, Users, BarChart3, FileText, HardDrive } from 'lucide-react'
+import { ArrowLeft, Pencil, Star, Users, BarChart3, FileText, HardDrive, ToggleRight, Check, X } from 'lucide-react'
 
 interface Plan {
   id: string
@@ -37,6 +37,10 @@ interface Plan {
   maxForms: number | null
   maxFormSubmissionsPerMonth: number | null
   maxStorageMb: number | null
+  allowForms: boolean
+  allowApiAccess: boolean
+  allowCustomBranding: boolean
+  allowEmailTemplates: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -55,6 +59,19 @@ function LimitValue({ value, label }: { value: number | null; label: string }) {
       <span className="text-sm font-medium">
         {value === null ? '∞' : value}
       </span>
+    </div>
+  )
+}
+
+function FeatureValue({ enabled, label }: { enabled: boolean; label: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-muted-foreground text-sm">{label}</span>
+      {enabled ? (
+        <Check className="size-4 text-green-600 dark:text-green-400" />
+      ) : (
+        <X className="size-4 text-muted-foreground/40" />
+      )}
     </div>
   )
 }
@@ -158,6 +175,21 @@ export function PlanDetailClient({
           </CardHeader>
           <CardContent className="space-y-2">
             <LimitValue value={plan.maxStorageMb} label="MB" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <ToggleRight className="size-4" />
+              {t('featureFlags')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <FeatureValue enabled={plan.allowForms} label={t('allowForms')} />
+            <FeatureValue enabled={plan.allowApiAccess} label={t('allowApiAccess')} />
+            <FeatureValue enabled={plan.allowCustomBranding} label={t('allowCustomBranding')} />
+            <FeatureValue enabled={plan.allowEmailTemplates} label={t('allowEmailTemplates')} />
           </CardContent>
         </Card>
       </div>

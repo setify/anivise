@@ -634,7 +634,18 @@
         "internalNotesPlaceholder": "Add internal notes about this organization...",
         "saved": "Organization updated successfully"
       },
-      "error": "An error occurred"
+      "error": "An error occurred",
+      "stats": {
+        "title": "Usage Statistics",
+        "members": "Members",
+        "totalJobs": "Total Jobs",
+        "completedJobs": "Completed",
+        "failedJobs": "Failed",
+        "processingJobs": "Processing",
+        "dossiers": "AI Analyses",
+        "lastActivity": "Last Activity",
+        "noActivity": "No activity yet"
+      }
     },
     "plans": {
       "title": "Plans",
@@ -694,7 +705,20 @@
       "noAssignedOrgs": "No organizations assigned to this plan yet.",
       "orgName": "Organization",
       "orgSlug": "Slug",
-      "assignedAt": "Assigned"
+      "assignedAt": "Assigned",
+      "features": "Features",
+      "featureFlags": "Feature Flags",
+      "featureFlagsDescription": "Enable or disable features for this plan",
+      "allowForms": "Forms",
+      "allowFormsHint": "Allow organizations to create and use forms",
+      "allowApiAccess": "API Access",
+      "allowApiAccessHint": "Allow organizations to use the API",
+      "allowCustomBranding": "Custom Branding",
+      "allowCustomBrandingHint": "Allow organizations to customize their branding",
+      "allowEmailTemplates": "Email Templates",
+      "allowEmailTemplatesHint": "Allow organizations to customize email templates",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
     },
     "platformSettings": {
       "title": "Settings",
@@ -836,7 +860,30 @@
       "jobRetried": "Job queued for retry",
       "pageInfo": "{from}–{to} of {total}",
       "previous": "Previous",
-      "nextPage": "Next"
+      "nextPage": "Next",
+      "autoRefresh": "Auto-Refresh",
+      "autoRefreshOn": "On",
+      "autoRefreshOff": "Off",
+      "viewDetail": "View Details",
+      "detail": {
+        "title": "Job Details",
+        "back": "Back to Jobs",
+        "jobInfo": "Job Information",
+        "organization": "Organization",
+        "subject": "Subject",
+        "requestedBy": "Requested by",
+        "pipeline": "n8n Pipeline",
+        "timeline": "Timeline",
+        "payload": "Metadata / Payload",
+        "error": "Error Details",
+        "transcript": "Transcript Path",
+        "testMode": "Test Mode",
+        "noMetadata": "No metadata available.",
+        "created": "Created",
+        "triggered": "n8n Triggered",
+        "callbackReceived": "Callback Received",
+        "statusChanged": "Status Changed"
+      }
     },
     "integrations": {
       "title": "Integrations",
@@ -935,7 +982,26 @@
       "viewAll": "View all notifications",
       "pageInfo": "{from}–{to} of {total}",
       "previous": "Previous",
-      "nextPage": "Next"
+      "nextPage": "Next",
+      "broadcast": "Send Broadcast",
+      "broadcastTitle": "Send Broadcast Message",
+      "broadcastDescription": "Send a notification to multiple users at once.",
+      "broadcastMessageTitle": "Title",
+      "broadcastMessageTitlePlaceholder": "e.g. Scheduled Maintenance",
+      "broadcastBody": "Message",
+      "broadcastBodyPlaceholder": "Enter your message...",
+      "broadcastTarget": "Recipients",
+      "broadcastAllOrgAdmins": "All Org Admins",
+      "broadcastOrgUsers": "Users of Organization",
+      "broadcastOrganization": "Organization",
+      "broadcastSelectOrg": "Select organization...",
+      "broadcastLink": "Link (optional)",
+      "broadcastLinkPlaceholder": "https://...",
+      "broadcastSend": "Send",
+      "broadcastSending": "Sending...",
+      "broadcastSuccess": "{count} notifications sent.",
+      "broadcastNoRecipients": "No recipients found.",
+      "broadcastError": "Failed to send broadcast."
     },
     "emailLayout": {
       "title": "Email Layout",
@@ -1327,7 +1393,20 @@
       "viewGrid": "Grid view",
       "viewList": "List view",
       "invalidType": "Invalid file type",
-      "fileTooLarge": "File too large (max 5 MB)"
+      "fileTooLarge": "File too large (max 5 MB)",
+      "storageOverview": "Storage Overview",
+      "totalStorage": "Total Storage",
+      "totalFiles": "Total Files",
+      "organizationsUsing": "Organizations",
+      "storageByOrg": "Storage by Organization",
+      "orgName": "Organization",
+      "files": "Files",
+      "storageUsed": "Used",
+      "quota": "Quota",
+      "usage": "Usage",
+      "unlimited": "Unlimited",
+      "noStorageData": "No storage data available.",
+      "byContext": "By Context"
     },
     "activity": {
       "title": "Activity",
@@ -1360,7 +1439,11 @@
       "columnDetails": "Details",
       "pageInfo": "{from}–{to} of {total}",
       "previous": "Previous",
-      "nextPage": "Next"
+      "nextPage": "Next",
+      "exportCSV": "Export CSV",
+      "exporting": "Exporting...",
+      "exportSuccess": "Audit log exported successfully.",
+      "exportError": "Failed to export audit log."
     }
   },
   "forms": {

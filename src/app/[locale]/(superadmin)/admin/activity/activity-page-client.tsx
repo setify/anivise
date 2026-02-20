@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { formatDistanceToNow } from 'date-fns'
 import { de, enUS } from 'date-fns/locale'
@@ -9,6 +10,7 @@ import {
   Activity,
   ChevronLeft,
   ChevronRight,
+  Download,
   Filter,
   User,
   Building2,
@@ -43,7 +45,7 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { getAuditLogs } from '../actions'
+import { getAuditLogs, exportAuditLogs } from '../actions'
 
 interface AuditLogEntry {
   id: string
@@ -115,6 +117,7 @@ export function ActivityPageClient({ initialLogs, initialTotal }: Props) {
   const [page, setPage] = useState(0)
   const [actionFilter, setActionFilter] = useState<string>('all')
   const [periodFilter, setPeriodFilter] = useState<string>('all')
+  const [exporting, setExporting] = useState(false)
 
   const dateLocale = locale === 'de' ? de : enUS
   const totalPages = Math.ceil(total / PAGE_SIZE)
@@ -146,6 +149,30 @@ export function ActivityPageClient({ initialLogs, initialTotal }: Props) {
     fetchLogs(0, undefined, value)
   }
 
+  async function handleExportCSV() {
+    setExporting(true)
+    try {
+      const result = await exportAuditLogs({
+        action: actionFilter === 'all' ? undefined : actionFilter,
+        period: periodFilter as 'day' | 'week' | 'month' | 'all',
+      })
+      if (result.success && result.csv) {
+        const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `audit-log-${new Date().toISOString().slice(0, 10)}.csv`
+        link.click()
+        URL.revokeObjectURL(url)
+        toast.success(t('exportSuccess'))
+      } else {
+        toast.error(t('exportError'))
+      }
+    } finally {
+      setExporting(false)
+    }
+  }
+
   function formatMetadata(metadata: unknown): string | null {
     if (!metadata || typeof metadata !== 'object') return null
     const m = metadata as Record<string, unknown>
@@ -175,6 +202,15 @@ export function ActivityPageClient({ initialLogs, initialTotal }: Props) {
               </CardTitle>
               <CardDescription>{t('filtersDescription')}</CardDescription>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportCSV}
+              disabled={exporting}
+            >
+              <Download className="mr-2 size-4" />
+              {exporting ? t('exporting') : t('exportCSV')}
+            </Button>
           </div>
         </CardHeader>
         <CardContent>

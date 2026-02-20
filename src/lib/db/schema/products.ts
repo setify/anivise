@@ -31,6 +31,12 @@ export const products = pgTable('products', {
   maxFormSubmissionsPerMonth: integer('max_form_submissions_per_month'),
   maxStorageMb: integer('max_storage_mb'),
 
+  // Feature flags
+  allowForms: boolean('allow_forms').notNull().default(true),
+  allowApiAccess: boolean('allow_api_access').notNull().default(false),
+  allowCustomBranding: boolean('allow_custom_branding').notNull().default(false),
+  allowEmailTemplates: boolean('allow_email_templates').notNull().default(false),
+
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -58,6 +64,12 @@ export const organizationProducts = pgTable(
     overrideMaxForms: integer('override_max_forms'),
     overrideMaxFormSubmissionsPerMonth: integer('override_max_form_submissions_per_month'),
     overrideMaxStorageMb: integer('override_max_storage_mb'),
+
+    // Feature flag overrides
+    overrideAllowForms: boolean('override_allow_forms'),
+    overrideAllowApiAccess: boolean('override_allow_api_access'),
+    overrideAllowCustomBranding: boolean('override_allow_custom_branding'),
+    overrideAllowEmailTemplates: boolean('override_allow_email_templates'),
 
     assignedAt: timestamp('assigned_at', { withTimezone: true })
       .notNull()
