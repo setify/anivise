@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.14.1] - 2026-02-20
+### Added
+- **Vitest Testing Infrastructure**: Set up Vitest with jsdom, @testing-library/react, @testing-library/jest-dom. 5 test files with 111 unit tests covering roles, validations, storage paths, utils, and audit actions.
+- **Error Boundaries**: 6 `error.tsx` files at strategic admin routes (admin root, jobs/[id], organizations/[id], plans/[id], forms/[formId], integrations) — errors no longer crash the entire page.
+- **Loading States**: 10 missing `loading.tsx` files added (media, users, settings/design, settings/email-layout, settings/emails, forms/edit, forms/submissions, forms/new, organizations/new, plans/new) — all admin routes now have skeleton loading.
+- **Storage RLS Policies**: `supabase/migrations/003_storage_rls_policies.sql` with policies for `platform-assets` and `org-assets` buckets, 4 helper functions (`is_platform_staff`, `is_platform_superadmin`, `is_org_member_for_path`, `is_org_admin_for_path`), path-based tenant isolation.
+
+### Changed
+- Added `test` and `test:watch` scripts to package.json.
+
 ## [1.14.0] - 2026-02-20
 ### Added
 - **Job Detail Page** (`/admin/jobs/[id]`): Full job detail view with visual timeline (Created → n8n Triggered → Callback → Status), info cards (Job, Organization, Subject, Requester, n8n Pipeline), metadata/payload display, error details, test mode badge, and retry/cancel actions.

@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.14.0
+**Version:** 1.14.1
 **Last Updated:** 2026-02-20
-**Last Commit:** feat(admin): add job detail, auto-refresh, org stats, feature flags, activity export, broadcast, storage overview
+**Last Commit:** chore(admin): add tests, error boundaries, loading states, storage RLS
 
 ## What's Implemented
 
@@ -14,6 +14,8 @@
 - [x] zod installed for runtime validation
 - [x] pnpm as package manager
 - [x] ESLint configured
+- [x] Vitest configured with jsdom, @testing-library/react, @testing-library/jest-dom
+- [x] 5 test files with 111 unit tests (roles, validations, storage-paths, utils, audit-actions)
 - [x] Complete folder structure from CLAUDE.md
 
 ### Database
@@ -51,6 +53,7 @@
 - [x] Supabase admin client (service role, superadmin only)
 - [x] Supabase middleware helper (session refresh)
 - [x] RLS SQL templates (enable RLS + tenant isolation policies)
+- [x] Storage RLS policies defined for `platform-assets` and `org-assets` buckets (003_storage_rls_policies.sql)
 - [x] Schema pushed to live Supabase database
 - [ ] RLS policies applied to Supabase (requires running SQL migrations against live DB)
 
@@ -196,7 +199,8 @@
 
 ### UX Polish
 - [x] Skeleton loading system (5 composites: Table, Card, Form, Detail, Stats) with shimmer animation
-- [x] 21 loading.tsx files (15 admin + 6 dashboard) for Suspense-based skeleton screens
+- [x] 31 loading.tsx files (25 admin + 6 dashboard) for Suspense-based skeleton screens
+- [x] 6 error.tsx files in admin routes (admin root, jobs/[id], organizations/[id], plans/[id], forms/[formId], integrations)
 - [x] Page transitions (fade-in + slide-up, 200ms) via PageTransition component in both layouts
 - [x] Navigation progress bar (3px top-fixed, z-100, captures link clicks)
 - [x] Dashboard breadcrumbs in header (auto-generated from URL path, matching admin breadcrumbs)
@@ -422,11 +426,11 @@
 - n8n integration (webhook trigger + callback)
 - Report generation + viewer
 - Resend email (magic link, notifications, team invitations)
-- Supabase Storage RLS policies (uploads work via admin client, RLS not yet applied)
+- Supabase Storage RLS policies defined but not yet applied to live DB (003_storage_rls_policies.sql)
 - OAuth providers (Google, Microsoft)
 - SSO/SAML for Enterprise
 - Consent management UI
-- Testing (Vitest, Playwright)
+- Playwright E2E tests (Vitest unit tests set up, Playwright not yet)
 - Avatar upload in profile page
 - Email templates created (React components) but Resend not yet integrated
 - Team invitation email sending (invitations created but email not sent)
@@ -613,6 +617,9 @@
 - `src/types/index.ts` - Type re-exports
 - `supabase/migrations/001_enable_rls.sql` - Enable RLS on all tables
 - `supabase/migrations/002_tenant_isolation_policies.sql` - Tenant isolation policies
+- `supabase/migrations/003_storage_rls_policies.sql` - Storage RLS for platform-assets and org-assets
+- `vitest.config.ts` - Vitest configuration
+- `src/test/setup.ts` - Test setup with @testing-library/jest-dom
 - `src/middleware.ts` - Three-layer middleware (locale + subdomain + auth)
 - `src/lib/i18n/request.ts` - next-intl server request config
 - `src/lib/i18n/routing.ts` - Locale routing definition
