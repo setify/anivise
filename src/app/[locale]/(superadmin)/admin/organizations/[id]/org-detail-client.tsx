@@ -61,6 +61,8 @@ import {
   Loader2,
   Brain,
   Clock,
+  ExternalLink,
+  UserCircle,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { de, enUS } from 'date-fns/locale'
@@ -100,6 +102,35 @@ interface OrgUsageStats {
   lastActivity: Date | null
 }
 
+interface OrgMember {
+  id: string
+  userId: string
+  email: string
+  fullName: string | null
+  firstName: string | null
+  lastName: string | null
+  avatarUrl: string | null
+  role: string
+  position: string | null
+  status: string
+  joinedAt: Date | null
+  department: { id: string; name: string } | null
+  location: { id: string; name: string } | null
+}
+
+interface OrgEmployee {
+  id: string
+  firstName: string
+  lastName: string
+  fullName: string
+  email: string | null
+  position: string | null
+  status: string
+  createdAt: Date | null
+  department: { id: string; name: string } | null
+  location: { id: string; name: string } | null
+}
+
 const statusVariants: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
   pending: 'default',
   accepted: 'secondary',
@@ -112,11 +143,15 @@ export function OrgDetailClient({
   invitations,
   isSuperadmin,
   usageStats,
+  members,
+  employees,
 }: {
   organization: Organization
   invitations: OrgInvitation[]
   isSuperadmin: boolean
   usageStats: OrgUsageStats
+  members: OrgMember[]
+  employees: OrgEmployee[]
 }) {
   const t = useTranslations('admin.orgs')
   const tDetail = useTranslations('admin.orgs.detail')
@@ -126,6 +161,8 @@ export function OrgDetailClient({
   const locale = useLocale()
   const router = useRouter()
   const dateLocale = locale === 'de' ? de : enUS
+  const tMembers = useTranslations('admin.orgs.members')
+  const tEmployees = useTranslations('admin.orgs.employees')
   const tImpersonation = useTranslations('admin.impersonation')
   const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [resendLink, setResendLink] = useState('')
@@ -135,6 +172,13 @@ export function OrgDetailClient({
     const result = await startImpersonationAction(organization.id, organization.name)
     if (result.success) {
       router.push(`/${locale}/dashboard`)
+    }
+  }
+
+  async function handleImpersonateTo(path: string) {
+    const result = await startImpersonationAction(organization.id, organization.name)
+    if (result.success) {
+      router.push(`/${locale}${path}`)
     }
   }
 
@@ -241,6 +285,22 @@ export function OrgDetailClient({
               {pendingInvitations.length > 0 && (
                 <Badge variant="secondary" className="ml-1.5">
                   {pendingInvitations.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="members">
+              {tMembers('title')}{' '}
+              {members.length > 0 && (
+                <Badge variant="secondary" className="ml-1.5">
+                  {members.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="employees">
+              {tEmployees('title')}{' '}
+              {employees.length > 0 && (
+                <Badge variant="secondary" className="ml-1.5">
+                  {employees.length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -465,6 +525,149 @@ export function OrgDetailClient({
                               )}
                             </TableCell>
                           )}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="members">
+            <Card>
+              <CardHeader>
+                <CardTitle>{tMembers('title')}</CardTitle>
+                <CardDescription>{tMembers('description')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {members.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">
+                    {tMembers('noMembers')}
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{tMembers('columnName')}</TableHead>
+                        <TableHead>{tMembers('columnEmail')}</TableHead>
+                        <TableHead>{tMembers('columnRole')}</TableHead>
+                        <TableHead>{tMembers('columnDepartment')}</TableHead>
+                        <TableHead>{tMembers('columnStatus')}</TableHead>
+                        <TableHead className="w-[60px]" />
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {members.map((member) => (
+                        <TableRow key={member.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xs font-medium">
+                                {member.firstName?.[0] ?? ''}{member.lastName?.[0] ?? ''}
+                              </div>
+                              <span className="font-medium">
+                                {member.fullName || member.email}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm">{member.email}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">{member.role}</Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {member.department?.name ?? '—'}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={member.status === 'active' ? 'default' : 'outline'}>
+                              {member.status === 'active'
+                                ? tMembers('statusActive')
+                                : tMembers('statusDeactivated')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {isSuperadmin && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleImpersonateTo('/users')}
+                                title={tMembers('viewInOrg')}
+                              >
+                                <ExternalLink className="size-4" />
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="employees">
+            <Card>
+              <CardHeader>
+                <CardTitle>{tEmployees('title')}</CardTitle>
+                <CardDescription>{tEmployees('description')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {employees.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">
+                    {tEmployees('noEmployees')}
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{tEmployees('columnName')}</TableHead>
+                        <TableHead>{tEmployees('columnPosition')}</TableHead>
+                        <TableHead>{tEmployees('columnDepartment')}</TableHead>
+                        <TableHead>{tEmployees('columnStatus')}</TableHead>
+                        <TableHead className="w-[60px]" />
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {employees.map((emp) => (
+                        <TableRow key={emp.id}>
+                          <TableCell className="font-medium">
+                            {emp.fullName}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {emp.position ?? '—'}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {emp.department?.name ?? '—'}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                emp.status === 'active'
+                                  ? 'default'
+                                  : emp.status === 'archived'
+                                    ? 'destructive'
+                                    : 'outline'
+                              }
+                            >
+                              {emp.status === 'active'
+                                ? tEmployees('statusActive')
+                                : emp.status === 'archived'
+                                  ? tEmployees('statusArchived')
+                                  : tEmployees('statusInactive')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {isSuperadmin && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleImpersonateTo(`/employees/${emp.id}`)}
+                                title={tEmployees('viewDetail')}
+                              >
+                                <ExternalLink className="size-4" />
+                              </Button>
+                            )}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

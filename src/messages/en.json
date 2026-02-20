@@ -610,6 +610,32 @@
           "cancelled": "Cancelled"
         }
       },
+      "members": {
+        "title": "Users",
+        "description": "All users of this organization",
+        "noMembers": "No users in this organization.",
+        "viewInOrg": "Open in org context",
+        "columnName": "Name",
+        "columnEmail": "Email",
+        "columnRole": "Role",
+        "columnDepartment": "Department",
+        "columnStatus": "Status",
+        "statusActive": "Active",
+        "statusDeactivated": "Deactivated"
+      },
+      "employees": {
+        "title": "Employees",
+        "description": "All employees of this organization",
+        "noEmployees": "No employees in this organization.",
+        "viewDetail": "Open employee record",
+        "columnName": "Name",
+        "columnPosition": "Position",
+        "columnDepartment": "Department",
+        "columnStatus": "Status",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "statusArchived": "Archived"
+      },
       "detail": {
         "title": "Organization Details",
         "dangerZone": "Danger Zone",

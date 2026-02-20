@@ -610,6 +610,32 @@
           "cancelled": "Zurückgezogen"
         }
       },
+      "members": {
+        "title": "Benutzer",
+        "description": "Alle Benutzer dieser Organisation",
+        "noMembers": "Keine Benutzer in dieser Organisation.",
+        "viewInOrg": "Im Org-Kontext öffnen",
+        "columnName": "Name",
+        "columnEmail": "E-Mail",
+        "columnRole": "Rolle",
+        "columnDepartment": "Abteilung",
+        "columnStatus": "Status",
+        "statusActive": "Aktiv",
+        "statusDeactivated": "Deaktiviert"
+      },
+      "employees": {
+        "title": "Mitarbeiter",
+        "description": "Alle Mitarbeiter dieser Organisation",
+        "noEmployees": "Keine Mitarbeiter in dieser Organisation.",
+        "viewDetail": "Mitarbeiterschein öffnen",
+        "columnName": "Name",
+        "columnPosition": "Position",
+        "columnDepartment": "Abteilung",
+        "columnStatus": "Status",
+        "statusActive": "Aktiv",
+        "statusInactive": "Inaktiv",
+        "statusArchived": "Archiviert"
+      },
       "detail": {
         "title": "Organisation Details",
         "dangerZone": "Gefahrenzone",

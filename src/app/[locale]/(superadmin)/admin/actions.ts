@@ -91,4 +91,6 @@ export {
 
 export { getOrgUsageStats } from './actions/org-stats'
 
+export { getOrgMembers, getOrgEmployees } from './actions/org-members'
+
 export { sendBroadcast, getOrganizationsForBroadcast } from './actions/broadcast'
