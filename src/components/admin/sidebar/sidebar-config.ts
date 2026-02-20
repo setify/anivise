@@ -13,6 +13,7 @@ import {
   Palette,
   Settings,
   Users,
+  UserSearch,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -78,6 +79,12 @@ export const adminSidebarConfig: SidebarGroup[] = [
         labelKey: 'admin.sidebar.organizations',
         href: '/admin/organizations',
         icon: Building2,
+      },
+      {
+        key: 'users',
+        labelKey: 'admin.sidebar.users',
+        href: '/admin/users',
+        icon: UserSearch,
       },
       {
         key: 'plans',

@@ -85,6 +85,16 @@ export function meetsWCAG_AA(foreground: string, background: string): boolean {
   return getContrastRatio(foreground, background) >= 4.5
 }
 
+/**
+ * Return a foreground color (white or dark) that has good contrast
+ * against the given hex background color.
+ */
+export function getContrastForeground(bgHex: string): string {
+  const lum = relativeLuminance(bgHex)
+  // Luminance > 0.4 → background is light → use dark text
+  return lum > 0.4 ? '#09090b' : '#fafafa'
+}
+
 /** Validate a hex color string (#rrggbb) */
 export function isValidHex(hex: string): boolean {
   return /^#[0-9A-Fa-f]{6}$/.test(hex)

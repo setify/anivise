@@ -29,18 +29,26 @@ export function AdminSidebar({ platformRole, logoUrl, user }: AdminSidebarProps)
   const isSuperadmin = platformRole === 'superadmin'
 
   // Collapse state: keys in this set are collapsed (closed)
-  const [collapsedKeys, setCollapsedKeys] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set()
+  // Initialize empty to match server render, then hydrate from localStorage
+  const [collapsedKeys, setCollapsedKeys] = useState<Set<string>>(new Set())
+  const [hydrated, setHydrated] = useState(false)
+
+  // Hydrate collapsed state from localStorage after mount
+  useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
-      return stored ? new Set(JSON.parse(stored)) : new Set()
+      if (stored) {
+        setCollapsedKeys(new Set(JSON.parse(stored)))
+      }
     } catch {
-      return new Set()
+      // Ignore storage errors
     }
-  })
+    setHydrated(true)
+  }, [])
 
   // Auto-open collapsibles when a child path is active
   useEffect(() => {
+    if (!hydrated) return
     for (const group of adminSidebarConfig) {
       for (const item of group.items) {
         if (item.children) {
@@ -60,16 +68,17 @@ export function AdminSidebar({ platformRole, logoUrl, user }: AdminSidebarProps)
     }
     // Only run on pathname changes, not on collapsedKeys changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, locale])
+  }, [pathname, locale, hydrated])
 
-  // Persist collapsed state to localStorage
+  // Persist collapsed state to localStorage (skip initial hydration set)
   useEffect(() => {
+    if (!hydrated) return
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify([...collapsedKeys]))
     } catch {
       // Ignore storage errors
     }
-  }, [collapsedKeys])
+  }, [collapsedKeys, hydrated])
 
   const toggleCollapse = useCallback((key: string) => {
     setCollapsedKeys((prev) => {

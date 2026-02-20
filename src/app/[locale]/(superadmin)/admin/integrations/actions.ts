@@ -508,13 +508,12 @@ export async function testDeepgramConnection(): Promise<{
 // ─── Webhook Environment Toggle ───
 
 export async function setWebhookEnvironment(
-  type: 'analysis' | 'dossier',
   env: 'test' | 'production'
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const currentUser = await requirePlatformRole('superadmin')
 
-    await setIntegrationSecret('n8n', `webhook_env_${type}`, env, false, currentUser.id)
+    await setIntegrationSecret('n8n', 'webhook_env', env, false, currentUser.id)
     invalidateSecretCache('n8n')
 
     await logAudit({
@@ -525,7 +524,6 @@ export async function setWebhookEnvironment(
       metadata: {
         service: 'n8n',
         action: 'integration.webhook_env_changed',
-        webhookType: type,
         environment: env,
       },
     })
@@ -539,9 +537,7 @@ export async function setWebhookEnvironment(
 
 // ─── Dry Run Webhook ───
 
-export async function dryRunWebhook(
-  type: 'analysis' | 'dossier'
-): Promise<{
+export async function dryRunWebhook(): Promise<{
   success: boolean
   statusCode?: number
   responseBody?: string
@@ -552,7 +548,7 @@ export async function dryRunWebhook(
   try {
     await requirePlatformRole('superadmin')
 
-    const resolved = await resolveWebhookUrl(type)
+    const resolved = await resolveWebhookUrl()
     if (!resolved) {
       return { success: false, error: 'No webhook URL configured for this environment' }
     }
@@ -570,26 +566,17 @@ export async function dryRunWebhook(
       headers[authHeaderName] = authHeaderValue
     }
 
-    const dummyPayload =
-      type === 'analysis'
-        ? {
-            jobId: '00000000-0000-0000-0000-000000000000',
-            organizationId: '00000000-0000-0000-0000-000000000000',
-            fileUrl: 'https://example.com/dry-run-test.txt',
-            callbackUrl: 'https://example.com/dry-run-callback',
-            metadata: { dryRun: true },
-          }
-        : {
-            dossierId: '00000000-0000-0000-0000-000000000000',
-            analysisId: '00000000-0000-0000-0000-000000000000',
-            organizationId: '00000000-0000-0000-0000-000000000000',
-            callbackUrl: 'https://example.com/dry-run-callback',
-            subject: { name: 'Dry Run Test' },
-            transcripts: [],
-            documents: [],
-            formResponses: [],
-            prompt: 'Dry run test — please ignore.',
-          }
+    const dummyPayload = {
+      dossierId: '00000000-0000-0000-0000-000000000000',
+      analysisId: '00000000-0000-0000-0000-000000000000',
+      organizationId: '00000000-0000-0000-0000-000000000000',
+      callbackUrl: 'https://example.com/dry-run-callback',
+      subject: { name: 'Dry Run Test' },
+      transcripts: [],
+      documents: [],
+      formResponses: [],
+      prompt: 'Dry run test — please ignore.',
+    }
 
     const response = await fetch(resolved.url, {
       method: 'POST',

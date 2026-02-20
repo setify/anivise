@@ -23,7 +23,7 @@ export interface N8nHealthStatus {
 export async function triggerN8nWebhook(
   payload: N8nTriggerPayload
 ): Promise<{ success: boolean; isTest: boolean; error?: string }> {
-  const resolved = await resolveWebhookUrl('analysis')
+  const resolved = await resolveWebhookUrl()
 
   if (!resolved) {
     return { success: false, isTest: false, error: 'n8n webhook URL not configured' }
@@ -37,17 +37,17 @@ export async function triggerN8nWebhook(
     (await getCachedSecret('n8n', 'auth_header_value')) ||
     process.env.N8N_WEBHOOK_SECRET
 
-  if (!authHeaderValue) {
-    return { success: false, isTest, error: 'n8n auth secret not configured' }
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+  if (authHeaderValue) {
+    headers[authHeaderName] = authHeaderValue
   }
 
   try {
     const response = await fetch(webhookUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        [authHeaderName]: authHeaderValue,
-      },
+      headers,
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(30000),
     })

@@ -41,7 +41,7 @@ export async function triggerDossierWebhook(
   organizationId: string,
   prompt: string
 ): Promise<{ success: boolean; isTest: boolean; error?: string }> {
-  const resolved = await resolveWebhookUrl('dossier')
+  const resolved = await resolveWebhookUrl()
 
   if (!resolved) {
     return { success: false, isTest: false, error: 'n8n dossier webhook URL not configured' }
@@ -54,10 +54,6 @@ export async function triggerDossierWebhook(
   const authHeaderValue =
     (await getCachedSecret('n8n', 'auth_header_value')) ||
     process.env.N8N_WEBHOOK_SECRET
-
-  if (!authHeaderValue) {
-    return { success: false, isTest, error: 'n8n auth secret not configured' }
-  }
 
   // 1. Load analysis + employee data
   const [analysis] = await db
@@ -197,13 +193,17 @@ export async function triggerDossierWebhook(
   }
 
   // 7. Send to n8n
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+  if (authHeaderValue) {
+    headers[authHeaderName] = authHeaderValue
+  }
+
   try {
     const response = await fetch(webhookUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        [authHeaderName]: authHeaderValue,
-      },
+      headers,
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(30000),
     })

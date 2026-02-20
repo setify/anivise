@@ -381,9 +381,7 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
   const [apiUrl, setApiUrl] = useState('')
   const [apiKey, setApiKey] = useState('')
   const [webhookUrl, setWebhookUrl] = useState('')
-  const [dossierWebhookUrl, setDossierWebhookUrl] = useState('')
   const [webhookUrlTest, setWebhookUrlTest] = useState('')
-  const [dossierWebhookUrlTest, setDossierWebhookUrlTest] = useState('')
   const [healthUrl, setHealthUrl] = useState('')
   const [authHeaderName, setAuthHeaderName] = useState('X-Anivise-Secret')
   const [authHeaderValue, setAuthHeaderValue] = useState('')
@@ -398,9 +396,8 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
   const [rotatedSecret, setRotatedSecret] = useState<string | null>(null)
 
   // Environment toggle state
-  const [analysisEnv, setAnalysisEnv] = useState<'production' | 'test'>('production')
-  const [dossierEnv, setDossierEnv] = useState<'production' | 'test'>('production')
-  const [dryRunLoading, setDryRunLoading] = useState<'analysis' | 'dossier' | null>(null)
+  const [webhookEnv, setWebhookEnv] = useState<'production' | 'test'>('production')
+  const [dryRunLoading, setDryRunLoading] = useState(false)
   const [cleanupLoading, setCleanupLoading] = useState(false)
 
   useEffect(() => {
@@ -409,19 +406,34 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
 
   async function loadSaved() {
     const secrets = await getIntegrationSecretsForUI('n8n')
+
+    // Collect values, preferring new keys but falling back to legacy keys
+    let loadedWebhookUrl = ''
+    let loadedWebhookUrlTest = ''
+    let loadedWebhookEnv: 'production' | 'test' = 'production'
+
     for (const s of secrets) {
       if (s.key === 'api_url') setApiUrl(s.maskedValue || '')
       if (s.key === 'api_key') setApiKey(s.maskedValue || '')
-      if (s.key === 'webhook_url') setWebhookUrl(s.maskedValue || '')
-      if (s.key === 'dossier_webhook_url') setDossierWebhookUrl(s.maskedValue || '')
-      if (s.key === 'webhook_url_test') setWebhookUrlTest(s.maskedValue || '')
-      if (s.key === 'dossier_webhook_url_test') setDossierWebhookUrlTest(s.maskedValue || '')
       if (s.key === 'health_url') setHealthUrl(s.maskedValue || '')
       if (s.key === 'auth_header_name') setAuthHeaderName(s.maskedValue || 'X-Anivise-Secret')
       if (s.key === 'auth_header_value') setAuthHeaderValue(s.maskedValue || '')
-      if (s.key === 'webhook_env_analysis') setAnalysisEnv((s.maskedValue as 'test' | 'production') || 'production')
-      if (s.key === 'webhook_env_dossier') setDossierEnv((s.maskedValue as 'test' | 'production') || 'production')
+
+      // Unified webhook URL (prefer new key, fall back to legacy dossier key)
+      if (s.key === 'webhook_url' && s.maskedValue) loadedWebhookUrl = s.maskedValue
+      if (s.key === 'dossier_webhook_url' && s.maskedValue && !loadedWebhookUrl) loadedWebhookUrl = s.maskedValue
+      if (s.key === 'webhook_url_test' && s.maskedValue) loadedWebhookUrlTest = s.maskedValue
+      if (s.key === 'dossier_webhook_url_test' && s.maskedValue && !loadedWebhookUrlTest) loadedWebhookUrlTest = s.maskedValue
+
+      // Unified env toggle (prefer new key, fall back to legacy keys)
+      if (s.key === 'webhook_env' && s.maskedValue) loadedWebhookEnv = s.maskedValue as 'test' | 'production'
+      if (s.key === 'webhook_env_dossier' && s.maskedValue && loadedWebhookEnv === 'production') loadedWebhookEnv = s.maskedValue as 'test' | 'production'
+      if (s.key === 'webhook_env_analysis' && s.maskedValue && loadedWebhookEnv === 'production') loadedWebhookEnv = s.maskedValue as 'test' | 'production'
     }
+
+    setWebhookUrl(loadedWebhookUrl)
+    setWebhookUrlTest(loadedWebhookUrlTest)
+    setWebhookEnv(loadedWebhookEnv)
   }
 
   async function handleSave() {
@@ -430,9 +442,7 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
         { key: 'api_url', value: apiUrl, isSensitive: false },
         { key: 'api_key', value: apiKey, isSensitive: true },
         { key: 'webhook_url', value: webhookUrl, isSensitive: false },
-        { key: 'dossier_webhook_url', value: dossierWebhookUrl, isSensitive: false },
         { key: 'webhook_url_test', value: webhookUrlTest, isSensitive: false },
-        { key: 'dossier_webhook_url_test', value: dossierWebhookUrlTest, isSensitive: false },
         { key: 'health_url', value: healthUrl, isSensitive: false },
         { key: 'auth_header_name', value: authHeaderName, isSensitive: false },
         { key: 'auth_header_value', value: authHeaderValue, isSensitive: true },
@@ -495,12 +505,11 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
     })
   }
 
-  async function handleEnvToggle(type: 'analysis' | 'dossier', env: 'production' | 'test') {
+  async function handleEnvToggle(env: 'production' | 'test') {
     startTransition(async () => {
-      const result = await setWebhookEnvironment(type, env)
+      const result = await setWebhookEnvironment(env)
       if (result.success) {
-        if (type === 'analysis') setAnalysisEnv(env)
-        else setDossierEnv(env)
+        setWebhookEnv(env)
         toast.success(t('saved'), { className: 'rounded-full', position: 'top-center' })
       } else {
         toast.error(result.error, { className: 'rounded-full', position: 'top-center' })
@@ -508,10 +517,10 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
     })
   }
 
-  async function handleDryRun(type: 'analysis' | 'dossier') {
-    setDryRunLoading(type)
+  async function handleDryRun() {
+    setDryRunLoading(true)
     try {
-      const result = await dryRunWebhook(type)
+      const result = await dryRunWebhook()
       if (result.success) {
         toast.success(t('n8n.dryRunSuccess', { statusCode: result.statusCode ?? 0 }), {
           className: 'rounded-full',
@@ -531,7 +540,7 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
         )
       }
     } finally {
-      setDryRunLoading(null)
+      setDryRunLoading(false)
     }
   }
 
@@ -557,23 +566,17 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
     }
   }
 
-  function EnvToggle({
-    type,
-    currentEnv,
-  }: {
-    type: 'analysis' | 'dossier'
-    currentEnv: 'production' | 'test'
-  }) {
+  function EnvToggle() {
     return (
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground text-xs">{t('n8n.webhookEnvironment')}:</span>
         <div className="inline-flex rounded-md border">
           <button
             type="button"
-            onClick={() => handleEnvToggle(type, 'production')}
+            onClick={() => handleEnvToggle('production')}
             disabled={isPending}
             className={`rounded-l-md px-3 py-1 text-xs font-medium transition-colors ${
-              currentEnv === 'production'
+              webhookEnv === 'production'
                 ? 'bg-primary text-primary-foreground'
                 : 'hover:bg-muted'
             }`}
@@ -582,10 +585,10 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
           </button>
           <button
             type="button"
-            onClick={() => handleEnvToggle(type, 'test')}
+            onClick={() => handleEnvToggle('test')}
             disabled={isPending}
             className={`rounded-r-md px-3 py-1 text-xs font-medium transition-colors ${
-              currentEnv === 'test'
+              webhookEnv === 'test'
                 ? 'bg-amber-500 text-white'
                 : 'hover:bg-muted'
             }`}
@@ -593,7 +596,7 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
             {t('n8n.test')}
           </button>
         </div>
-        {currentEnv === 'test' && (
+        {webhookEnv === 'test' && (
           <Badge variant="outline" className="border-amber-400 text-amber-600 dark:text-amber-400">
             {t('n8n.test')}
           </Badge>
@@ -645,14 +648,14 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
           <Separator />
           <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">{t('n8n.webhookSection')}</p>
 
-          {/* Analysis Webhook */}
+          {/* Webhook */}
           <div className="space-y-2 rounded-lg border p-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium">Webhook URL (Analysis)</Label>
-              <EnvToggle type="analysis" currentEnv={analysisEnv} />
+              <Label className="text-sm font-medium">Webhook URL</Label>
+              <EnvToggle />
             </div>
             <Input value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://n8n.example.com/webhook/..." />
-            {analysisEnv === 'test' && (
+            {webhookEnv === 'test' && (
               <div>
                 <Label className="text-xs">{t('n8n.webhookUrlTest')}</Label>
                 <Input
@@ -667,45 +670,10 @@ function N8nCard({ t }: { t: ReturnType<typeof useTranslations> }) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleDryRun('analysis')}
-              disabled={dryRunLoading === 'analysis'}
+              onClick={handleDryRun}
+              disabled={dryRunLoading}
             >
-              {dryRunLoading === 'analysis' ? (
-                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-              ) : (
-                <Play className="mr-1.5 size-3.5" />
-              )}
-              {t('n8n.dryRun')}
-            </Button>
-          </div>
-
-          {/* Dossier Webhook */}
-          <div className="space-y-2 rounded-lg border p-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium">{t('n8n.dossierWebhookUrl')}</Label>
-              <EnvToggle type="dossier" currentEnv={dossierEnv} />
-            </div>
-            <Input value={dossierWebhookUrl} onChange={(e) => setDossierWebhookUrl(e.target.value)} placeholder="https://n8n.example.com/webhook/..." />
-            <p className="text-muted-foreground text-xs">{t('n8n.dossierWebhookUrlHint')}</p>
-            {dossierEnv === 'test' && (
-              <div>
-                <Label className="text-xs">{t('n8n.dossierWebhookUrlTest')}</Label>
-                <Input
-                  value={dossierWebhookUrlTest}
-                  onChange={(e) => setDossierWebhookUrlTest(e.target.value)}
-                  placeholder="https://n8n.example.com/webhook-test/..."
-                  className="border-amber-300 dark:border-amber-700"
-                />
-                <p className="text-muted-foreground mt-1 text-xs">{t('n8n.webhookUrlTestHint')}</p>
-              </div>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleDryRun('dossier')}
-              disabled={dryRunLoading === 'dossier'}
-            >
-              {dryRunLoading === 'dossier' ? (
+              {dryRunLoading ? (
                 <Loader2 className="mr-1.5 size-3.5 animate-spin" />
               ) : (
                 <Play className="mr-1.5 size-3.5" />

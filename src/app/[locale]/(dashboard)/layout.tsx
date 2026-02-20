@@ -9,6 +9,7 @@ import { db } from '@/lib/db'
 import { users, organizations, organizationMembers } from '@/lib/db/schema'
 import { getSetting } from '@/lib/settings/platform'
 import { getOrgBranding } from '@/lib/branding/apply-branding'
+import { getContrastForeground } from '@/lib/branding/color-utils'
 import { hasPlatformRole } from '@/lib/auth/roles'
 
 export default async function DashboardLayout({
@@ -102,10 +103,17 @@ export default async function DashboardLayout({
 
     // Only apply custom colors if the org has saved branding
     // Hex values are valid CSS colors and can be used directly in CSS variables
+    // Foreground colors are auto-calculated for contrast
     if (branding.primaryColor) {
       brandingCssVars = {
         '--primary': branding.primaryColor,
-        ...(branding.accentColor ? { '--accent': branding.accentColor } : {}),
+        '--primary-foreground': getContrastForeground(branding.primaryColor),
+        ...(branding.accentColor
+          ? {
+              '--accent': branding.accentColor,
+              '--accent-foreground': getContrastForeground(branding.accentColor),
+            }
+          : {}),
         ...(branding.backgroundColor ? { '--background': branding.backgroundColor } : {}),
         ...(branding.textColor ? { '--foreground': branding.textColor } : {}),
       } as React.CSSProperties

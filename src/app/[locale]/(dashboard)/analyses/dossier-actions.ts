@@ -58,7 +58,7 @@ export async function generateDossier(analysisId: string) {
 
   // Resolve isTest before inserting so the flag is set correctly
   const { resolveWebhookUrl } = await import('@/lib/n8n/resolve-webhook-url')
-  const resolved = await resolveWebhookUrl('dossier')
+  const resolved = await resolveWebhookUrl()
   const isTest = resolved?.isTest ?? false
 
   // Insert dossier record with isTest flag

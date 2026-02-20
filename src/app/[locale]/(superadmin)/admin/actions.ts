@@ -62,7 +62,13 @@ export {
   checkN8nHealthAction,
 } from './actions/jobs'
 
-export { getPlatformStats } from './actions/stats'
+export { getPlatformStats, getRecentActivity } from './actions/stats'
+
+export { getAllPlatformUsers } from './actions/users'
+
+export { getSystemHealth } from './actions/health'
+
+export { globalSearch } from './actions/search'
 
 export {
   getActiveProducts,

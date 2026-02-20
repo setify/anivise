@@ -9,6 +9,7 @@ import { AdminSidebar } from '@/components/admin/sidebar/admin-sidebar'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { NotificationBell } from '@/components/admin/notification-bell'
 import { AdminBreadcrumbs } from '@/components/admin/breadcrumbs'
+import { AdminSearch } from '@/components/admin/admin-search'
 import { PageTransition } from '@/components/ui/page-transition'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
@@ -145,6 +146,7 @@ export function AdminLayoutClient({
           </Button>
           <AdminBreadcrumbs />
           <div className="flex-1" />
+          <AdminSearch />
           <NotificationBell />
           <ThemeToggle />
           <AdminHeaderUser user={user} />
