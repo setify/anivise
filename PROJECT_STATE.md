@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.13.0
+**Version:** 1.14.0
 **Last Updated:** 2026-02-20
-**Last Commit:** feat(admin): add user management, system health, global search + rename Dossier to KI-Analyse
+**Last Commit:** feat(admin): add job detail, auto-refresh, org stats, feature flags, activity export, broadcast, storage overview
 
 ## What's Implemented
 
@@ -21,8 +21,8 @@
 - [x] drizzle.config.ts with schema path and migrations output
 - [x] All enums defined (subscription_tier, subscription_status, org_member_role, consent_type, consent_status, job_status, locale, platform_role, invitation_status, invitation_type, form_status, form_visibility, form_completion_type, form_step_display_mode, product_status, media_context, analysis_form_assignment_status)
 - [x] Schema: organizations (name, slug, settings, subscription tier/status [deprecated], default_locale, internal_notes, soft-delete)
-- [x] Schema: products (name, slug, description, status, is_default, sort_order, seat limits [max_org_admins/managers/members], feature limits [max_analyses/forms/submissions/storage])
-- [x] Schema: organization_products (1:1 org-plan junction, override columns for custom plans, assigned_by/at, notes, unique on organization_id)
+- [x] Schema: products (name, slug, description, status, is_default, sort_order, seat limits [max_org_admins/managers/members], feature limits [max_analyses/forms/submissions/storage], feature flags [allow_forms/api_access/custom_branding/email_templates])
+- [x] Schema: organization_products (1:1 org-plan junction, override columns for custom plans + feature flags, assigned_by/at, notes, unique on organization_id)
 - [x] Schema: users (Supabase Auth ID, email, first/last/display name, phone, timezone, avatar, platform_role, locale)
 - [x] Schema: organization_members (junction table, role enum, unique constraint, position, department_id, location_id, phone, status active/deactivated)
 - [x] Schema: org_departments (org-scoped departments with unique name)
@@ -146,7 +146,7 @@
 - [x] Platform settings: default plan selector (replaces default tier)
 - [x] Audit actions for plan changes (plan.assigned, plan.changed, plan.removed)
 - [x] subscription_tier/maxMembers/maxAnalysesPerMonth deprecated on organizations table
-- [x] Admin Plans CRUD UI (`/admin/plans`): list, detail, create, edit pages with full server actions
+- [x] Admin Plans CRUD UI (`/admin/plans`): list, detail, create, edit pages with full server actions, feature flag toggles
 - [x] Plans nav item in admin sidebar (CreditCard, superadmin-only)
 - [x] i18n for admin.plans namespace (DE: "Tarife", EN: "Plans")
 - [x] Org-admin plan view (`/dashboard/plan`): plan details + usage bars for seats, analyses, forms, storage
@@ -231,21 +231,22 @@
 - [x] Superadmin Team management page (members table, invite dialog, role change, remove, invitations tab)
 - [x] Superadmin Organizations list page with table
 - [x] Superadmin Create Organization page with form
-- [x] Superadmin Organization detail page with danger zone (soft-delete), invitations tab, and edit button
+- [x] Superadmin Organization detail page with danger zone (soft-delete), invitations tab, statistics tab (usage stats), and edit button
 - [x] Superadmin Organization edit page with basic data, status & plan, settings, internal notes
 - [x] Org creation form with "First Org-Admin" section and auto-invitation
-- [x] Superadmin Activity page with audit log table, action/period filters, pagination
+- [x] Superadmin Activity page with audit log table, action/period filters, pagination, CSV export
 - [x] Superadmin Settings page with 4 tabs (General, Invitations, Organizations, Analysis)
 - [x] Superadmin Email Templates page (`/admin/settings/emails`) with editor, preview, variables, reset, test send
 - [x] Email Layout page (`/admin/settings/email-layout`) with logo, colors, footer, border radius, live preview, test send
 - [x] Impersonation: "View as Organization" button on org detail (superadmin only)
 - [x] Impersonation banner in dashboard layout with signed cookie and 2h timeout
 - [x] NotificationBell component in admin header (popover, polling, unread badge)
-- [x] Notifications page (`/admin/notifications`) with All/Unread tabs, mark-all-read, pagination
-- [x] Analysis Jobs page (`/admin/jobs`) with n8n health check, stats, filters, retry/cancel actions
+- [x] Notifications page (`/admin/notifications`) with All/Unread tabs, mark-all-read, pagination, broadcast dialog (superadmin)
+- [x] Analysis Jobs page (`/admin/jobs`) with n8n health check, stats, filters, retry/cancel actions, auto-refresh (10s polling), clickable job IDs
+- [x] Job Detail page (`/admin/jobs/[id]`) with visual timeline, info cards, metadata/payload, error details, test mode badge
 - [x] Integrations page (`/admin/integrations`) with encrypted secret management (Supabase, Resend, n8n, Vercel, Payment placeholder)
 - [x] Breadcrumbs component in admin header (auto-generated from URL path)
-- [x] Media Library page (`/admin/media`) with grid/list views, upload dialog, preview, delete with usage check, bulk delete, sync, context filter, search
+- [x] Media Library page (`/admin/media`) with grid/list views, upload dialog, preview, delete with usage check, bulk delete, sync, context filter, search, storage overview (per-org quota usage)
 - [x] "Mediathek" nav item in admin sidebar (Image icon, superadmin-only)
 - [x] Staff permission filtering on admin sidebar (Settings hidden for staff)
 - [x] Home page (redirects to dashboard)
@@ -316,8 +317,10 @@
 - [x] saveOrgEmailTemplate - upsert org email template override
 - [x] resetOrgEmailTemplate - delete org override, return global template values
 - [x] sendOrgTestEmail - send test email with org branding to current user
-- [x] logAudit - append audit log entry (22 action types)
+- [x] logAudit - append audit log entry (23 action types incl. notification.broadcast)
 - [x] getAuditLogs - list audit logs with action/period filters and pagination
+- [x] exportAuditLogs - export filtered audit logs as CSV (up to 10k entries)
+- [x] getOrgUsageStats - per-org usage stats (members, jobs, dossiers, last activity)
 - [x] updatePlatformSettings - update platform settings with audit logging
 - [x] getSetting / setSetting / getAllSettings - typed platform settings helpers
 - [x] updateEmailTemplate - update email template content with audit logging
@@ -331,11 +334,14 @@
 - [x] markNotificationRead - mark a single notification as read
 - [x] markAllNotificationsRead - mark all notifications as read
 - [x] createNotification - create notification for user or broadcast to all superadmins
+- [x] sendBroadcast - broadcast notification to all org admins or all users of an org (superadmin)
+- [x] getOrganizationsForBroadcast - list orgs for broadcast dialog
 - [x] getAnalysisJobs - list analysis jobs with status/org filters and pagination
 - [x] getAnalysisJobStats - get counts by status
 - [x] cancelAnalysisJob - cancel pending/processing job with audit logging
 - [x] retryAnalysisJob - reset failed/cancelled job to pending with audit logging
 - [x] checkN8nHealthAction - check n8n webhook connectivity
+- [x] getAnalysisJobDetail - full job detail with org, subject, requester data
 - [x] sendTestTemplateEmail - send test email with unsaved template content and layout
 - [x] saveIntegrationSecrets - save encrypted secrets for a service
 - [x] getIntegrationSecretsForUI - load masked secrets for display
@@ -379,6 +385,7 @@
 - [x] bulkDeleteMedia - bulk delete with usage checks (admin)
 - [x] syncMedia - sync media_files table with Supabase Storage (admin)
 - [x] getMediaPublicUrl - get public URL for a media file (admin)
+- [x] getStorageStats - storage usage stats by org and context with quota info (admin)
 
 ### Media Library
 - [x] `media_files` DB table with context enum (email_logo, email_template, form_header, org_logo, report_asset, general)
@@ -498,7 +505,13 @@
 - `src/lib/n8n/trigger.ts` - n8n webhook trigger and health check
 - `src/app/api/webhooks/n8n/analysis-complete/route.ts` - n8n callback webhook handler
 - `src/app/[locale]/(superadmin)/admin/jobs/page.tsx` - Analysis jobs page (server)
-- `src/app/[locale]/(superadmin)/admin/jobs/jobs-page-client.tsx` - Analysis jobs table (client)
+- `src/app/[locale]/(superadmin)/admin/jobs/jobs-page-client.tsx` - Analysis jobs table with auto-refresh (client)
+- `src/app/[locale]/(superadmin)/admin/jobs/[id]/page.tsx` - Job detail page (server)
+- `src/app/[locale]/(superadmin)/admin/jobs/[id]/job-detail-client.tsx` - Job detail with timeline (client)
+- `src/app/[locale]/(superadmin)/admin/actions/job-detail.ts` - Job detail server action
+- `src/app/[locale]/(superadmin)/admin/actions/org-stats.ts` - Org usage stats server action
+- `src/app/[locale]/(superadmin)/admin/actions/activity-export.ts` - Audit log CSV export server action
+- `src/app/[locale]/(superadmin)/admin/actions/broadcast.ts` - Notification broadcast server actions
 - `src/app/[locale]/(superadmin)/admin/integrations/page.tsx` - Integrations page (server)
 - `src/app/[locale]/(superadmin)/admin/integrations/integrations-page-client.tsx` - Integrations cards (client)
 - `src/app/[locale]/(superadmin)/admin/integrations/actions.ts` - Integration server actions

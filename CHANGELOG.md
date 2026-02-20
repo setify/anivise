@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.14.0] - 2026-02-20
+### Added
+- **Job Detail Page** (`/admin/jobs/[id]`): Full job detail view with visual timeline (Created → n8n Triggered → Callback → Status), info cards (Job, Organization, Subject, Requester, n8n Pipeline), metadata/payload display, error details, test mode badge, and retry/cancel actions.
+- **Jobs Auto-Refresh**: 10-second polling for pending/processing jobs with toggle switch, pulsing indicator, and auto-disable when no active jobs. Job IDs are now clickable links to detail page.
+- **Org Usage Statistics**: New "Statistics" tab on organization detail page showing members, total/completed/failed/processing jobs, AI analyses (dossiers), and last activity with relative timestamps.
+- **Plans Feature Flags**: 4 boolean feature flags (Forms, API Access, Custom Branding, Email Templates) on plans with Switch toggles in create/edit forms, icon indicators in plan list table, and per-org overrides. DB migration `0015_silent_inhumans.sql`.
+- **Activity Log CSV Export**: Export button on audit log page that downloads filtered entries as CSV with proper escaping. Respects current action category and time period filters.
+- **Notifications Broadcast**: Superadmins can send broadcast messages to all org admins or all users of a specific org. Dialog with title, body, target selection, optional link. Audit logged.
+- **Media Storage Overview**: Collapsible storage dashboard on media page showing total storage/files, per-organization breakdown with quota usage bars (color-coded at 75%/90%), and storage by context type.
+- Server actions: `getAnalysisJobDetail`, `getOrgUsageStats`, `exportAuditLogs`, `sendBroadcast`, `getOrganizationsForBroadcast`, `getStorageStats`.
+- i18n: `admin.jobs.detail`, `admin.jobs.autoRefresh`, `admin.orgs.stats`, `admin.plans.featureFlags`, `admin.activity.export*`, `admin.notifications.broadcast*`, `admin.media.storage*` namespaces (DE + EN).
+- Audit action: `notification.broadcast`.
+
+### Changed
+- Products schema: added `allow_forms`, `allow_api_access`, `allow_custom_branding`, `allow_email_templates` columns.
+- Organization products schema: added matching override columns for feature flags.
+
 ## [1.13.0] - 2026-02-20
 ### Added
 - **"Dossier" → "KI-Analyse" Rename**: All user-facing texts renamed from "Dossier" to "KI-Analyse" (DE) / "AI Analysis" (EN). DB table and internal code names remain unchanged.
