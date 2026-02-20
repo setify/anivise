@@ -38,6 +38,7 @@ async function main() {
     '0012_same_valeria_richards',
     '0013_ambiguous_steel_serpent',
     '0014_colorful_selene',
+    '0015_silent_inhumans',
   ]
 
   console.log('Ensuring drizzle migrations schema and table exist...')
