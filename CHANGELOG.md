@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.15.0] - 2026-02-20
+### Added
+- **Avatar Upload**: Profile page now supports avatar upload (PNG, JPG, WebP, max 2 MB) with remove functionality. Avatars tracked in `media_files` table, stored in Supabase Storage.
+- **Team Invitation Emails**: `inviteTeamMember` now sends `team-invitation` email via `sendTemplatedEmail`.
+- **Org Creation Invitation Emails**: `createOrganizationWithAdmin` now sends `org-invitation` email to the new org admin.
+- **Storage Usage Tracking**: `getOrganizationUsage()` now includes `storageMb` field. New `canUploadFile()` helper enforces storage limits before uploads.
+- **Storage Limit Enforcement**: Org media uploads now check `maxStorageMb` limit before uploading. Plan page and dashboard widget show actual storage usage.
+- **Playwright E2E Tests**: Set up `@playwright/test` with Chromium, smoke tests (login redirect, admin redirect). Scripts: `pnpm test:e2e`, `pnpm test:e2e:ui`.
+- **RLS Policies Applied**: All 3 Supabase SQL migrations (table RLS, tenant isolation, storage RLS) applied to live database. Script: `scripts/apply-rls.mjs`.
+
+### Fixed
+- **A1**: Admin dashboard time display now uses `formatDistanceToNow` with locale support instead of hardcoded English strings.
+- **A2**: `retryAnalysisJob` now triggers n8n webhook and updates job status to `processing` on success.
+
 ## [1.14.1] - 2026-02-20
 ### Added
 - **Vitest Testing Infrastructure**: Set up Vitest with jsdom, @testing-library/react, @testing-library/jest-dom. 5 test files with 111 unit tests covering roles, validations, storage paths, utils, and audit actions.

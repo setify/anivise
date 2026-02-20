@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.14.1
+**Version:** 1.15.0
 **Last Updated:** 2026-02-20
-**Last Commit:** chore(admin): add tests, error boundaries, loading states, storage RLS
+**Last Commit:** feat: avatar upload, invitation emails, storage tracking, Playwright, RLS applied
 
 ## What's Implemented
 
@@ -16,6 +16,7 @@
 - [x] ESLint configured
 - [x] Vitest configured with jsdom, @testing-library/react, @testing-library/jest-dom
 - [x] 5 test files with 111 unit tests (roles, validations, storage-paths, utils, audit-actions)
+- [x] Playwright E2E configured with Chromium, smoke tests (login/admin redirect)
 - [x] Complete folder structure from CLAUDE.md
 
 ### Database
@@ -55,7 +56,7 @@
 - [x] RLS SQL templates (enable RLS + tenant isolation policies)
 - [x] Storage RLS policies defined for `platform-assets` and `org-assets` buckets (003_storage_rls_policies.sql)
 - [x] Schema pushed to live Supabase database
-- [ ] RLS policies applied to Supabase (requires running SQL migrations against live DB)
+- [x] RLS policies applied to live Supabase (tables + storage buckets, via scripts/apply-rls.mjs)
 
 ### Authentication
 - [x] Supabase Auth integration (email/password + magic link)
@@ -160,7 +161,7 @@
 - [x] User-facing limit error messages (seat_limit_reached, form_submission_limit_reached)
 - [x] Org-admin plan view redesigned with `PlanUsageBar` (color-coded) + contact upgrade button
 - [ ] Analysis job limit enforcement (analysis upload flow not yet built)
-- [ ] Storage usage tracking (storage not yet implemented)
+- [x] Storage usage tracking (getOrganizationUsage includes storageMb, canUploadFile enforces limits)
 
 ### Org Settings
 - [x] Settings > Allgemein (`/settings`): view/edit org info (name, address, contact, business data, industry combobox)
@@ -426,25 +427,22 @@
 - n8n integration (webhook trigger + callback)
 - Report generation + viewer
 - Resend email (magic link, notifications, team invitations)
-- Supabase Storage RLS policies defined but not yet applied to live DB (003_storage_rls_policies.sql)
+
 - OAuth providers (Google, Microsoft)
 - SSO/SAML for Enterprise
 - Consent management UI
-- Playwright E2E tests (Vitest unit tests set up, Playwright not yet)
-- Avatar upload in profile page
-- Email templates created (React components) but Resend not yet integrated
-- Team invitation email sending (invitations created but email not sent)
-- Invitation acceptance page needs email notifications when invitation is accepted
+- Playwright E2E tests beyond smoke tests (auth flows, CRUD operations)
+- Avatar upload in org-level profile page (admin profile done)
+- Invitation acceptance email notification (currently uses in-app notification only)
 
 ## Known Issues / Tech Debt
 - Admin sidebar user footer now shows real user data (name, avatar, role) from server layout
 - Sidebar organization label is placeholder - useTenant hook available but not yet wired
 - Dashboard stats are live from DB queries (resolved in v1.13.0)
-- RLS policies are defined as SQL files but not yet applied to a live Supabase instance
 - Next.js 16 shows deprecation warning for middleware convention (will be renamed to "proxy" in future)
 - useRole hook queries Supabase directly from client - consider server-side session enrichment for performance
 - Profile form uses toast in render (should use useEffect for toast side effects)
-- Team invitations don't send actual emails yet (Resend not integrated)
+- Team invitations and org creation invitations now send emails (Resend configured)
 
 ## File Map (Key Files)
 - `src/app/layout.tsx` - Root layout with fonts, metadata, ThemeProvider
@@ -620,6 +618,9 @@
 - `supabase/migrations/003_storage_rls_policies.sql` - Storage RLS for platform-assets and org-assets
 - `vitest.config.ts` - Vitest configuration
 - `src/test/setup.ts` - Test setup with @testing-library/jest-dom
+- `playwright.config.ts` - Playwright E2E configuration
+- `e2e/smoke.spec.ts` - Smoke tests (login/admin redirect)
+- `scripts/apply-rls.mjs` - Apply Supabase RLS policies to live DB
 - `src/middleware.ts` - Three-layer middleware (locale + subdomain + auth)
 - `src/lib/i18n/request.ts` - next-intl server request config
 - `src/lib/i18n/routing.ts` - Locale routing definition
