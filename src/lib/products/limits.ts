@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
-import { products, organizationProducts, organizationMembers, employees } from '@/lib/db/schema'
-import { eq, and, count } from 'drizzle-orm'
+import { products, organizationProducts, organizationMembers, employees, mediaFiles } from '@/lib/db/schema'
+import { eq, and, count, sql } from 'drizzle-orm'
 
 export interface OrganizationLimits {
   maxOrgAdmins: number | null
@@ -16,6 +16,7 @@ export interface OrganizationUsage {
   orgAdmins: number
   managers: number
   members: number
+  storageMb: number
 }
 
 const BLOCKED_LIMITS: OrganizationLimits = {
@@ -78,7 +79,7 @@ export async function getOrganizationLimits(
 export async function getOrganizationUsage(
   organizationId: string
 ): Promise<OrganizationUsage> {
-  const [roleCounts, [employeeCount]] = await Promise.all([
+  const [roleCounts, [employeeCount], [storageResult]] = await Promise.all([
     db
       .select({
         role: organizationMembers.role,
@@ -91,6 +92,13 @@ export async function getOrganizationUsage(
       .select({ value: count() })
       .from(employees)
       .where(and(eq(employees.organizationId, organizationId), eq(employees.status, 'active'))),
+    db
+      .select({
+        totalBytes: sql<number>`COALESCE(SUM(${mediaFiles.size}), 0)`,
+      })
+      .from(mediaFiles)
+      .innerJoin(organizationMembers, eq(mediaFiles.uploadedBy, organizationMembers.userId))
+      .where(eq(organizationMembers.organizationId, organizationId)),
   ])
 
   const countByRole = new Map(roleCounts.map((r) => [r.role, r.value]))
@@ -99,6 +107,7 @@ export async function getOrganizationUsage(
     orgAdmins: countByRole.get('org_admin') ?? 0,
     managers: countByRole.get('manager') ?? 0,
     members: employeeCount?.value ?? 0,
+    storageMb: Math.round(Number(storageResult?.totalBytes ?? 0) / (1024 * 1024)),
   }
 }
 
@@ -109,6 +118,24 @@ export async function getOrganizationUsage(
 export function checkLimit(limit: number | null, current: number): boolean {
   if (limit === null) return true
   return current < limit
+}
+
+/**
+ * Check if a file of the given size can be uploaded without exceeding the storage limit.
+ */
+export async function canUploadFile(
+  organizationId: string,
+  fileSizeBytes: number
+): Promise<boolean> {
+  const [limits, usage] = await Promise.all([
+    getOrganizationLimits(organizationId),
+    getOrganizationUsage(organizationId),
+  ])
+
+  if (limits.maxStorageMb === null) return true // Unlimited
+
+  const newTotalMb = usage.storageMb + Math.ceil(fileSizeBytes / (1024 * 1024))
+  return newTotalMb <= limits.maxStorageMb
 }
 
 /**

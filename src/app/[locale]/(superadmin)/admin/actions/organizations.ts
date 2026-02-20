@@ -376,9 +376,26 @@ export async function createOrganizationWithAdmin(formData: FormData) {
     link: `/${process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de'}/admin/organizations/${newOrg.id}`,
   })
 
-  // Build invite link (show in dialog since Resend is not configured yet)
+  // Build invite link
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
-  const inviteLink = `${appUrl}/de/invite/${token}`
+  const locale = (process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de') as 'de' | 'en'
+  const inviteLink = `${appUrl}/${locale}/invite/${token}`
+
+  // Send invitation email to the new org admin
+  const { sendTemplatedEmail } = await import('@/lib/email/send')
+  await sendTemplatedEmail({
+    to: adminEmail,
+    templateSlug: 'org-invitation',
+    locale,
+    variables: {
+      inviteLink,
+      role: 'org_admin',
+      expiryDays: String(expiryDays),
+      inviterName: currentUser.displayName || currentUser.fullName || currentUser.email,
+      orgName: newOrg.name,
+    },
+    organizationId: newOrg.id,
+  })
 
   revalidatePath('/admin/organizations')
   return { success: true, inviteLink }

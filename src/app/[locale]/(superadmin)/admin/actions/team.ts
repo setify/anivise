@@ -124,6 +124,24 @@ export async function inviteTeamMember(formData: FormData) {
     metadata: { email: parsed.data.email, role: parsed.data.role },
   })
 
+  // Send invitation email
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
+  const locale = (process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de') as 'de' | 'en'
+  const inviteLink = `${appUrl}/${locale}/invite/${token}`
+
+  const { sendTemplatedEmail } = await import('@/lib/email/send')
+  await sendTemplatedEmail({
+    to: parsed.data.email,
+    templateSlug: 'team-invitation',
+    locale,
+    variables: {
+      inviteLink,
+      role: parsed.data.role,
+      expiryDays: String(expiryDays),
+      inviterName: currentUser.displayName || currentUser.fullName || currentUser.email,
+    },
+  })
+
   revalidatePath('/admin/team')
   return { success: true }
 }

@@ -92,6 +92,11 @@ export function PlanWidget({ overview }: { overview: PlanOverview }) {
           current={overview.usage.activeForms}
           limit={overview.limits.maxForms}
         />
+        <MiniUsageBar
+          label={t('storage')}
+          current={overview.usage.storageMb}
+          limit={overview.limits.maxStorageMb}
+        />
 
         <Button variant="ghost" size="sm" className="w-full" asChild>
           <Link href={`/${locale}/settings/plan`}>

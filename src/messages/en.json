@@ -135,6 +135,7 @@
       "seats": "Seats",
       "analyses": "Analyses / Month",
       "forms": "Forms",
+      "storage": "Storage",
       "viewDetails": "View details"
     }
   },
@@ -525,7 +526,14 @@
       "timezone": "Timezone",
       "locale": "Language",
       "saved": "Profile saved successfully",
-      "error": "Failed to save profile"
+      "error": "Failed to save profile",
+      "avatarUpload": "Upload photo",
+      "avatarUploading": "Uploading...",
+      "avatarRemove": "Remove photo",
+      "avatarHint": "PNG, JPG or WebP. Max 2 MB.",
+      "avatarUpdated": "Profile photo updated",
+      "avatarRemoved": "Profile photo removed",
+      "avatarError": "Failed to upload profile photo"
     },
     "team": {
       "title": "Team",
@@ -2100,7 +2108,7 @@
         "dropOrClick": "Drop file here or click",
         "maxFileSize": "Max. 10 MB per file",
         "uploading": "Uploading...",
-        "storageLimitReached": "Storage limit reached. Please delete unused files.",
+        "storageLimitReached": "Storage limit reached. Please delete files or upgrade your plan.",
         "uploaded": "File uploaded",
         "uploadError": "Upload failed",
         "deleteFile": "Delete",

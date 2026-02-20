@@ -135,6 +135,7 @@
       "seats": "Plätze",
       "analyses": "Analysen / Monat",
       "forms": "Formulare",
+      "storage": "Speicher",
       "viewDetails": "Details anzeigen"
     }
   },
@@ -525,7 +526,14 @@
       "timezone": "Zeitzone",
       "locale": "Sprache",
       "saved": "Profil erfolgreich gespeichert",
-      "error": "Fehler beim Speichern des Profils"
+      "error": "Fehler beim Speichern des Profils",
+      "avatarUpload": "Bild hochladen",
+      "avatarUploading": "Wird hochgeladen...",
+      "avatarRemove": "Bild entfernen",
+      "avatarHint": "PNG, JPG oder WebP. Max. 2 MB.",
+      "avatarUpdated": "Profilbild aktualisiert",
+      "avatarRemoved": "Profilbild entfernt",
+      "avatarError": "Fehler beim Hochladen des Profilbilds"
     },
     "team": {
       "title": "Team",
@@ -2100,7 +2108,7 @@
         "dropOrClick": "Datei hier ablegen oder klicken",
         "maxFileSize": "Max. 10 MB pro Datei",
         "uploading": "Wird hochgeladen...",
-        "storageLimitReached": "Speicherlimit erreicht. Bitte löschen Sie nicht benötigte Dateien.",
+        "storageLimitReached": "Speicherlimit erreicht. Bitte löschen Sie Dateien oder upgraden Sie Ihren Tarif.",
         "uploaded": "Datei hochgeladen",
         "uploadError": "Upload fehlgeschlagen",
         "deleteFile": "Löschen",

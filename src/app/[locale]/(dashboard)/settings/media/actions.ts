@@ -10,6 +10,7 @@ import { logAudit } from '@/lib/audit/log'
 import { trackUpload } from '@/lib/media/track-upload'
 import { checkMediaUsage } from '@/lib/media/check-usage'
 import { MEDIA_BUCKET, buildStoragePath } from '@/lib/media/storage-paths'
+import { canUploadFile } from '@/lib/products/limits'
 import type { MediaContext, MediaFile } from '@/types/database'
 
 const ORG_BUCKET = 'org-assets'
@@ -77,6 +78,12 @@ export async function uploadOrgMedia(
 
     if (file.size > ORG_MAX_FILE_SIZE) {
       return { success: false, error: 'Datei zu groß. Maximal 10 MB.' }
+    }
+
+    // Check organization storage limit
+    const allowed = await canUploadFile(organizationId, file.size)
+    if (!allowed) {
+      return { success: false, error: 'Storage limit exceeded', storageLimitReached: true }
     }
 
     // Bucket: org-assets under {orgId}/media/...

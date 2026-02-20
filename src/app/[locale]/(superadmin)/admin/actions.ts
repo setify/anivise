@@ -2,7 +2,7 @@
 // Each module has its own 'use server' directive.
 // NOTE: Do NOT add 'use server' here — it disallows re-exports.
 
-export { updateProfile } from './actions/profile'
+export { updateProfile, uploadAvatar, removeAvatar } from './actions/profile'
 
 export {
   getTeamMembers,

@@ -206,8 +206,33 @@ export async function retryAnalysisJob(jobId: string): Promise<{ success: boolea
       organizationId: updated.organizationId,
     })
 
-    // TODO: Re-trigger n8n webhook when integration is fully wired
-    // await triggerN8nWebhook({ jobId, organizationId: job.organizationId, ... })
+    // Re-trigger n8n webhook
+    try {
+      const { triggerN8nWebhook } = await import('@/lib/n8n/trigger')
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
+      const callbackUrl = `${appUrl}/api/webhooks/n8n/analysis-complete`
+
+      const triggerResult = await triggerN8nWebhook({
+        jobId: updated.id,
+        organizationId: updated.organizationId,
+        fileUrl: job.transcriptStoragePath,
+        callbackUrl,
+      })
+
+      if (triggerResult.success) {
+        await db
+          .update(analysisJobs)
+          .set({
+            status: 'processing',
+            n8nWebhookTriggeredAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(analysisJobs.id, updated.id))
+      }
+    } catch (webhookError) {
+      console.error('Failed to trigger n8n webhook on retry:', webhookError)
+      // Job remains in pending state, can be retried again
+    }
 
     revalidatePath('/admin/jobs')
     return { success: true }

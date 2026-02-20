@@ -1,4 +1,6 @@
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { formatDistanceToNow } from 'date-fns'
+import { de, enUS } from 'date-fns/locale'
 import Link from 'next/link'
 import {
   Building2,
@@ -47,6 +49,8 @@ function AdminDashboard({
   health: Awaited<ReturnType<typeof getSystemHealth>>
 }) {
   const t = useTranslations('admin')
+  const locale = useLocale()
+  const dateLocale = locale === 'de' ? de : enUS
 
   return (
     <div className="space-y-6">
@@ -176,7 +180,7 @@ function AdminDashboard({
             ) : (
               <div className="space-y-3">
                 {recentActivity.map((entry) => (
-                  <ActivityEntry key={entry.id} entry={entry} />
+                  <ActivityEntry key={entry.id} entry={entry} dateLocale={dateLocale} />
                 ))}
               </div>
             )}
@@ -239,14 +243,19 @@ function HealthItem({
 
 function ActivityEntry({
   entry,
+  dateLocale,
 }: {
   entry: Awaited<ReturnType<typeof getRecentActivity>>[number]
+  dateLocale: typeof de | typeof enUS
 }) {
   const actionParts = entry.action.split('.')
   const category = actionParts[0]
   const action = actionParts.slice(1).join('.')
 
-  const timeAgo = getTimeAgo(entry.createdAt)
+  const timeAgo = formatDistanceToNow(new Date(entry.createdAt), {
+    addSuffix: true,
+    locale: dateLocale,
+  })
 
   return (
     <div className="flex items-start gap-3 text-sm">
@@ -279,15 +288,3 @@ function ActionIcon({ category }: { category: string }) {
   }
 }
 
-function getTimeAgo(date: Date): string {
-  const now = new Date()
-  const diffMs = now.getTime() - new Date(date).getTime()
-  const diffMin = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMs / 3600000)
-  const diffDays = Math.floor(diffMs / 86400000)
-
-  if (diffMin < 1) return 'just now'
-  if (diffMin < 60) return `${diffMin}m`
-  if (diffHours < 24) return `${diffHours}h`
-  return `${diffDays}d`
-}

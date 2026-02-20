@@ -140,7 +140,7 @@ export function PlanPageClient({
             />
             <PlanUsageBar
               label={t('storage')}
-              current={0}
+              current={overview.usage.storageMb}
               limit={overview.limits.maxStorageMb}
               unit={t('unitUsed')}
               formatValue={formatMb}
