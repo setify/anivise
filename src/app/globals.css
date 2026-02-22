@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
@@ -239,6 +241,154 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+}
+
+/* ============================================================
+   MARKETING PAGE – Animations & Components
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hero entrance animation with blur */
+@keyframes hero-fade-up {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-scale-up {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(0.95) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1) translateY(0);
+  }
+}
+
+.hero-animate {
+  opacity: 0;
+  animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-animate-scale {
+  opacity: 0;
+  animation: hero-scale-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Logo marquee */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-container {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 30s linear infinite;
+}
+
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Section badge pill */
+.section-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  color: var(--primary);
+  background: oklch(from var(--primary) l c h / 0.08);
+  border: 1px solid oklch(from var(--primary) l c h / 0.15);
+}
+
+/* Animated nav link underline */
+.nav-link-animated {
+  position: relative;
+}
+
+.nav-link-animated::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 1px;
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link-animated:hover::after {
+  width: 100%;
+}
+
+/* Services bento grid */
+.services-bento {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .services-bento {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .services-bento > *:nth-child(1) { grid-column: span 2; }
+  .services-bento > *:nth-child(2) { grid-column: span 1; }
+  .services-bento > *:nth-child(3) { grid-column: span 1; }
+  .services-bento > *:nth-child(4) { grid-column: span 1; }
+  .services-bento > *:nth-child(5) { grid-column: span 1; }
+  .services-bento > *:nth-child(6) { grid-column: span 2; }
+  .services-bento > *:nth-child(7) { grid-column: span 1; }
+  .services-bento > *:nth-child(8) { grid-column: span 1; }
+}
+
+/* CTA radial glow */
+.cta-glow::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, oklch(0.57 0.12 280 / 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Scrollbar hide utility */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 @layer base {

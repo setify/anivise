@@ -1,8 +1,8 @@
 # Project State
 
-**Version:** 1.16.1
-**Last Updated:** 2026-02-20
-**Last Commit:** chore: error boundaries, PROJECT_STATE cleanup, analysis types
+**Version:** 1.17.0
+**Last Updated:** 2026-02-22
+**Last Commit:** feat(landing): premium design upgrade with morphing navbar, scroll reveals, bento grid and animations
 
 ## What's Implemented
 
@@ -258,6 +258,12 @@
 - [x] Media Library page (`/admin/media`) with grid/list views, upload dialog, preview, delete with usage check, bulk delete, sync, context filter, search, storage overview (per-org quota usage)
 - [x] "Mediathek" nav item in admin sidebar (Image icon, superadmin-only)
 - [x] Staff permission filtering on admin sidebar (Settings hidden for staff)
+- [x] **Marketing Landing Page** (`/` root): 10 sections (Hero, Logo Marquee, Stats, Dark Statement, Feature Showcase, Services Bento Grid, Case Studies Horizontal Scroll, Testimonials Carousel, FAQ Accordion, CTA)
+- [x] **Marketing Navbar**: Pill-shape morphing (floats as pill at top, expands full-width on scroll), animated nav links, primary glow CTA button
+- [x] **Marketing Footer**: Dark bg with gradient blob decoration, social links
+- [x] **Legal Pages**: Impressum + Datenschutz with draft banner and `@tailwindcss/typography` prose
+- [x] **Marketing Locale Switcher**: DE/EN toggle for landing page
+- [x] **Marketing Animations**: framer-motion utilities (FadeIn, StaggerContainer, StaggerItem, FloatingElement, ParallaxSection, CountUp, ScaleOnHover), CSS keyframes (hero-animate with blur, marquee-scroll, section-badge, nav-link-animated, services-bento grid, cta-glow)
 - [x] Home page (redirects to dashboard)
 - [x] Invitation acceptance page (`/invite/[token]`) with token validation, register, and accept flows
 - [x] **Org User Management** (`/users`): User list with tabs (All, Active, Deactivated, Invitations), search, stat cards, seat usage bar
@@ -622,6 +628,24 @@
 - `playwright.config.ts` - Playwright E2E configuration
 - `e2e/smoke.spec.ts` - Smoke tests (login/admin redirect)
 - `scripts/apply-rls.mjs` - Apply Supabase RLS policies to live DB
+- `src/app/[locale]/(marketing)/layout.tsx` - Marketing layout (Navbar + Footer)
+- `src/app/[locale]/(marketing)/page.tsx` - Landing page (10 sections)
+- `src/app/[locale]/(marketing)/impressum/page.tsx` - Impressum legal page
+- `src/app/[locale]/(marketing)/datenschutz/page.tsx` - Datenschutz legal page
+- `src/components/marketing/navbar.tsx` - Pill-morphing navbar (client)
+- `src/components/marketing/footer.tsx` - Footer with gradient blob (server)
+- `src/components/marketing/motion.tsx` - framer-motion animation utilities
+- `src/components/marketing/hero-section.tsx` - Hero with staggered blur animations
+- `src/components/marketing/logo-marquee.tsx` - Infinite logo marquee
+- `src/components/marketing/stats-section.tsx` - Animated stats counter
+- `src/components/marketing/dark-statement.tsx` - Dark statement with rich text
+- `src/components/marketing/feature-showcase-section.tsx` - Feature showcase with steps
+- `src/components/marketing/services-section.tsx` - Bento grid services
+- `src/components/marketing/case-studies-section.tsx` - Horizontal scroll case studies
+- `src/components/marketing/testimonials-section.tsx` - Carousel with auto-play
+- `src/components/marketing/faq-section.tsx` - FAQ accordion
+- `src/components/marketing/cta-section.tsx` - CTA with radial glow
+- `src/components/marketing/locale-switcher.tsx` - DE/EN locale toggle
 - `src/middleware.ts` - Three-layer middleware (locale + subdomain + auth)
 - `src/lib/i18n/request.ts` - next-intl server request config
 - `src/lib/i18n/routing.ts` - Locale routing definition

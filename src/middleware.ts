@@ -7,6 +7,8 @@ const intlMiddleware = createIntlMiddleware(routing)
 
 /** Routes that do not require authentication */
 const PUBLIC_PATTERNS = [
+  /^\/(de|en)(\/|$)/,                          // Root / landing page
+  /^\/(de|en)\/(impressum|datenschutz)(\/|$)/,  // Legal pages
   /^\/(de|en)\/login(\/|$)/,
   /^\/(de|en)\/register(\/|$)/,
   /^\/(de|en)\/invite(\/|$)/,
@@ -78,6 +80,14 @@ export default async function middleware(request: NextRequest) {
   // Propagate organization slug downstream via request header
   if (orgSlug) {
     intlResponse.headers.set('x-organization-slug', orgSlug)
+
+    // On org subdomains, redirect root to dashboard (don't show landing page)
+    const localeMatch = pathname.match(/^\/(de|en)\/?$/)
+    if (localeMatch || pathname === '/') {
+      const locale = localeMatch?.[1] || routing.defaultLocale
+      const dashboardUrl = new URL(`/${locale}/dashboard`, request.url)
+      return NextResponse.redirect(dashboardUrl)
+    }
   }
 
   // If the subdomain is "admin", mark as superadmin route

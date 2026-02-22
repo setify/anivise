@@ -2351,5 +2351,227 @@
       "description": "Dieses Formular wurde bereits ausgefüllt. Vielen Dank!"
     },
     "submitError": "Beim Absenden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "landing": {
+    "nav": {
+      "features": "Funktionen",
+      "faq": "FAQ",
+      "login": "Anmelden",
+      "register": "Kostenlos starten",
+      "impressum": "Impressum",
+      "datenschutz": "Datenschutz"
+    },
+    "hero": {
+      "title": "KI-gestützte Musteranalyse für Führungsentscheidungen",
+      "subtitle": "Anivise hilft Organisationen, Menschen in Rollen zu bringen, in denen sie aufblühen – nicht ausbrennen.",
+      "ctaPrimary": "Jetzt entdecken",
+      "ctaSecondary": "Kostenlos starten"
+    },
+    "stats": {
+      "items": [
+        {
+          "value": "500",
+          "suffix": "+",
+          "label": "Durchgeführte Analysen"
+        },
+        {
+          "value": "50",
+          "suffix": "+",
+          "label": "Organisationen"
+        },
+        {
+          "value": "99",
+          "suffix": "%",
+          "label": "Datenschutz-Konformität"
+        },
+        {
+          "value": "2",
+          "label": "Sprachen"
+        }
+      ]
+    },
+    "logoMarquee": {
+      "title": "Vertraut von führenden Organisationen"
+    },
+    "darkStatement": {
+      "text": "Jede dritte Führungsbesetzung scheitert. Nicht, weil Menschen schlecht sind – sondern weil sie in Rollen landen, die nicht zu ihren {highlight} passen.",
+      "highlight": "Mustern"
+    },
+    "featureShowcase": {
+      "title": "Psychodynamische Muster erkennen, Orientierung gewinnen",
+      "subtitle": "Unsere KI analysiert Gesprächsdaten und erkennt Muster – keine Diagnosen, sondern fundierte Orientierung für bessere Entscheidungen.",
+      "badge": "So funktioniert es",
+      "highlight": "Musteranalyse anwenden und Handlungsoptionen generieren",
+      "steps": [
+        {
+          "title": "Gespräch hochladen",
+          "description": "Laden Sie ein Transkript oder eine Aufnahme hoch – sicher und verschlüsselt."
+        },
+        {
+          "title": "KI-Analyse starten",
+          "description": "Die KI erkennt psychodynamische Muster in den Gesprächsdaten."
+        },
+        {
+          "title": "Orientierung erhalten",
+          "description": "Ein strukturierter Bericht mit Mustern, Entwicklungsfeldern und Handlungsoptionen."
+        }
+      ]
+    },
+    "services": {
+      "title": "Leistungen",
+      "subtitle": "Umfassende Lösungen für Ihre Führungsentscheidungen",
+      "items": [
+        {
+          "title": "Musteranalyse für Besetzungsentscheidungen",
+          "image": "/images/services/service-1.jpg"
+        },
+        {
+          "title": "Entwicklungspotenzial-Analyse",
+          "image": "/images/services/service-2.png"
+        },
+        {
+          "title": "Due-Diligence Unterstützung",
+          "image": "/images/services/service-3.png"
+        },
+        {
+          "title": "Führungskräfte-Assessment",
+          "image": "/images/services/service-4.png"
+        },
+        {
+          "title": "Team-Dynamik Analyse",
+          "image": "/images/services/service-5.png"
+        },
+        {
+          "title": "Consent-Management",
+          "image": "/images/services/service-6.png"
+        },
+        {
+          "title": "Strukturierte Datenerhebung",
+          "image": "/images/services/service-7.png"
+        },
+        {
+          "title": "Mehrsprachige Berichte",
+          "image": "/images/services/service-8.png"
+        }
+      ]
+    },
+    "caseStudies": {
+      "title": "Anwendungsbereiche",
+      "subtitle": "Wie Organisationen Anivise einsetzen",
+      "viewAll": "Alle Anwendungsbereiche",
+      "items": [
+        {
+          "title": "KI-gestützte Personalentwicklung im Gesundheitswesen",
+          "image": "/images/case-studies/case-1.png"
+        },
+        {
+          "title": "Führungsanalysen im Retail-Bereich",
+          "image": "/images/case-studies/case-2.png"
+        },
+        {
+          "title": "Risikobewertung im Finanzsektor",
+          "image": "/images/case-studies/case-3.png"
+        },
+        {
+          "title": "Messbare Ergebnisse in der Beratung",
+          "image": "/images/case-studies/case-4.png"
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Was unsere Kunden sagen",
+      "subtitle": "Führungskräfte und HR-Verantwortliche vertrauen auf Anivise",
+      "items": [
+        {
+          "quote": "Anivise hat unseren Blick auf Besetzungsentscheidungen grundlegend verändert. Die Muster-Orientierung gibt uns Sicherheit, ohne Menschen in Schubladen zu stecken.",
+          "name": "Dr. Martina Fels",
+          "role": "CHRO, Mittelstandsholding",
+          "avatar": "/images/testimonials/avatar-1.png"
+        },
+        {
+          "quote": "Endlich ein Tool, das Ethik nicht als Hindernis, sondern als Fundament versteht. Das Consent-Management hat uns sofort überzeugt.",
+          "name": "Thomas Richter",
+          "role": "Geschäftsführer, Beratungsgruppe",
+          "avatar": "/images/testimonials/avatar-2.png"
+        },
+        {
+          "quote": "Die strukturierte Analyse spart uns Wochen an Einschätzungsarbeit – und die Ergebnisse sind nachvollziehbarer als jedes Bauchgefühl.",
+          "name": "Sarah Hofmann",
+          "role": "Head of People & Culture",
+          "avatar": "/images/testimonials/avatar-3.png"
+        },
+        {
+          "quote": "Die DSGVO-Konformität war für uns ein Muss. Anivise liefert hier auf höchstem Niveau – inklusive vollständiger Einwilligungsdokumentation.",
+          "name": "Michael Weber",
+          "role": "Datenschutzbeauftragter",
+          "avatar": "/images/testimonials/avatar-4.png"
+        },
+        {
+          "quote": "Wir nutzen Anivise für unsere Due-Diligence-Prozesse. Die Qualität der Musteranalyse ist beeindruckend.",
+          "name": "Elena Kraus",
+          "role": "Partnerin, PE-Gesellschaft",
+          "avatar": "/images/testimonials/avatar-5.png"
+        },
+        {
+          "quote": "Als Coach nutze ich Anivise mit mehreren Organisationen gleichzeitig. Die Multi-Tenant-Architektur macht das nahtlos möglich.",
+          "name": "Prof. Dr. Hans Becker",
+          "role": "Executive Coach",
+          "avatar": "/images/testimonials/avatar-6.png"
+        }
+      ]
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "subtitle": "Antworten auf die wichtigsten Fragen zu Anivise",
+      "items": [
+        {
+          "question": "Was genau ist Anivise?",
+          "answer": "Anivise ist ein Decision-Support-System für Führungsentscheidungen. Es analysiert Gesprächsdaten mit KI, erkennt psychodynamische Muster und liefert Orientierung – keine Diagnosen, keine automatisierten Entscheidungen."
+        },
+        {
+          "question": "Wie wird der Datenschutz sichergestellt?",
+          "answer": "Anivise hostet alle Daten in der EU (Frankfurt), nutzt verschlüsselte Verbindungen und ein striktes Einwilligungsmanagement. Keine Analyse startet ohne explizite Zustimmung der betroffenen Person."
+        },
+        {
+          "question": "Kann Anivise in bestehende Systeme integriert werden?",
+          "answer": "Ja, Anivise bietet eine Webhook-basierte Architektur, die sich in bestehende HR- und Recruiting-Workflows integrieren lässt. Sprechen Sie uns für Details an."
+        },
+        {
+          "question": "In welchen Sprachen ist Anivise verfügbar?",
+          "answer": "Anivise ist vollständig in Deutsch und Englisch verfügbar. Weitere Sprachen können auf Anfrage ergänzt werden."
+        },
+        {
+          "question": "Was bedeutet 'Consent-basiert'?",
+          "answer": "Jede analysierte Person muss vorab explizit einwilligen. Ohne aktive Einwilligung ist keine Analyse möglich. Die Einwilligung kann jederzeit widerrufen werden – laufende Analysen werden dann gestoppt."
+        },
+        {
+          "question": "Ersetzt Anivise die menschliche Einschätzung?",
+          "answer": "Nein. Anivise liefert Orientierung und zeigt Muster auf. Die Entscheidung liegt immer beim Menschen. Berichte werden als 'Orientierung' gekennzeichnet, nicht als 'Empfehlung' oder 'Bewertung'."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Bereit für bessere Führungsentscheidungen?",
+      "subtitle": "Starten Sie jetzt mit Anivise und bringen Sie Menschen in Rollen, in denen sie aufblühen.",
+      "button": "Jetzt kostenlos starten"
+    },
+    "footer": {
+      "product": "Produkt",
+      "legal": "Rechtliches",
+      "contact": "Kontakt",
+      "copyright": "© {year} Anivise. Alle Rechte vorbehalten.",
+      "tagline": "KI-gestützte Musteranalyse für Führungsentscheidungen."
+    }
+  },
+  "legal": {
+    "draftBanner": "ENTWURF — Dieser Text muss vor Veröffentlichung anwaltlich geprüft werden.",
+    "impressum": {
+      "title": "Impressum",
+      "content": "<h2>Angaben gemäß § 5 TMG</h2><p>[Firmenname GmbH]<br/>[Straße Nr.]<br/>[PLZ Ort]<br/>Deutschland</p><h2>Vertreten durch</h2><p>[Geschäftsführer/in: Vorname Nachname]</p><h2>Kontakt</h2><p>Telefon: [+49 XXX XXXXXXX]<br/>E-Mail: <a href='mailto:kontakt@anivise.de'>kontakt@anivise.de</a></p><h2>Registereintrag</h2><p>Eintragung im Handelsregister.<br/>Registergericht: [Amtsgericht Ort]<br/>Registernummer: [HRB XXXXX]</p><h2>Umsatzsteuer-ID</h2><p>Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br/>[DE XXXXXXXXX]</p><h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2><p>[Vorname Nachname]<br/>[Adresse wie oben]</p><h2>Haftungsausschluss</h2><h3>Haftung für Inhalte</h3><p>Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p><h3>Haftung für Links</h3><p>Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p><h3>Urheberrecht</h3><p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>"
+    },
+    "datenschutz": {
+      "title": "Datenschutzerklärung",
+      "content": "<h2>1. Verantwortlicher</h2><p>[Firmenname GmbH]<br/>[Straße Nr.]<br/>[PLZ Ort]<br/>Deutschland<br/>E-Mail: <a href='mailto:datenschutz@anivise.de'>datenschutz@anivise.de</a></p><h2>2. Übersicht der Verarbeitungen</h2><p>Wir verarbeiten personenbezogene Daten nur, soweit dies zur Bereitstellung einer funktionsfähigen Plattform sowie unserer Inhalte und Leistungen erforderlich ist.</p><h2>3. Hosting</h2><p>Unsere Plattform wird bei <strong>Vercel Inc.</strong> gehostet (Serverstandort: Frankfurt, EU). Vercel verarbeitet technisch notwendige Verbindungsdaten (IP-Adresse, Zeitstempel, angefragte URL). Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p><h2>4. Datenbank</h2><p>Anwendungsdaten werden in einer PostgreSQL-Datenbank bei <strong>Supabase</strong> gespeichert (Serverstandort: EU). Supabase verarbeitet Daten ausschließlich in unserem Auftrag gemäß Art. 28 DSGVO.</p><h2>5. Authentifizierung</h2><p>Für die Benutzeranmeldung nutzen wir <strong>Supabase Auth</strong>. Dabei werden E-Mail-Adresse und ein gehashtes Passwort bzw. Magic-Link-Token verarbeitet. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</p><h2>6. E-Mail-Versand</h2><p>Für den Versand von System-E-Mails (Einladungen, Benachrichtigungen) nutzen wir <strong>Resend</strong> (via AWS SES, EU-Region). Verarbeitet werden: Empfänger-E-Mail, Betreff, Nachrichteninhalt. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p><h2>7. Cookies</h2><p>Wir verwenden ausschließlich technisch notwendige Cookies für die Authentifizierung (Session-Cookies). Es werden keine Tracking- oder Marketing-Cookies eingesetzt. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p><h2>8. Analyse-Daten</h2><p>Die Kernfunktion von Anivise ist die KI-gestützte Analyse von Gesprächsdaten. Diese Verarbeitung erfolgt <strong>ausschließlich auf Basis einer expliziten Einwilligung</strong> der betroffenen Person (Art. 6 Abs. 1 lit. a DSGVO, Art. 9 Abs. 2 lit. a DSGVO). Ohne aktive Einwilligung wird keine Analyse durchgeführt. Die Einwilligung kann jederzeit widerrufen werden.</p><h2>9. Betroffenenrechte</h2><p>Sie haben das Recht auf:</p><ul><li><strong>Auskunft</strong> über Ihre gespeicherten Daten (Art. 15 DSGVO)</li><li><strong>Berichtigung</strong> unrichtiger Daten (Art. 16 DSGVO)</li><li><strong>Löschung</strong> Ihrer Daten (Art. 17 DSGVO)</li><li><strong>Einschränkung</strong> der Verarbeitung (Art. 18 DSGVO)</li><li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li><li><strong>Widerspruch</strong> gegen die Verarbeitung (Art. 21 DSGVO)</li><li><strong>Widerruf</strong> erteilter Einwilligungen (Art. 7 Abs. 3 DSGVO)</li></ul><p>Zur Ausübung Ihrer Rechte wenden Sie sich an: <a href='mailto:datenschutz@anivise.de'>datenschutz@anivise.de</a></p><h2>10. Beschwerderecht</h2><p>Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.</p><h2>11. Änderungen</h2><p>Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie an geänderte Rechtslagen oder bei Änderungen des Dienstes anzupassen. Die aktuelle Version finden Sie stets auf dieser Seite.</p>"
+    }
   }
 }

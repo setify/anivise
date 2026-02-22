@@ -2351,5 +2351,227 @@
       "description": "This form has already been completed. Thank you!"
     },
     "submitError": "An error occurred while submitting. Please try again."
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "faq": "FAQ",
+      "login": "Sign In",
+      "register": "Get Started",
+      "impressum": "Imprint",
+      "datenschutz": "Privacy"
+    },
+    "hero": {
+      "title": "AI-Powered Pattern Analysis for Leadership Decisions",
+      "subtitle": "Anivise helps organizations place people in roles where they thrive – not burn out.",
+      "ctaPrimary": "Discover Now",
+      "ctaSecondary": "Get Started Free"
+    },
+    "stats": {
+      "items": [
+        {
+          "value": "500",
+          "suffix": "+",
+          "label": "Analyses Completed"
+        },
+        {
+          "value": "50",
+          "suffix": "+",
+          "label": "Organizations"
+        },
+        {
+          "value": "99",
+          "suffix": "%",
+          "label": "Privacy Compliance"
+        },
+        {
+          "value": "2",
+          "label": "Languages"
+        }
+      ]
+    },
+    "logoMarquee": {
+      "title": "Trusted by leading organizations"
+    },
+    "darkStatement": {
+      "text": "Every third leadership placement fails. Not because people are bad – but because they end up in roles that don't match their {highlight}.",
+      "highlight": "patterns"
+    },
+    "featureShowcase": {
+      "title": "Detect Psychodynamic Patterns, Gain Orientation",
+      "subtitle": "Our AI analyzes conversation data and detects patterns – no diagnoses, just informed orientation for better decisions.",
+      "badge": "How It Works",
+      "highlight": "Apply pattern analysis and generate action options",
+      "steps": [
+        {
+          "title": "Upload Conversation",
+          "description": "Upload a transcript or recording – securely and encrypted."
+        },
+        {
+          "title": "Start AI Analysis",
+          "description": "The AI detects psychodynamic patterns in the conversation data."
+        },
+        {
+          "title": "Receive Orientation",
+          "description": "A structured report with patterns, development areas, and action options."
+        }
+      ]
+    },
+    "services": {
+      "title": "Services",
+      "subtitle": "Comprehensive solutions for your leadership decisions",
+      "items": [
+        {
+          "title": "Pattern Analysis for Placement Decisions",
+          "image": "/images/services/service-1.jpg"
+        },
+        {
+          "title": "Development Potential Analysis",
+          "image": "/images/services/service-2.png"
+        },
+        {
+          "title": "Due Diligence Support",
+          "image": "/images/services/service-3.png"
+        },
+        {
+          "title": "Leadership Assessment",
+          "image": "/images/services/service-4.png"
+        },
+        {
+          "title": "Team Dynamics Analysis",
+          "image": "/images/services/service-5.png"
+        },
+        {
+          "title": "Consent Management",
+          "image": "/images/services/service-6.png"
+        },
+        {
+          "title": "Structured Data Collection",
+          "image": "/images/services/service-7.png"
+        },
+        {
+          "title": "Multilingual Reports",
+          "image": "/images/services/service-8.png"
+        }
+      ]
+    },
+    "caseStudies": {
+      "title": "Use Cases",
+      "subtitle": "How organizations use Anivise",
+      "viewAll": "All use cases",
+      "items": [
+        {
+          "title": "AI-Powered Talent Development in Healthcare",
+          "image": "/images/case-studies/case-1.png"
+        },
+        {
+          "title": "Leadership Analysis in Retail",
+          "image": "/images/case-studies/case-2.png"
+        },
+        {
+          "title": "Risk Assessment in Finance",
+          "image": "/images/case-studies/case-3.png"
+        },
+        {
+          "title": "Measurable Results in Consulting",
+          "image": "/images/case-studies/case-4.png"
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "What Our Clients Say",
+      "subtitle": "Leaders and HR professionals trust Anivise",
+      "items": [
+        {
+          "quote": "Anivise fundamentally changed how we approach placement decisions. Pattern orientation gives us confidence without putting people into boxes.",
+          "name": "Dr. Martina Fels",
+          "role": "CHRO, Mid-Market Holding",
+          "avatar": "/images/testimonials/avatar-1.png"
+        },
+        {
+          "quote": "Finally a tool that understands ethics not as an obstacle but as a foundation. The consent management convinced us immediately.",
+          "name": "Thomas Richter",
+          "role": "Managing Director, Advisory Group",
+          "avatar": "/images/testimonials/avatar-2.png"
+        },
+        {
+          "quote": "The structured analysis saves us weeks of assessment work – and the results are more transparent than any gut feeling.",
+          "name": "Sarah Hofmann",
+          "role": "Head of People & Culture",
+          "avatar": "/images/testimonials/avatar-3.png"
+        },
+        {
+          "quote": "GDPR compliance was a must for us. Anivise delivers at the highest level here – including complete consent documentation.",
+          "name": "Michael Weber",
+          "role": "Data Protection Officer",
+          "avatar": "/images/testimonials/avatar-4.png"
+        },
+        {
+          "quote": "We use Anivise for our due diligence processes. The quality of the pattern analysis is impressive.",
+          "name": "Elena Kraus",
+          "role": "Partner, PE Firm",
+          "avatar": "/images/testimonials/avatar-5.png"
+        },
+        {
+          "quote": "As a coach, I use Anivise with multiple organizations simultaneously. The multi-tenant architecture makes this seamless.",
+          "name": "Prof. Dr. Hans Becker",
+          "role": "Executive Coach",
+          "avatar": "/images/testimonials/avatar-6.png"
+        }
+      ]
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Answers to the most important questions about Anivise",
+      "items": [
+        {
+          "question": "What exactly is Anivise?",
+          "answer": "Anivise is a decision support system for leadership decisions. It analyzes conversation data with AI, detects psychodynamic patterns, and provides orientation – no diagnoses, no automated decisions."
+        },
+        {
+          "question": "How is data privacy ensured?",
+          "answer": "Anivise hosts all data in the EU (Frankfurt), uses encrypted connections, and has strict consent management. No analysis starts without the explicit consent of the person being analyzed."
+        },
+        {
+          "question": "Can Anivise be integrated into existing systems?",
+          "answer": "Yes, Anivise offers a webhook-based architecture that integrates into existing HR and recruiting workflows. Contact us for details."
+        },
+        {
+          "question": "What languages is Anivise available in?",
+          "answer": "Anivise is fully available in German and English. Additional languages can be added on request."
+        },
+        {
+          "question": "What does 'consent-based' mean?",
+          "answer": "Every person being analyzed must give explicit prior consent. No analysis is possible without active consent. Consent can be revoked at any time – running analyses will be stopped."
+        },
+        {
+          "question": "Does Anivise replace human judgment?",
+          "answer": "No. Anivise provides orientation and reveals patterns. The decision always lies with the human. Reports are labeled as 'Orientation', not 'Recommendation' or 'Assessment'."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready for Better Leadership Decisions?",
+      "subtitle": "Start now with Anivise and place people in roles where they thrive.",
+      "button": "Get Started for Free"
+    },
+    "footer": {
+      "product": "Product",
+      "legal": "Legal",
+      "contact": "Contact",
+      "copyright": "© {year} Anivise. All rights reserved.",
+      "tagline": "AI-powered pattern analysis for leadership decisions."
+    }
+  },
+  "legal": {
+    "draftBanner": "DRAFT — This text must be reviewed by legal counsel before publication.",
+    "impressum": {
+      "title": "Imprint",
+      "content": "<h2>Information according to § 5 TMG</h2><p>[Company Name GmbH]<br/>[Street No.]<br/>[Postal Code City]<br/>Germany</p><h2>Represented by</h2><p>[Managing Director: First Name Last Name]</p><h2>Contact</h2><p>Phone: [+49 XXX XXXXXXX]<br/>Email: <a href='mailto:kontakt@anivise.de'>kontakt@anivise.de</a></p><h2>Commercial Register</h2><p>Entry in the commercial register.<br/>Register court: [Local Court City]<br/>Register number: [HRB XXXXX]</p><h2>VAT ID</h2><p>Sales tax identification number according to § 27 a Sales Tax Law:<br/>[DE XXXXXXXXX]</p><h2>Responsible for content according to § 55 Abs. 2 RStV</h2><p>[First Name Last Name]<br/>[Address as above]</p><h2>Disclaimer</h2><h3>Liability for Content</h3><p>The contents of our pages were created with the greatest care. However, we cannot guarantee the accuracy, completeness, and timeliness of the content. As a service provider, we are responsible for our own content on these pages under general law according to § 7 Para. 1 TMG. According to §§ 8 to 10 TMG, however, we as a service provider are not obligated to monitor transmitted or stored third-party information or to investigate circumstances that indicate illegal activity.</p><h3>Liability for Links</h3><p>Our offer contains links to external websites of third parties over whose content we have no influence. Therefore, we cannot accept any liability for this third-party content. The respective provider or operator of the linked pages is always responsible for the content of the linked pages.</p><h3>Copyright</h3><p>The content and works created by the site operators on these pages are subject to German copyright law. Reproduction, editing, distribution, and any kind of use outside the limits of copyright law require the written consent of the respective author or creator.</p>"
+    },
+    "datenschutz": {
+      "title": "Privacy Policy",
+      "content": "<h2>1. Controller</h2><p>[Company Name GmbH]<br/>[Street No.]<br/>[Postal Code City]<br/>Germany<br/>Email: <a href='mailto:datenschutz@anivise.de'>datenschutz@anivise.de</a></p><h2>2. Overview of Processing</h2><p>We process personal data only insofar as it is necessary to provide a functional platform and our content and services.</p><h2>3. Hosting</h2><p>Our platform is hosted by <strong>Vercel Inc.</strong> (server location: Frankfurt, EU). Vercel processes technically necessary connection data (IP address, timestamp, requested URL). Legal basis: Art. 6 Para. 1 lit. f GDPR.</p><h2>4. Database</h2><p>Application data is stored in a PostgreSQL database at <strong>Supabase</strong> (server location: EU). Supabase processes data exclusively on our behalf in accordance with Art. 28 GDPR.</p><h2>5. Authentication</h2><p>For user login, we use <strong>Supabase Auth</strong>. This processes email addresses and hashed passwords or magic link tokens. Legal basis: Art. 6 Para. 1 lit. b GDPR (contract fulfillment).</p><h2>6. Email Delivery</h2><p>For sending system emails (invitations, notifications), we use <strong>Resend</strong> (via AWS SES, EU region). Processed data: recipient email, subject, message content. Legal basis: Art. 6 Para. 1 lit. b GDPR.</p><h2>7. Cookies</h2><p>We use exclusively technically necessary cookies for authentication (session cookies). No tracking or marketing cookies are used. Legal basis: Art. 6 Para. 1 lit. f GDPR.</p><h2>8. Analysis Data</h2><p>The core function of Anivise is AI-powered analysis of conversation data. This processing takes place <strong>exclusively on the basis of explicit consent</strong> of the person concerned (Art. 6 Para. 1 lit. a GDPR, Art. 9 Para. 2 lit. a GDPR). No analysis is performed without active consent. Consent can be revoked at any time.</p><h2>9. Data Subject Rights</h2><p>You have the right to:</p><ul><li><strong>Information</strong> about your stored data (Art. 15 GDPR)</li><li><strong>Rectification</strong> of inaccurate data (Art. 16 GDPR)</li><li><strong>Erasure</strong> of your data (Art. 17 GDPR)</li><li><strong>Restriction</strong> of processing (Art. 18 GDPR)</li><li><strong>Data portability</strong> (Art. 20 GDPR)</li><li><strong>Objection</strong> to processing (Art. 21 GDPR)</li><li><strong>Withdrawal</strong> of given consent (Art. 7 Para. 3 GDPR)</li></ul><p>To exercise your rights, contact: <a href='mailto:datenschutz@anivise.de'>datenschutz@anivise.de</a></p><h2>10. Right to Complain</h2><p>You have the right to lodge a complaint with a data protection supervisory authority.</p><h2>11. Changes</h2><p>We reserve the right to adapt this privacy policy to accommodate changed legal situations or changes to the service. The current version is always available on this page.</p>"
+    }
   }
 }

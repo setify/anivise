@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.17.0] - 2026-02-22
+### Added
+- **Landing Page (Marketing)**: Complete marketing landing page at root domain with 10 sections: Hero, Logo Marquee, Stats, Dark Statement, Feature Showcase, Services (Bento Grid), Case Studies (Horizontal Scroll), Testimonials (Carousel), FAQ (Accordion), CTA
+- **Premium Design System**: Pill-shape morphing navbar (floats as pill, expands on scroll), staggered hero animations with blur entrance, animated stats counter, section badge pills, nav link underline animations
+- **New Sections**: Dark Statement (dark rounded container with rich text highlight), Logo Marquee (infinite scroll with pause on hover)
+- **CSS Animations**: `hero-animate` keyframes with blur, `marquee-scroll` infinite loop, `section-badge` pill styling, `nav-link-animated` underline, `services-bento` asymmetric grid, `cta-glow` radial gradient, smooth scroll
+- **framer-motion Utilities** (`src/components/marketing/motion.tsx`): FadeIn, StaggerContainer, StaggerItem, FloatingElement, ParallaxSection, CountUp, ScaleOnHover — all respecting `useReducedMotion()`
+- **Testimonials Carousel**: Auto-rotation (6s), pause on hover, AnimatePresence slide transitions, dark rounded container with large decorative quote mark
+- **FAQ Section**: White accordion cards on gray rounded container, smooth expand/collapse
+- **CTA Section**: Radial gradient glow pseudo-element, white button with glow shadow on dark container
+- **Footer**: Gradient blob decoration, dark background using `var(--foreground)`
+- **Legal Pages**: Impressum and Datenschutz with draft banner and typography prose styling
+- **Marketing i18n**: Full `landing` namespace (nav, hero, stats, logoMarquee, darkStatement, featureShowcase, services, caseStudies, testimonials, faq, cta, footer) + `legal` namespace (DE + EN)
+- **Marketing Route Group**: `(marketing)/layout.tsx` with Navbar + Footer, `(marketing)/page.tsx` as root, `/impressum`, `/datenschutz`
+- **Middleware Updates**: Root and legal routes added to public patterns, subdomain redirect (org subdomains → dashboard)
+- **Dependencies**: `framer-motion`, `@tailwindcss/typography`
+
 ## [1.16.1] - 2026-02-20
 ### Added
 - **Dashboard Error Boundaries**: 11 granular `error.tsx` files covering all dashboard sub-routes and dynamic routes (analyses, analyses/[id], employees, employees/[id], forms, forms/[slug], guides, users, settings, plan, dashboard). Detail pages include `error.message` display.
